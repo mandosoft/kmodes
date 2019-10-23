@@ -1,4 +1,0 @@
-{
-    "python.formatting.provider": "black",
-    "C_Cpp.errorSquiggles": "Disabled"
-}
