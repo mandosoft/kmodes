@@ -24,7 +24,7 @@ df.index+=1
 
 #Outfile testwrite 
 outf = open('outfile.txt', 'w')
-outf.writelines('Input Data: ' + '\n'*2 + df.to_string(index=False)+ '\n'*3)
+outf.writelines('Multiple Sequence Alignment: ' + '\n'*2 + df.to_string(index=False)+ '\n'*3)
 
 
 #score = nmis(df[1], df[2])
