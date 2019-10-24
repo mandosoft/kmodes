@@ -22,13 +22,19 @@ df = pd.read_csv(file, encoding='utf-8', header=None)
 df = df.drop(df.columns[[0]], axis=1)
 df.index+=1
 
-#Outfile testwrite
+#Outfile testwrite 
 outf = open('outfile.txt', 'w')
-outf.writelines(df.to_string(index=False))
-
-
-
+outf.writelines('Input Data: ' + '\n'*2 + df.to_string(index=False)+ '\n'*3)
 
 
 #score = nmis(df[1], df[2])
+
+#Step 1 Module 
+# Eliminate global vars following completion 
+
+k = len(df.columns)
+ 
+#Outfile testwrite
+outf.writelines('Value of K: ' + str(k) + '\n'*3)
+outf.close()
 

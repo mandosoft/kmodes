@@ -1,3 +1,5 @@
+Input Data: 
+
 1  2  3  4  5  6  7  8  9  10 11 12 13 14
  C  C  C  C  C  C  T  T  T  T  T  S  S  S
  G  N  D  A  G  N  D  A  G  N  D  A  G  N
@@ -7,3 +9,7 @@
  Y  F  V  H  Q  E  P  W  Y  F  V  H  Q  E
  G  N  D  A  G  N  F  A  G  G  D  A  G  N
  G  Y  D  A  G  N  D  A  G  N  D  A  G  N
+
+
+
+Value of K: 14
