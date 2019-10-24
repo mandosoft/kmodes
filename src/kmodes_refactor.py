@@ -17,16 +17,18 @@ file = open(file_path)
 #NEEDTOFIX C parser was throwing UnicodeDecodeErrors. Switching engines does not fix the problem. 
 #Not related to pandas as the built-in readLines() also did not work 
 #Note that chunksize returns a TextFileObject rather than a Traditional DataFrame
+
 df = pd.read_csv(file, encoding='utf-8', header=None)
-
-
 df = df.drop(df.columns[[0]], axis=1)
-#df.columns = np.arange(len(df.columns))
+df.index+=1
 
-print(df)
+#Outfile testwrite
+outf = open('outfile.txt', 'w')
+outf.writelines(df.to_string(index=False))
 
 
 
 
-score = nmis(df[1], df[2])
+
+#score = nmis(df[1], df[2])
 
