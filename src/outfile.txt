@@ -14,3 +14,118 @@ Multiple Sequence Alignment:
 Value of K: 14
 
 
+Clusters: 
+
+[[  13
+1  S
+2  G
+3  I
+4  S
+5  G
+6  Q
+7  G
+8  G], [   6
+1  C
+2  N
+3  K
+4  C
+5  N
+6  E
+7  N
+8  N], [   6
+1  C
+2  N
+3  K
+4  C
+5  N
+6  E
+7  N
+8  N], [  12
+1  S
+2  A
+3  M
+4  S
+5  A
+6  H
+7  A
+8  A], [   8
+1  T
+2  A
+3  I
+4  T
+5  A
+6  W
+7  A
+8  A], [   1
+1  C
+2  G
+3  K
+4  C
+5  G
+6  Y
+7  G
+8  G], [  11
+1  T
+2  D
+3  K
+4  T
+5  D
+6  V
+7  D
+8  D], [  12
+1  S
+2  A
+3  M
+4  S
+5  A
+6  H
+7  A
+8  A], [   3
+1  C
+2  D
+3  I
+4  L
+5  D
+6  V
+7  D
+8  D], [  12
+1  S
+2  A
+3  M
+4  S
+5  A
+6  H
+7  A
+8  A], [   5
+1  C
+2  G
+3  R
+4  C
+5  E
+6  Q
+7  G
+8  G], [  13
+1  S
+2  G
+3  I
+4  S
+5  G
+6  Q
+7  G
+8  G], [  14
+1  S
+2  N
+3  L
+4  S
+5  N
+6  E
+7  N
+8  N], [  11
+1  T
+2  D
+3  K
+4  T
+5  D
+6  V
+7  D
+8  D]]

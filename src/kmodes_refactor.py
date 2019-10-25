@@ -32,9 +32,19 @@ outf.writelines('Multiple Sequence Alignment: ' + '\n'*2 + df.to_string(index=Fa
 #Step 1 Module 
 # Eliminate global vars following completion 
 
-k = len(df.columns)
+k = len(df.columns) #TODO: This could be more precise.
+k_clusters = [[] for i in range(k)]
+
+
+for i in range(len(k_clusters)):
+    k_clusters[i].append(df.sample(1, axis=1))
+
+#clusters = randk.columns.values
+
  
 #Outfile testwrite
 outf.writelines('Value of K: ' + str(k) + '\n'*3)
+outf.writelines('Clusters: ' + '\n'*2 + str(k_clusters))
 outf.close()
+
 
