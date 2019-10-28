@@ -27,19 +27,24 @@ k = len(df.columns)
  
 while (k > 2):
     k_random_samples  = df.sample(k, axis = 1)
-    outf.writelines(str(k) + ' random samples ' + '\n'*2 + k_random_samples.to_string(index=False) + '\n'*3)
+    outf.writelines(str(k) + ' random samples' + '\n' + 'sample names: ' + '\n')
+    for i in k_random_samples:
+        outf.writelines(str(k_random_samples[i].name) + ' ')
+    outf.writelines('\n' + 'sampled subset dataframe: ' + '\n' + k_random_samples.to_string(index=False, header=False) + '\n'*3)
 
-    for i in k_random_samples.columns:
-        for j in df.columns:
-            max_rii = 0
-            if k_random_samples.columns != df.columns: 
-                rii = nmis(k_random_samples[i], df[j])
-                if rii > max_rii: 
-                    max_rii = rii 
+ 
+#    for i in k_random_samples:
+#        for j in df:
+#            max_rii = 0
+#            if k_random_samples[i].name !=  df[j].name: 
+#                rii = nmis(k_random_samples[i], df[j])
+#                if rii > max_rii: 
+#                    max_rii = rii 
     k -= 1
 
 #Outfile testwrite
 outf.writelines('End Value of K: ' + str(k) + '\n'*3)
-outf.writelines('Max Rii: ' + str(max_rii)) 
+#outf.writelines('Max Rii: ' + str(max_rii))
+#outf.writelines(str(k_random_samples)) 
 outf.close()
 

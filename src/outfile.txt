@@ -11,16 +11,174 @@ Multiple Sequence Alignment:
  G  Y  D  A  G  N  D  A  G  N  D  A  G  N
 
 
-14 random samples 
+14 random samples
+sample names: 
+14 6 1 10 11 8 12 3 5 4 2 9 7 13 
+sampled subset dataframe: 
+ S  C  C  T  T  T  S  C  C  C  C  T  T  S
+ N  N  G  N  D  A  A  D  G  A  N  G  D  G
+ L  K  K  R  K  I  M  I  R  L  M  L  M  I
+ S  C  C  T  T  T  S  L  C  C  C  T  T  S
+ N  N  G  N  D  A  A  D  E  A  N  G  D  G
+ E  E  Y  F  V  W  H  V  Q  H  F  Y  P  Q
+ N  N  G  G  D  A  A  D  G  A  N  G  F  G
+ N  N  G  N  D  A  A  D  G  A  Y  G  D  G
 
-14 1  3  9  11 7  2  13 8  6  10 5  12 4 
- S  C  C  T  T  T  C  S  T  C  T  C  S  C
- N  G  D  G  D  D  N  G  A  N  N  G  A  A
- L  K  I  L  K  M  M  I  I  K  R  R  M  L
- S  C  L  T  T  T  C  S  T  C  T  C  S  C
- N  G  D  G  D  D  N  G  A  N  N  E  A  A
- E  Y  V  Y  V  P  F  Q  W  E  F  Q  H  H
- N  G  D  G  D  F  N  G  A  N  G  G  A  A
- N  G  D  G  D  D  Y  G  A  N  N  G  A  A
+
+13 random samples
+sample names: 
+4 12 13 8 6 9 5 10 2 11 1 7 14 
+sampled subset dataframe: 
+ C  S  S  T  C  T  C  T  C  T  C  T  S
+ A  A  G  A  N  G  G  N  N  D  G  D  N
+ L  M  I  I  K  L  R  R  M  K  K  M  L
+ C  S  S  T  C  T  C  T  C  T  C  T  S
+ A  A  G  A  N  G  E  N  N  D  G  D  N
+ H  H  Q  W  E  Y  Q  F  F  V  Y  P  E
+ A  A  G  A  N  G  G  G  N  D  G  F  N
+ A  A  G  A  N  G  G  N  Y  D  G  D  N
+
+
+12 random samples
+sample names: 
+8 10 1 2 11 12 7 13 5 6 14 3 
+sampled subset dataframe: 
+ T  T  C  C  T  S  T  S  C  C  S  C
+ A  N  G  N  D  A  D  G  G  N  N  D
+ I  R  K  M  K  M  M  I  R  K  L  I
+ T  T  C  C  T  S  T  S  C  C  S  L
+ A  N  G  N  D  A  D  G  E  N  N  D
+ W  F  Y  F  V  H  P  Q  Q  E  E  V
+ A  G  G  N  D  A  F  G  G  N  N  D
+ A  N  G  Y  D  A  D  G  G  N  N  D
+
+
+11 random samples
+sample names: 
+12 5 1 14 3 6 2 7 8 10 11 
+sampled subset dataframe: 
+ S  C  C  S  C  C  C  T  T  T  T
+ A  G  G  N  D  N  N  D  A  N  D
+ M  R  K  L  I  K  M  M  I  R  K
+ S  C  C  S  L  C  C  T  T  T  T
+ A  E  G  N  D  N  N  D  A  N  D
+ H  Q  Y  E  V  E  F  P  W  F  V
+ A  G  G  N  D  N  N  F  A  G  D
+ A  G  G  N  D  N  Y  D  A  N  D
+
+
+10 random samples
+sample names: 
+14 6 2 12 7 3 1 11 5 8 
+sampled subset dataframe: 
+ S  C  C  S  T  C  C  T  C  T
+ N  N  N  A  D  D  G  D  G  A
+ L  K  M  M  M  I  K  K  R  I
+ S  C  C  S  T  L  C  T  C  T
+ N  N  N  A  D  D  G  D  E  A
+ E  E  F  H  P  V  Y  V  Q  W
+ N  N  N  A  F  D  G  D  G  A
+ N  N  Y  A  D  D  G  D  G  A
+
+
+9 random samples
+sample names: 
+7 5 9 14 3 2 8 6 13 
+sampled subset dataframe: 
+ T  C  T  S  C  C  T  C  S
+ D  G  G  N  D  N  A  N  G
+ M  R  L  L  I  M  I  K  I
+ T  C  T  S  L  C  T  C  S
+ D  E  G  N  D  N  A  N  G
+ P  Q  Y  E  V  F  W  E  Q
+ F  G  G  N  D  N  A  N  G
+ D  G  G  N  D  Y  A  N  G
+
+
+8 random samples
+sample names: 
+4 14 3 2 1 11 9 12 
+sampled subset dataframe: 
+ C  S  C  C  C  T  T  S
+ A  N  D  N  G  D  G  A
+ L  L  I  M  K  K  L  M
+ C  S  L  C  C  T  T  S
+ A  N  D  N  G  D  G  A
+ H  E  V  F  Y  V  Y  H
+ A  N  D  N  G  D  G  A
+ A  N  D  Y  G  D  G  A
+
+
+7 random samples
+sample names: 
+2 1 11 14 10 12 5 
+sampled subset dataframe: 
+ C  C  T  S  T  S  C
+ N  G  D  N  N  A  G
+ M  K  K  L  R  M  R
+ C  C  T  S  T  S  C
+ N  G  D  N  N  A  E
+ F  Y  V  E  F  H  Q
+ N  G  D  N  G  A  G
+ Y  G  D  N  N  A  G
+
+
+6 random samples
+sample names: 
+1 6 11 5 12 7 
+sampled subset dataframe: 
+ C  C  T  C  S  T
+ G  N  D  G  A  D
+ K  K  K  R  M  M
+ C  C  T  C  S  T
+ G  N  D  E  A  D
+ Y  E  V  Q  H  P
+ G  N  D  G  A  F
+ G  N  D  G  A  D
+
+
+5 random samples
+sample names: 
+7 3 12 8 14 
+sampled subset dataframe: 
+ T  C  S  T  S
+ D  D  A  A  N
+ M  I  M  I  L
+ T  L  S  T  S
+ D  D  A  A  N
+ P  V  H  W  E
+ F  D  A  A  N
+ D  D  A  A  N
+
+
+4 random samples
+sample names: 
+14 4 9 7 
+sampled subset dataframe: 
+ S  C  T  T
+ N  A  G  D
+ L  L  L  M
+ S  C  T  T
+ N  A  G  D
+ E  H  Y  P
+ N  A  G  F
+ N  A  G  D
+
+
+3 random samples
+sample names: 
+2 14 9 
+sampled subset dataframe: 
+ C  S  T
+ N  N  G
+ M  L  L
+ C  S  T
+ N  N  G
+ F  E  Y
+ N  N  G
+ Y  N  G
+
+
+End Value of K: 2
 
 
