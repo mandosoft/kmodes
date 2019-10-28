@@ -1,6 +1,7 @@
 import operator
 import tkinter as tk
 import sys 
+import itertools 
 
 from collections import defaultdict
 from tkinter import filedialog
