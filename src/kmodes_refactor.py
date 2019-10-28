@@ -1,17 +1,10 @@
-import operator
-import tkinter as tk
-from collections import defaultdict
-from tkinter import filedialog
-
-import pandas as pd
-import numpy as np
-from sklearn.metrics.cluster import adjusted_mutual_info_score as amis
-from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
+from libconfig import * 
 
 #prompts "Choose File" window to select a file to read as input
 tk.Tk().withdraw()
 file_path = filedialog.askopenfilename()
 file = open(file_path) 
+ 
 
 #Data input stream
 #NEEDTOFIX C parser was throwing UnicodeDecodeErrors. Switching engines does not fix the problem. 
@@ -21,6 +14,7 @@ file = open(file_path)
 df = pd.read_csv(file, encoding='utf-8', header=None)
 df = df.drop(df.columns[[0]], axis=1)
 df.index+=1
+
 
 #Outfile testwrite 
 outf = open('outfile.txt', 'w')
@@ -32,19 +26,20 @@ outf.writelines('Multiple Sequence Alignment: ' + '\n'*2 + df.to_string(index=Fa
 #Step 1 Module 
 # Eliminate global vars following completion 
 
-k = len(df.columns) #TODO: This could be more precise.
+k = len(df.columns)
 k_clusters = [[] for i in range(k)]
 
 
-for i in range(len(k_clusters)):
-    k_clusters[i].append(df.sample(1, axis=1))
+#for i in range(len(k_clusters)):
+ #   k_clusters[i].append(df.columns(df.sample(1, axis=1)))
 
-#clusters = randk.columns.values
+
+#TypeError: 'Int64Index' object is not callable
 
  
 #Outfile testwrite
 outf.writelines('Value of K: ' + str(k) + '\n'*3)
-outf.writelines('Clusters: ' + '\n'*2 + str(k_clusters))
+outf.writelines('Clusters: ' + '\n'*2 + str(''))
+outf.writelines(str(df.info))
 outf.close()
-
 
