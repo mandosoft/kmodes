@@ -10,6 +10,11 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.cluster import adjusted_mutual_info_score as amis
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
+from warnings import simplefilter
+
+
+simplefilter(action='ignore', category=FutureWarning)
+
 
 def main():
     try:
