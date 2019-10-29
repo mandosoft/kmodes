@@ -30,7 +30,7 @@ while (k > 2):
     outf.writelines(str(k) + ' random samples' + '\n' + 'sample names: ' + '\n')
     for i in k_random_samples:
         outf.writelines(str(k_random_samples[i].name) + ' ')
-    outf.writelines('\n' + 'sampled subset dataframe: ' + '\n' + k_random_samples.to_string(index=False, header=False) + '\n'*3)
+    outf.writelines('\n'*2 + 'sampled subset dataframe: ' + '\n' + k_random_samples.to_string(index=False) + '\n'*3)
 
  
 #    for i in k_random_samples:
