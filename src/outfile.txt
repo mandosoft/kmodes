@@ -11,197 +11,41 @@ Multiple Sequence Alignment:
  G  Y  D  A  G  N  D  A  G  N  D  A  G  N
 
 
-14 random samples
-sample names: 
-13 5 2 12 9 1 14 6 4 7 10 3 8 11 
-
-sampled subset dataframe: 
-13 5  2  12 9  1  14 6  4  7  10 3  8  11
- S  C  C  S  T  C  S  C  C  T  T  C  T  T
- G  G  N  A  G  G  N  N  A  D  N  D  A  D
- I  R  M  M  L  K  L  K  L  M  R  I  I  K
- S  C  C  S  T  C  S  C  C  T  T  L  T  T
- G  E  N  A  G  G  N  N  A  D  N  D  A  D
- Q  Q  F  H  Y  Y  E  E  H  P  F  V  W  V
- G  G  N  A  G  G  N  N  A  F  G  D  A  D
- G  G  Y  A  G  G  N  N  A  D  N  D  A  D
-
-
 13 random samples
-sample names: 
-2 9 6 7 3 8 1 11 10 12 5 14 4 
-
-sampled subset dataframe: 
-2  9  6  7  3  8  1  11 10 12 5  14 4 
- C  T  C  T  C  T  C  T  T  S  C  S  C
- N  G  N  D  D  A  G  D  N  A  G  N  A
- M  L  K  M  I  I  K  K  R  M  R  L  L
- C  T  C  T  L  T  C  T  T  S  C  S  C
- N  G  N  D  D  A  G  D  N  A  E  N  A
- F  Y  E  P  V  W  Y  V  F  H  Q  E  H
- N  G  N  F  D  A  G  D  G  A  G  N  A
- Y  G  N  D  D  A  G  D  N  A  G  N  A
-
+(13 5 12 10 7 1 2 11 9 6 8 4 3 )
 
 12 random samples
-sample names: 
-6 4 10 3 5 9 14 11 8 1 12 7 
-
-sampled subset dataframe: 
-6  4  10 3  5  9  14 11 8  1  12 7 
- C  C  T  C  C  T  S  T  T  C  S  T
- N  A  N  D  G  G  N  D  A  G  A  D
- K  L  R  I  R  L  L  K  I  K  M  M
- C  C  T  L  C  T  S  T  T  C  S  T
- N  A  N  D  E  G  N  D  A  G  A  D
- E  H  F  V  Q  Y  E  V  W  Y  H  P
- N  A  G  D  G  G  N  D  A  G  A  F
- N  A  N  D  G  G  N  D  A  G  A  D
-
+(13 11 3 4 14 5 10 7 2 1 8 12 )
 
 11 random samples
-sample names: 
-12 5 8 1 6 14 10 11 9 4 2 
-
-sampled subset dataframe: 
-12 5  8  1  6  14 10 11 9  4  2 
- S  C  T  C  C  S  T  T  T  C  C
- A  G  A  G  N  N  N  D  G  A  N
- M  R  I  K  K  L  R  K  L  L  M
- S  C  T  C  C  S  T  T  T  C  C
- A  E  A  G  N  N  N  D  G  A  N
- H  Q  W  Y  E  E  F  V  Y  H  F
- A  G  A  G  N  N  G  D  G  A  N
- A  G  A  G  N  N  N  D  G  A  Y
-
+(8 12 3 4 5 13 6 10 1 9 14 )
 
 10 random samples
-sample names: 
-4 9 6 11 8 10 5 1 2 3 
-
-sampled subset dataframe: 
-4  9  6  11 8  10 5  1  2  3 
- C  T  C  T  T  T  C  C  C  C
- A  G  N  D  A  N  G  G  N  D
- L  L  K  K  I  R  R  K  M  I
- C  T  C  T  T  T  C  C  C  L
- A  G  N  D  A  N  E  G  N  D
- H  Y  E  V  W  F  Q  Y  F  V
- A  G  N  D  A  G  G  G  N  D
- A  G  N  D  A  N  G  G  Y  D
-
+(11 14 12 9 13 5 7 6 4 3 )
 
 9 random samples
-sample names: 
-12 14 2 6 11 1 13 10 9 
-
-sampled subset dataframe: 
-12 14 2  6  11 1  13 10 9 
- S  S  C  C  T  C  S  T  T
- A  N  N  N  D  G  G  N  G
- M  L  M  K  K  K  I  R  L
- S  S  C  C  T  C  S  T  T
- A  N  N  N  D  G  G  N  G
- H  E  F  E  V  Y  Q  F  Y
- A  N  N  N  D  G  G  G  G
- A  N  Y  N  D  G  G  N  G
-
+(5 11 4 10 8 2 6 12 1 )
 
 8 random samples
-sample names: 
-10 12 3 7 11 14 4 6 
-
-sampled subset dataframe: 
-10 12 3  7  11 14 4  6 
- T  S  C  T  T  S  C  C
- N  A  D  D  D  N  A  N
- R  M  I  M  K  L  L  K
- T  S  L  T  T  S  C  C
- N  A  D  D  D  N  A  N
- F  H  V  P  V  E  H  E
- G  A  D  F  D  N  A  N
- N  A  D  D  D  N  A  N
-
+(10 1 3 12 6 7 9 2 )
 
 7 random samples
-sample names: 
-14 12 6 10 2 1 4 
-
-sampled subset dataframe: 
-14 12 6  10 2  1  4 
- S  S  C  T  C  C  C
- N  A  N  N  N  G  A
- L  M  K  R  M  K  L
- S  S  C  T  C  C  C
- N  A  N  N  N  G  A
- E  H  E  F  F  Y  H
- N  A  N  G  N  G  A
- N  A  N  N  Y  G  A
-
+(9 11 4 8 3 1 7 )
 
 6 random samples
-sample names: 
-8 4 3 7 6 9 
-
-sampled subset dataframe: 
- 8  4  3  7  6  9
- T  C  C  T  C  T
- A  A  D  D  N  G
- I  L  I  M  K  L
- T  C  L  T  C  T
- A  A  D  D  N  G
- W  H  V  P  E  Y
- A  A  D  F  N  G
- A  A  D  D  N  G
-
+(14 9 12 2 6 11 )
 
 5 random samples
-sample names: 
-12 2 6 1 7 
-
-sampled subset dataframe: 
-12 2  6  1  7 
- S  C  C  C  T
- A  N  N  G  D
- M  M  K  K  M
- S  C  C  C  T
- A  N  N  G  D
- H  F  E  Y  P
- A  N  N  G  F
- A  Y  N  G  D
-
+(8 7 5 1 10 )
 
 4 random samples
-sample names: 
-8 11 10 3 
-
-sampled subset dataframe: 
-8  11 10 3 
- T  T  T  C
- A  D  N  D
- I  K  R  I
- T  T  T  L
- A  D  N  D
- W  V  F  V
- A  D  G  D
- A  D  N  D
-
+(4 6 9 12 )
 
 3 random samples
-sample names: 
-4 7 6 
+(8 7 5 )
 
-sampled subset dataframe: 
- 4  7  6
- C  T  C
- A  D  N
- L  M  K
- C  T  C
- A  D  N
- H  P  E
- A  F  N
- A  D  N
-
+2 random samples
+(13 3 )
 
 End Value of K: 2
 
