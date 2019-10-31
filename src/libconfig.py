@@ -2,9 +2,12 @@ import operator
 import tkinter as tk
 import sys 
 import itertools 
+import timeit 
 
 from collections import defaultdict
 from tkinter import filedialog
+
+from halo import Halo 
 
 import pandas as pd
 import numpy as np

@@ -4,6 +4,10 @@ from libconfig import *
 tk.Tk().withdraw()
 file_path = filedialog.askopenfilename()
 file = open(file_path) 
+
+#Spinner. Helpful with large sequences
+spinner = Halo(text='Running', spinner='simpleDots', color='green')
+spinner.start()
  
 #Data input stream
 #NEEDTOFIX C parser was throwing UnicodeDecodeErrors. Switching engines does not fix the problem. 
@@ -27,25 +31,29 @@ k = len(df.columns)
  
 while (k > 2):
     k_random_samples  = df.sample(k-1, axis = 1)
-    outf.writelines(str(k-1) + ' random samples' + '\n')
+    outf.writelines('\n'*2 + str(k-1) + ' random samples' + '\n')
     outf.writelines('(')
     for i in k_random_samples:
         outf.writelines(str(k_random_samples[i].name) + ' ')
     outf.writelines(')')
     outf.writelines('\n'*2)
-    
-#    for i in k_random_samples:
-#        for j in df:
-#            max_rii = 0
-#            if k_random_samples[i].name !=  df[j].name: 
-#                rii = nmis(k_random_samples[i], df[j])
-#            if rii > max_rii: 
-#                max_rii = rii 
+   
+    for i in k_random_samples:
+        for j in df:
+            max_rii = 0
+            if k_random_samples[i].name !=  df[j].name: 
+                rii = nmis(k_random_samples[i], df[j], average_method='arithmetic')
+                outf.writelines(str(k_random_samples[i].name) + '->' + str(df[j].name) + ': '  +  str(rii)+ '\n')
+                if rii > max_rii: 
+                    max_rii = rii
     k -= 1
+   
+    #outf.writelines('\n' + str(max_rii))
+
 
 #Outfile testwrite
-outf.writelines('End Value of K: ' + str(k) + '\n'*3)
+outf.writelines('\n'*2 + 'End Value of K: ' + str(k) + '\n'*3)
 #outf.writelines('Max Rii: ' + str(rii))
 #outf.writelines(str(k_random_samples)) 
 outf.close()
-
+spinner.stop()
