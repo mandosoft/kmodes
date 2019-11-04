@@ -6,7 +6,7 @@ file_path = filedialog.askopenfilename()
 file = open(file_path) 
 
 #Spinner. Helpful with large sequences
-spinner = Halo(text='Running  ', spinner='simpleDots', color='green')
+spinner = Halo(text='Running', spinner='simpleDots', color='green')
 spinner.start()
  
 #Data input stream
@@ -47,14 +47,12 @@ while (k > 2):
                 if rii > max_rii: 
                     max_rii = rii
                     b_max = df[j] 
-        outf.writelines(str(k_random_samples.name[i] + '->' + str(b_max.name)))
+        outf.writelines(str(k_random_samples.names[i] + '->' + str(b_max.names))
 
 
-#Outfile testwrites
-#outf.writelines('\n'*2 + 'End Value of K: ' + str(k) + '\n'*3)
+#Outfile testwrite
+outf.writelines('\n'*2 + 'End Value of K: ' + str(k) + '\n'*3)
 #outf.writelines('Max Rii: ' + str(rii))
 #outf.writelines(str(k_random_samples)) 
-
 outf.close()
 spinner.stop()
-
