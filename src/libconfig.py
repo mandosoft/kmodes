@@ -2,7 +2,7 @@ import operator
 import tkinter as tk
 import sys 
 import itertools 
-import timeit 
+import time 
 
 from collections import defaultdict
 from tkinter import filedialog

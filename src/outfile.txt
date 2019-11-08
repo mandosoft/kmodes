@@ -1,18 +1,276 @@
-Multiple Sequence Alignment: 
+K Samples: 
+  2  10 4  9  3  5  11 7  13 8  12 1  6 
+1  C  T  C  T  C  C  T  T  S  T  S  C  C
+2  N  N  A  G  D  G  D  D  G  A  A  G  N
+3  M  R  L  L  I  R  K  M  I  I  M  K  K
+4  C  T  C  T  L  C  T  T  S  T  S  C  C
+5  N  N  A  G  D  E  D  D  G  A  A  G  N
+6  F  F  H  Y  V  Q  V  P  Q  W  H  Y  E
+7  N  G  A  G  D  G  D  F  G  A  A  G  N
+8  Y  N  A  G  D  G  D  D  G  A  A  G  N
 
-1  2  3  4  5  6  7  8  9  10 11 12 13 14
- C  C  C  C  C  C  T  T  T  T  T  S  S  S
- G  N  D  A  G  N  D  A  G  N  D  A  G  N
- K  M  I  L  R  K  M  I  L  R  K  M  I  L
- C  C  L  C  C  C  T  T  T  T  T  S  S  S
- G  N  D  A  E  N  D  A  G  N  D  A  G  N
- Y  F  V  H  Q  E  P  W  Y  F  V  H  Q  E
- G  N  D  A  G  N  F  A  G  G  D  A  G  N
- G  Y  D  A  G  N  D  A  G  N  D  A  G  N
+Remaining Subset: 
+  14
+1  S
+2  N
+3  L
+4  S
+5  N
+6  E
+7  N
+8  N
 
 
+K Samples: 
+  7  9  14 8  5  3  2  13 6  1  11 4 
+1  T  T  S  T  C  C  C  S  C  C  T  C
+2  D  G  N  A  G  D  N  G  N  G  D  A
+3  M  L  L  I  R  I  M  I  K  K  K  L
+4  T  T  S  T  C  L  C  S  C  C  T  C
+5  D  G  N  A  E  D  N  G  N  G  D  A
+6  P  Y  E  W  Q  V  F  Q  E  Y  V  H
+7  F  G  N  A  G  D  N  G  N  G  D  A
+8  D  G  N  A  G  D  Y  G  N  G  D  A
+
+Remaining Subset: 
+  10 12
+1  T  S
+2  N  A
+3  R  M
+4  T  S
+5  N  A
+6  F  H
+7  G  A
+8  N  A
 
 
-13 random samples
-(8 10 11 4 14 7 2 1 12 5 9 3 13 )
+K Samples: 
+  2  6  4  9  5  10 13 8  3  7  12
+1  C  C  C  T  C  T  S  T  C  T  S
+2  N  N  A  G  G  N  G  A  D  D  A
+3  M  K  L  L  R  R  I  I  I  M  M
+4  C  C  C  T  C  T  S  T  L  T  S
+5  N  N  A  G  E  N  G  A  D  D  A
+6  F  E  H  Y  Q  F  Q  W  V  P  H
+7  N  N  A  G  G  G  G  A  D  F  A
+8  Y  N  A  G  G  N  G  A  D  D  A
+
+Remaining Subset: 
+  1  11 14
+1  C  T  S
+2  G  D  N
+3  K  K  L
+4  C  T  S
+5  G  D  N
+6  Y  V  E
+7  G  D  N
+8  G  D  N
+
+
+K Samples: 
+  3  4  11 5  6  9  1  7  12 14
+1  C  C  T  C  C  T  C  T  S  S
+2  D  A  D  G  N  G  G  D  A  N
+3  I  L  K  R  K  L  K  M  M  L
+4  L  C  T  C  C  T  C  T  S  S
+5  D  A  D  E  N  G  G  D  A  N
+6  V  H  V  Q  E  Y  Y  P  H  E
+7  D  A  D  G  N  G  G  F  A  N
+8  D  A  D  G  N  G  G  D  A  N
+
+Remaining Subset: 
+  2  8  10 13
+1  C  T  T  S
+2  N  A  N  G
+3  M  I  R  I
+4  C  T  T  S
+5  N  A  N  G
+6  F  W  F  Q
+7  N  A  G  G
+8  Y  A  N  G
+
+
+K Samples: 
+  4  3  12 1  7  6  14 11 13
+1  C  C  S  C  T  C  S  T  S
+2  A  D  A  G  D  N  N  D  G
+3  L  I  M  K  M  K  L  K  I
+4  C  L  S  C  T  C  S  T  S
+5  A  D  A  G  D  N  N  D  G
+6  H  V  H  Y  P  E  E  V  Q
+7  A  D  A  G  F  N  N  D  G
+8  A  D  A  G  D  N  N  D  G
+
+Remaining Subset: 
+  2  5  8  9  10
+1  C  C  T  T  T
+2  N  G  A  G  N
+3  M  R  I  L  R
+4  C  C  T  T  T
+5  N  E  A  G  N
+6  F  Q  W  Y  F
+7  N  G  A  G  G
+8  Y  G  A  G  N
+
+
+K Samples: 
+  14 3  11 8  9  12 13 10
+1  S  C  T  T  T  S  S  T
+2  N  D  D  A  G  A  G  N
+3  L  I  K  I  L  M  I  R
+4  S  L  T  T  T  S  S  T
+5  N  D  D  A  G  A  G  N
+6  E  V  V  W  Y  H  Q  F
+7  N  D  D  A  G  A  G  G
+8  N  D  D  A  G  A  G  N
+
+Remaining Subset: 
+   1  2  4  5  6  7
+1  C  C  C  C  C  T
+2  G  N  A  G  N  D
+3  K  M  L  R  K  M
+4  C  C  C  C  C  T
+5  G  N  A  E  N  D
+6  Y  F  H  Q  E  P
+7  G  N  A  G  N  F
+8  G  Y  A  G  N  D
+
+
+K Samples: 
+  10 13 6  5  7  8  14
+1  T  S  C  C  T  T  S
+2  N  G  N  G  D  A  N
+3  R  I  K  R  M  I  L
+4  T  S  C  C  T  T  S
+5  N  G  N  E  D  A  N
+6  F  Q  E  Q  P  W  E
+7  G  G  N  G  F  A  N
+8  N  G  N  G  D  A  N
+
+Remaining Subset: 
+  1  2  3  4  9  11 12
+1  C  C  C  C  T  T  S
+2  G  N  D  A  G  D  A
+3  K  M  I  L  L  K  M
+4  C  C  L  C  T  T  S
+5  G  N  D  A  G  D  A
+6  Y  F  V  H  Y  V  H
+7  G  N  D  A  G  D  A
+8  G  Y  D  A  G  D  A
+
+
+K Samples: 
+  13 3  10 1  12 6 
+1  S  C  T  C  S  C
+2  G  D  N  G  A  N
+3  I  I  R  K  M  K
+4  S  L  T  C  S  C
+5  G  D  N  G  A  N
+6  Q  V  F  Y  H  E
+7  G  D  G  G  A  N
+8  G  D  N  G  A  N
+
+Remaining Subset: 
+  2  4  5  7  8  9  11 14
+1  C  C  C  T  T  T  T  S
+2  N  A  G  D  A  G  D  N
+3  M  L  R  M  I  L  K  L
+4  C  C  C  T  T  T  T  S
+5  N  A  E  D  A  G  D  N
+6  F  H  Q  P  W  Y  V  E
+7  N  A  G  F  A  G  D  N
+8  Y  A  G  D  A  G  D  N
+
+
+K Samples: 
+  10 5  12 9  8 
+1  T  C  S  T  T
+2  N  G  A  G  A
+3  R  R  M  L  I
+4  T  C  S  T  T
+5  N  E  A  G  A
+6  F  Q  H  Y  W
+7  G  G  A  G  A
+8  N  G  A  G  A
+
+Remaining Subset: 
+  1  2  3  4  6  7  11 13 14
+1  C  C  C  C  C  T  T  S  S
+2  G  N  D  A  N  D  D  G  N
+3  K  M  I  L  K  M  K  I  L
+4  C  C  L  C  C  T  T  S  S
+5  G  N  D  A  N  D  D  G  N
+6  Y  F  V  H  E  P  V  Q  E
+7  G  N  D  A  N  F  D  G  N
+8  G  Y  D  A  N  D  D  G  N
+
+
+K Samples: 
+   4  1  6  5
+1  C  C  C  C
+2  A  G  N  G
+3  L  K  K  R
+4  C  C  C  C
+5  A  G  N  E
+6  H  Y  E  Q
+7  A  G  N  G
+8  A  G  N  G
+
+Remaining Subset: 
+  2  3  7  8  9  10 11 12 13 14
+1  C  C  T  T  T  T  T  S  S  S
+2  N  D  D  A  G  N  D  A  G  N
+3  M  I  M  I  L  R  K  M  I  L
+4  C  L  T  T  T  T  T  S  S  S
+5  N  D  D  A  G  N  D  A  G  N
+6  F  V  P  W  Y  F  V  H  Q  E
+7  N  D  F  A  G  G  D  A  G  N
+8  Y  D  D  A  G  N  D  A  G  N
+
+
+K Samples: 
+  10 6  13
+1  T  C  S
+2  N  N  G
+3  R  K  I
+4  T  C  S
+5  N  N  G
+6  F  E  Q
+7  G  N  G
+8  N  N  G
+
+Remaining Subset: 
+  1  2  3  4  5  7  8  9  11 12 14
+1  C  C  C  C  C  T  T  T  T  S  S
+2  G  N  D  A  G  D  A  G  D  A  N
+3  K  M  I  L  R  M  I  L  K  M  L
+4  C  C  L  C  C  T  T  T  T  S  S
+5  G  N  D  A  E  D  A  G  D  A  N
+6  Y  F  V  H  Q  P  W  Y  V  H  E
+7  G  N  D  A  G  F  A  G  D  A  N
+8  G  Y  D  A  G  D  A  G  D  A  N
+
+
+K Samples: 
+  1  13
+1  C  S
+2  G  G
+3  K  I
+4  C  S
+5  G  G
+6  Y  Q
+7  G  G
+8  G  G
+
+Remaining Subset: 
+  2  3  4  5  6  7  8  9  10 11 12 14
+1  C  C  C  C  C  T  T  T  T  T  S  S
+2  N  D  A  G  N  D  A  G  N  D  A  N
+3  M  I  L  R  K  M  I  L  R  K  M  L
+4  C  L  C  C  C  T  T  T  T  T  S  S
+5  N  D  A  E  N  D  A  G  N  D  A  N
+6  F  V  H  Q  E  P  W  Y  F  V  H  E
+7  N  D  A  G  N  F  A  G  G  D  A  N
+8  Y  D  A  G  N  D  A  G  N  D  A  N
+
 
