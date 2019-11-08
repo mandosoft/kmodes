@@ -13,6 +13,6 @@ Multiple Sequence Alignment:
 
 
 
-12 random samples
-(4 6 9 5 1 2 11 12 7 10 13 3 8 )
+13 random samples
+(8 10 11 4 14 7 2 1 12 5 9 3 13 )
 

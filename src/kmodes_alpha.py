@@ -32,28 +32,23 @@ k = len(df.columns)
 while (k > 2):
     k -= 1
     k_random_samples  = df.sample(k, axis = 1)
-    outf.writelines('\n'*2 + str(k-1) + ' random samples' + '\n')
+    outf.writelines('\n'*2 + str(k) + ' random samples' + '\n')
     outf.writelines('(')
     for i in k_random_samples:
         outf.writelines(str(k_random_samples[i].name) + ' ')
     outf.writelines(')')
     outf.writelines('\n'*2)
    
-    for i in k_random_samples:
-        for j in df:
+    for i in df:
+        for j in k_random_samples:
             max_rii = 0
-            if k_random_samples[i].name !=  df[j].name: 
-                rii = nmis(k_random_samples[i], df[j], average_method='arithmetic')
+            if df[~df[i].isin(k_random_samples)]: 
+                rii = nmis(df[j], k_random_samples[j], average_method='arithmetic')
                 if rii > max_rii: 
                     max_rii = rii
-                    b_max = df[j] 
-        outf.writelines(str(k_random_samples.name[i] + '->' + str(b_max.name)))
-
-
-#Outfile testwrites
-#outf.writelines('\n'*2 + 'End Value of K: ' + str(k) + '\n'*3)
-#outf.writelines('Max Rii: ' + str(rii))
-#outf.writelines(str(k_random_samples)) 
+                    max_rii_val = k_random_samples[j] 
+        cluster = pd.concat([max_rii_val, df[i]], axis=1)        
+        outf.writelines(str(cluster.columns.values.tolist()) + '\n'*2)
 
 outf.close()
 spinner.stop()
