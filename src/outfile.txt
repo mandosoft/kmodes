@@ -1,3 +1,4 @@
+
 Multiple Sequence Alignment
 1  2  3  4  5  6  7  8  9  10 11 12 13 14
  C  C  C  C  C  C  T  T  T  T  T  S  S  S
