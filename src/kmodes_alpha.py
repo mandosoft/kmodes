@@ -27,8 +27,11 @@ outf.writelines('Multiple Sequence Alignment\n' + df.to_string(index = False))
 while (k > 2): 
     k -= 1
     k_random_samples = df.sample(k, axis = 1)
+    clusters = [pd.DataFrame(k_random_samples[i]) for i in k_random_samples]
     remaining_attr = df[df.columns.difference(k_random_samples.columns, False)]
+    outf.writelines('\nIteration: ' + str(k) + '\n' + str(clusters))
 
+'''
     for i in remaining_attr: 
         for j in k_random_samples:
             max_rii = 0 
@@ -39,6 +42,8 @@ while (k > 2):
         cluster = pd.DataFrame(current_max)
         cluster = cluster.join(remaining_attr[i])
         outf.writelines('\n' + 'Cluster:' + str(k) + '\n' + cluster.to_string(header = True, index = False) + '\n'*2)
+'''
+
 outf.close()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
