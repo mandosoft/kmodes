@@ -9,3 +9,938 @@ Multiple Sequence Alignment
  Y  F  V  H  Q  E  P  W  Y  F  V  H  Q  E
  G  N  D  A  G  N  F  A  G  G  D  A  G  N
  G  Y  D  A  G  N  D  A  G  N  D  A  G  N
+Value of K:13
+
+ 9
+ T
+ G
+ L
+ T
+ G
+ Y
+ G
+ G
+
+ 7
+ T
+ D
+ M
+ T
+ D
+ P
+ F
+ D
+
+ 6
+ C
+ N
+ K
+ C
+ N
+ E
+ N
+ N
+
+12
+ S
+ A
+ M
+ S
+ A
+ H
+ A
+ A
+
+4  13
+ C  S
+ A  G
+ L  I
+ C  S
+ A  G
+ H  Q
+ A  G
+ A  G
+
+ 3
+ C
+ D
+ I
+ L
+ D
+ V
+ D
+ D
+
+14
+ S
+ N
+ L
+ S
+ N
+ E
+ N
+ N
+
+11
+ T
+ D
+ K
+ T
+ D
+ V
+ D
+ D
+
+ 1
+ C
+ G
+ K
+ C
+ G
+ Y
+ G
+ G
+
+ 8
+ T
+ A
+ I
+ T
+ A
+ W
+ A
+ A
+
+ 5
+ C
+ G
+ R
+ C
+ E
+ Q
+ G
+ G
+
+10
+ T
+ N
+ R
+ T
+ N
+ F
+ G
+ N
+
+ 2
+ C
+ N
+ M
+ C
+ N
+ F
+ N
+ Y
+
+
+Value of K:12
+
+ 2
+ C
+ N
+ M
+ C
+ N
+ F
+ N
+ Y
+
+11
+ T
+ D
+ K
+ T
+ D
+ V
+ D
+ D
+
+ 6
+ C
+ N
+ K
+ C
+ N
+ E
+ N
+ N
+
+10
+ T
+ N
+ R
+ T
+ N
+ F
+ G
+ N
+
+ 5
+ C
+ G
+ R
+ C
+ E
+ Q
+ G
+ G
+
+ 1  8
+ C  T
+ G  A
+ K  I
+ C  T
+ G  A
+ Y  W
+ G  A
+ G  A
+
+4  12
+ C  S
+ A  A
+ L  M
+ C  S
+ A  A
+ H  H
+ A  A
+ A  A
+
+13
+ S
+ G
+ I
+ S
+ G
+ Q
+ G
+ G
+
+ 7
+ T
+ D
+ M
+ T
+ D
+ P
+ F
+ D
+
+ 9
+ T
+ G
+ L
+ T
+ G
+ Y
+ G
+ G
+
+14
+ S
+ N
+ L
+ S
+ N
+ E
+ N
+ N
+
+ 3
+ C
+ D
+ I
+ L
+ D
+ V
+ D
+ D
+
+
+Value of K:11
+
+11 3 
+ T  C
+ D  D
+ K  I
+ T  L
+ D  D
+ V  V
+ D  D
+ D  D
+
+ 9
+ T
+ G
+ L
+ T
+ G
+ Y
+ G
+ G
+
+12
+ S
+ A
+ M
+ S
+ A
+ H
+ A
+ A
+
+ 4  8
+ C  T
+ A  A
+ L  I
+ C  T
+ A  A
+ H  W
+ A  A
+ A  A
+
+7  10
+ T  T
+ D  N
+ M  R
+ T  T
+ D  N
+ P  F
+ F  G
+ D  N
+
+14
+ S
+ N
+ L
+ S
+ N
+ E
+ N
+ N
+
+13
+ S
+ G
+ I
+ S
+ G
+ Q
+ G
+ G
+
+ 1
+ C
+ G
+ K
+ C
+ G
+ Y
+ G
+ G
+
+ 2
+ C
+ N
+ M
+ C
+ N
+ F
+ N
+ Y
+
+ 6
+ C
+ N
+ K
+ C
+ N
+ E
+ N
+ N
+
+ 5
+ C
+ G
+ R
+ C
+ E
+ Q
+ G
+ G
+
+
+Value of K:10
+
+ 4  5
+ C  C
+ A  G
+ L  R
+ C  C
+ A  E
+ H  Q
+ A  G
+ A  G
+
+ 7
+ T
+ D
+ M
+ T
+ D
+ P
+ F
+ D
+
+13 9  14
+ S  T  S
+ G  G  N
+ I  L  L
+ S  T  S
+ G  G  N
+ Q  Y  E
+ G  G  N
+ G  G  N
+
+12
+ S
+ A
+ M
+ S
+ A
+ H
+ A
+ A
+
+ 3
+ C
+ D
+ I
+ L
+ D
+ V
+ D
+ D
+
+ 1  6
+ C  C
+ G  N
+ K  K
+ C  C
+ G  N
+ Y  E
+ G  N
+ G  N
+
+ 8
+ T
+ A
+ I
+ T
+ A
+ W
+ A
+ A
+
+10
+ T
+ N
+ R
+ T
+ N
+ F
+ G
+ N
+
+ 2
+ C
+ N
+ M
+ C
+ N
+ F
+ N
+ Y
+
+11
+ T
+ D
+ K
+ T
+ D
+ V
+ D
+ D
+
+
+Value of K:9
+
+ 3
+ C
+ D
+ I
+ L
+ D
+ V
+ D
+ D
+
+11 1  4  6  9  14
+ T  C  C  C  T  S
+ D  G  A  N  G  N
+ K  K  L  K  L  L
+ T  C  C  C  T  S
+ D  G  A  N  G  N
+ V  Y  H  E  Y  E
+ D  G  A  N  G  N
+ D  G  A  N  G  N
+
+ 2
+ C
+ N
+ M
+ C
+ N
+ F
+ N
+ Y
+
+12
+ S
+ A
+ M
+ S
+ A
+ H
+ A
+ A
+
+10
+ T
+ N
+ R
+ T
+ N
+ F
+ G
+ N
+
+ 7
+ T
+ D
+ M
+ T
+ D
+ P
+ F
+ D
+
+ 8
+ T
+ A
+ I
+ T
+ A
+ W
+ A
+ A
+
+ 5
+ C
+ G
+ R
+ C
+ E
+ Q
+ G
+ G
+
+13
+ S
+ G
+ I
+ S
+ G
+ Q
+ G
+ G
+
+
+Value of K:8
+
+7  10
+ T  T
+ D  N
+ M  R
+ T  T
+ D  N
+ P  F
+ F  G
+ D  N
+
+12 1  2 
+ S  C  C
+ A  G  N
+ M  K  M
+ S  C  C
+ A  G  N
+ H  Y  F
+ A  G  N
+ A  G  Y
+
+14 9  13
+ S  T  S
+ N  G  G
+ L  L  I
+ S  T  S
+ N  G  G
+ E  Y  Q
+ N  G  G
+ N  G  G
+
+ 3
+ C
+ D
+ I
+ L
+ D
+ V
+ D
+ D
+
+ 5
+ C
+ G
+ R
+ C
+ E
+ Q
+ G
+ G
+
+11
+ T
+ D
+ K
+ T
+ D
+ V
+ D
+ D
+
+ 4  6
+ C  C
+ A  N
+ L  K
+ C  C
+ A  N
+ H  E
+ A  N
+ A  N
+
+ 8
+ T
+ A
+ I
+ T
+ A
+ W
+ A
+ A
+
+
+Value of K:7
+
+ 4  1  2
+ C  C  C
+ A  G  N
+ L  K  M
+ C  C  C
+ A  G  N
+ H  Y  F
+ A  G  N
+ A  G  Y
+
+14 3 
+ S  C
+ N  D
+ L  I
+ S  L
+ N  D
+ E  V
+ N  D
+ N  D
+
+9  7  10
+ T  T  T
+ G  D  N
+ L  M  R
+ T  T  T
+ G  D  N
+ Y  P  F
+ G  F  G
+ G  D  N
+
+13 11 12
+ S  T  S
+ G  D  A
+ I  K  M
+ S  T  S
+ G  D  A
+ Q  V  H
+ G  D  A
+ G  D  A
+
+ 8
+ T
+ A
+ I
+ T
+ A
+ W
+ A
+ A
+
+ 6
+ C
+ N
+ K
+ C
+ N
+ E
+ N
+ N
+
+ 5
+ C
+ G
+ R
+ C
+ E
+ Q
+ G
+ G
+
+
+Value of K:6
+
+ 8  1  2
+ T  C  C
+ A  G  N
+ I  K  M
+ T  C  C
+ A  G  N
+ W  Y  F
+ A  G  N
+ A  G  Y
+
+ 5
+ C
+ G
+ R
+ C
+ E
+ Q
+ G
+ G
+
+ 3
+ C
+ D
+ I
+ L
+ D
+ V
+ D
+ D
+
+6  11 12 13 14
+ C  T  S  S  S
+ N  D  A  G  N
+ K  K  M  I  L
+ C  T  S  S  S
+ N  D  A  G  N
+ E  V  H  Q  E
+ N  D  A  G  N
+ N  D  A  G  N
+
+ 4  9
+ C  T
+ A  G
+ L  L
+ C  T
+ A  G
+ H  Y
+ A  G
+ A  G
+
+10 7 
+ T  T
+ N  D
+ R  M
+ T  T
+ N  D
+ F  P
+ G  F
+ N  D
+
+
+Value of K:5
+
+7  10
+ T  T
+ D  N
+ M  R
+ T  T
+ D  N
+ P  F
+ F  G
+ D  N
+
+ 1  2
+ C  C
+ G  N
+ K  M
+ C  C
+ G  N
+ Y  F
+ G  N
+ G  Y
+
+12 3 
+ S  C
+ A  D
+ M  I
+ S  L
+ A  D
+ H  V
+ A  D
+ A  D
+
+ 5
+ C
+ G
+ R
+ C
+ E
+ Q
+ G
+ G
+
+6  4  8  9  11 13 14
+ C  C  T  T  T  S  S
+ N  A  A  G  D  G  N
+ K  L  I  L  K  I  L
+ C  C  T  T  T  S  S
+ N  A  A  G  D  G  N
+ E  H  W  Y  V  Q  E
+ N  A  A  G  D  G  N
+ N  A  A  G  D  G  N
+
+
+Value of K:4
+
+11 1  2 
+ T  C  C
+ D  G  N
+ K  K  M
+ T  C  C
+ D  G  N
+ V  Y  F
+ D  G  N
+ D  G  Y
+
+ 4  5
+ C  C
+ A  G
+ L  R
+ C  C
+ A  E
+ H  Q
+ A  G
+ A  G
+
+3  8  9  12 13 14
+ C  T  T  S  S  S
+ D  A  G  A  G  N
+ I  I  L  M  I  L
+ L  T  T  S  S  S
+ D  A  G  A  G  N
+ V  W  Y  H  Q  E
+ D  A  G  A  G  N
+ D  A  G  A  G  N
+
+6  7  10
+ C  T  T
+ N  D  N
+ K  M  R
+ C  T  T
+ N  D  N
+ E  P  F
+ N  F  G
+ N  D  N
+
+
+Value of K:3
+
+7  3  4  5  6  8  9  11 12 14
+ T  C  C  C  C  T  T  T  S  S
+ D  D  A  G  N  A  G  D  A  N
+ M  I  L  R  K  I  L  K  M  L
+ T  L  C  C  C  T  T  T  S  S
+ D  D  A  E  N  A  G  D  A  N
+ P  V  H  Q  E  W  Y  V  H  E
+ F  D  A  G  N  A  G  D  A  N
+ D  D  A  G  N  A  G  D  A  N
+
+13 1  2 
+ S  C  C
+ G  G  N
+ I  K  M
+ S  C  C
+ G  G  N
+ Q  Y  F
+ G  G  N
+ G  G  Y
+
+10
+ T
+ N
+ R
+ T
+ N
+ F
+ G
+ N
+
+
+Value of K:2
+
+13 1  2  6  7  10
+ S  C  C  C  T  T
+ G  G  N  N  D  N
+ I  K  M  K  M  R
+ S  C  C  C  T  T
+ G  G  N  N  D  N
+ Q  Y  F  E  P  F
+ G  G  N  N  F  G
+ G  G  Y  N  D  N
+
+3  4  5  8  9  11 12 14
+ C  C  C  T  T  T  S  S
+ D  A  G  A  G  D  A  N
+ I  L  R  I  L  K  M  L
+ L  C  C  T  T  T  S  S
+ D  A  E  A  G  D  A  N
+ V  H  Q  W  Y  V  H  E
+ D  A  G  A  G  D  A  N
+ D  A  G  A  G  D  A  N
+

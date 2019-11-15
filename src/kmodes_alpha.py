@@ -32,17 +32,19 @@ while (k > 2):
 
     for i in remaining_attr:
         max_rii = 0 
-        for cluster in cluster_list: 
-            for j in cluster:  
+        for location, cluster in enumerate(cluster_list):  
+            for j in cluster:
                 rii = nmis(remaining_attr[i], cluster[j], average_method='arithmetic')
             if rii > max_rii: 
-                max_rii = rii
-                best_cluster = cluster_list[cluster]
-        best_cluster.join(remaining_attr[i], inplace = True)
-        #outf.writelines('\n' + 'Cluster:' + str(k) + '\n' + cluster.to_string(header = True, index = False) + '\n'*2)
+                max_rii, best_cluster = rii, location         
+        cluster_list[best_cluster] = cluster_list[best_cluster].join(remaining_attr[i])
 
+
+
+    outf.writelines('\nValue of K:' + str(k) + '\n'*2) 
+    for i in cluster_list: 
+        outf.writelines(i.to_string(index = False) + '\n'*2)
 
 outf.close()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
-
