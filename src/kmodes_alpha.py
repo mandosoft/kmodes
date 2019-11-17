@@ -22,7 +22,7 @@ outf = open('outfile.txt', 'w')
 n = len(df.columns)
 k = n
 
-outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index = False))
+#outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index = False) + '\n'*2)
 
 while (k > 2): 
     k -= 1
@@ -39,11 +39,10 @@ while (k > 2):
                 max_rii, best_cluster = rii, location         
         cluster_list[best_cluster] = cluster_list[best_cluster].join(remaining_attr[i])
 
-
-
-    outf.writelines('\nValue of K:' + str(k) + '\n'*2) 
-    for i in cluster_list: 
-        outf.writelines(i.to_string(index = False) + '\n'*2)
+    outf.writelines('\nValue of K:' + str(k) + '\n')
+    for cluster in cluster_list:
+         outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
+    outf.writelines('\n'*2)
 
 outf.close()
 spinner.stop()
