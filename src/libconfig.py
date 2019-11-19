@@ -3,6 +3,7 @@ import tkinter as tk
 import sys 
 import itertools 
 import time 
+import random
 
 from collections import defaultdict
 from tkinter import filedialog

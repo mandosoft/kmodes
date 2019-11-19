@@ -29,7 +29,6 @@ k_random_samples = df.sample(k, axis = 1)
 cluster_list = [pd.DataFrame(k_random_samples[i]) for i in k_random_samples]
 remaining_attr = df[df.columns.difference(k_random_samples.columns, False)]
 max_rii = 0 
-    
 for location, cluster in enumerate(cluster_list):
     cluster_mode = cluster[cluster.columns[0]] 
     rii = nmis(remaining_attr[remaining_attr.columns[0]], cluster_mode, average_method='arithmetic')
@@ -42,6 +41,9 @@ outf.writelines('First Pairwise Association at K = ' + str(k) + '\n')
 for cluster in cluster_list:
     outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
 
+#Select a new mode 
+mode_df = random.choice(cluster_list)
+new_mode = mode_df[mode_df.columns[0]]
 
 
 '''
