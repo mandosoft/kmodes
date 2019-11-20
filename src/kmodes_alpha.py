@@ -1,4 +1,5 @@
 from libconfig import * 
+from udfs import *
 
 #prompts "Choose File" window to select a file to read as input
 tk.Tk().withdraw()
@@ -60,18 +61,16 @@ cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random
 if cluster_list[random_df_il].empty == True:
     del cluster_list[random_df_il]
 
+#Sri value you goes here
+for cluster in cluster_list: 
+    sri(cluster)
+
 #Write out clustering at each iteration k 
 outf.writelines('\n'*2 + 'Clusters at Iteration K = ' + str(k) + '\n')
 for cluster in cluster_list:
     outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
 
 
-'''
-    outf.writelines('\nValue of K:' + str(k) + '\n')
-    for cluster in cluster_list:
-         outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
-    outf.writelines('\n'*2)
-'''
 
 outf.close()
 spinner.stop()
