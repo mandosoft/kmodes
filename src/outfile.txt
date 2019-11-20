@@ -1,17 +1,5 @@
-
-Multiple Sequence Alignment
-1  2  3  4  5  6  7  8  9  10 11 12 13 14
- C  C  C  C  C  C  T  T  T  T  T  S  S  S
- G  N  D  A  G  N  D  A  G  N  D  A  G  N
- K  M  I  L  R  K  M  I  L  R  K  M  I  L
- C  C  L  C  C  C  T  T  T  T  T  S  S  S
- G  N  D  A  E  N  D  A  G  N  D  A  G  N
- Y  F  V  H  Q  E  P  W  Y  F  V  H  Q  E
- G  N  D  A  G  N  F  A  G  G  D  A  G  N
- G  Y  D  A  G  N  D  A  G  N  D  A  G  N
-
 First Pairwise Association at K = 13
-(8 4)(14)(7)(1)(6)(2)(3)(10)(9)(13)(5)(11)(12)
+(7)(11)( 4 13)(12)(3)(10)(1)(5)(6)(2)(9)(8)(14)
 
 Clusters at Iteration K = 12
-(4)(14)(7)(1 8)(6)(2)(3)(10)(9)(13)(5)(11)(12)
+(7)(11)( 5  4 13)(12)(3)(10)(1)(6)(2)(9)(8)(14)
