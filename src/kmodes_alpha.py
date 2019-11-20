@@ -29,6 +29,7 @@ k_random_samples = df.sample(k, axis = 1)
 cluster_list = [pd.DataFrame(k_random_samples[i]) for i in k_random_samples]
 remaining_attr = df[df.columns.difference(k_random_samples.columns, False)]
 max_rii = 0 
+rii = 0
 
 for location, cluster in enumerate(cluster_list):
     cluster_mode = cluster[cluster.columns[0]] 
@@ -48,8 +49,20 @@ i_rand = random.choice(ix)
 random_df = cluster_list[i_rand]
 new_mode = random_df[random_df.columns[0]]
 
-outf.writelines('\nix\n' + str(ix) + '\n' + '\ni_rand\n' +  str(i_rand) + '\n' + '\nrandom_df\n' + str(random_df) + '\n' + '\nnew mode\n' + str(new_mode))
+#Subsequent iterative step
+k -= 1
+for location, cluster in enumerate(cluster_list):
+    cluster_mode = cluster[cluster.columns[0]]
+    rii = nmis(new_mode, cluster_mode, average_method ='arithmetic')
+    if rii > max_rii and new_mode.name != cluster_mode.name:
+        max_rii, best_cluster = rii, location
+cluster_list[best_cluster] = cluster_list[best_cluster].join(cluster_list[i_rand]) 
+del cluster_list[i_rand]
 
+#Write out clustering at each iteration k 
+outf.writelines('\n'*2 + 'Clusters at Iteration K = ' + str(k) + '\n')
+for cluster in cluster_list:
+    outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
 
 
 '''

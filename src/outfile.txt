@@ -11,31 +11,7 @@ Multiple Sequence Alignment
  G  Y  D  A  G  N  D  A  G  N  D  A  G  N
 
 First Pairwise Association at K = 13
-(5)(4)( 7 10)(13)(2)(11)(6)(3)(12)(8)(1)(14)(9)
-ix
-range(0, 13)
+( 7 10)(4)(14)(5)(11)(2)(1)(8)(9)(13)(12)(3)(6)
 
-i_rand
-8
-
-random_df
-  12
-1  S
-2  A
-3  M
-4  S
-5  A
-6  H
-7  A
-8  A
-
-new mode
-1    S
-2    A
-3    M
-4    S
-5    A
-6    H
-7    A
-8    A
-Name: 12, dtype: object
+Clusters at Iteration K = 12
+( 7 10  3)(4)(14)(5)(11)(2)(1)(8)(9)(13)(12)(6)
