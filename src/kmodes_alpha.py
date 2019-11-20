@@ -44,9 +44,7 @@ for cluster in cluster_list:
     outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
 
 #Select a new mode 
-ix = range(len(cluster_list))
-i_rand = random.choice(ix)
-random_df = cluster_list[i_rand]
+random_df_il, random_df = random.choice(list(enumerate(cluster_list)))
 new_mode = random_df[random_df.columns[0]]
 
 #Subsequent iterative step
@@ -56,8 +54,8 @@ for location, cluster in enumerate(cluster_list):
     rii = nmis(new_mode, cluster_mode, average_method ='arithmetic')
     if rii > max_rii and new_mode.name != cluster_mode.name:
         max_rii, best_cluster = rii, location
-cluster_list[best_cluster] = cluster_list[best_cluster].join(cluster_list[i_rand]) 
-del cluster_list[i_rand]
+cluster_list[best_cluster] = cluster_list[best_cluster].join(new_mode) 
+cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random_df_il].columns[0], axis=1)
 
 #Write out clustering at each iteration k 
 outf.writelines('\n'*2 + 'Clusters at Iteration K = ' + str(k) + '\n')
