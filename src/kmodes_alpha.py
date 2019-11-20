@@ -57,6 +57,9 @@ for location, cluster in enumerate(cluster_list):
 cluster_list[best_cluster] = cluster_list[best_cluster].join(new_mode) 
 cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random_df_il].columns[0], axis=1)
 
+if cluster_list[random_df_il].empty == True:
+    del cluster_list[random_df_il]
+
 #Write out clustering at each iteration k 
 outf.writelines('\n'*2 + 'Clusters at Iteration K = ' + str(k) + '\n')
 for cluster in cluster_list:
