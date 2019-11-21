@@ -38,52 +38,50 @@ for location, cluster in enumerate(cluster_list):
     rii = nmis(remaining_attr[remaining_attr.columns[0]], cluster_mode, average_method='arithmetic')
     if rii > max_rii: 
         max_rii, best_cluster = rii, location       
-cluster_list[best_cluster] = cluster_list[best_cluster].join(remaining_attr)
+cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], remaining_attr], axis=1)
 
 #Write out initial pairwise clustering
 outf.writelines('First Pairwise Association at K = ' + str(k) + '\n')
 for cluster in cluster_list:
     outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
 
-#Select a new mode 
+#Subsequent iterative steps
+k -= 1
+
+#Select a new mode and cluster  
 random_df_il, random_df = random.choice(list(enumerate(cluster_list)))
 new_mode = random_df[random_df.columns[0]]
 
-#Subsequent iterative steps
+for location, cluster in enumerate(cluster_list):
+    cluster_mode = cluster[cluster.columns[0]]
+    rii = nmis(new_mode, cluster_mode, average_method='arithmetic')
+    if rii > max_rii and new_mode.name != cluster_mode.name:
+        max_rii, best_cluster = rii, location
+cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], new_mode], axis=1)
+cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random_df_il].columns[0], axis=1)
 
-while(k >2):
-    k -= 1
-    for location, cluster in enumerate(cluster_list):
-        cluster_mode = cluster[cluster.columns[0]]
-        rii = nmis(new_mode, cluster_mode, average_method='arithmetic')
-        if rii > max_rii and new_mode.name != cluster_mode.name:
-            max_rii, best_cluster = rii, location
-    best = cluster_list[best_cluster]
-    cluster_list[best_cluster] = cluster_list[best_cluster].join(new_mode) 
-    cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random_df_il].columns[0], axis=1)
+#Handles the cluster where mode has been removed
+if cluster_list[random_df_il].empty == True:
+    del cluster_list[random_df_il]
+else: 
+    for i in cluster_list[random_df_il]:
+        remaining_attr = cluster_list[random_df_il][i]
+        for location, cluster in enumerate(cluster_list):
+            cluster_mode = cluster[cluster.columns[0]]
+            rii = nmis(remaining_attr, cluster_mode, average_method='arithmetic')
+            if rii > max_rii and remaining_attr.name != cluster_mode.name:
+                max_rii, best_cluster = rii, location
+        cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], remaining_attr], axis=1)
+    del cluster_list[random_df_il]
+    
+#Compute new mode for each cluster
+for location, cluster in enumerate(cluster_list): 
+    cluster_list[location] = sri(cluster)
 
-    #Handles the cluster where mode has been removed
-    if cluster_list[random_df_il].empty == True:
-        del cluster_list[random_df_il]
-    else: 
-        for i in cluster_list[random_df_il]:
-            remaining_attr = cluster_list[random_df_il][i]
-            for location, cluster in enumerate(cluster_list):
-                cluster_mode = cluster[cluster.columns[0]]
-                rii = nmis(remaining_attr, cluster_mode, average_method='arithmetic')
-                if rii > max_rii and remaining_attr.name != cluster_mode.name:
-                    max_rii, best_cluster = rii, location
-            cluster_list[best_cluster] = cluster_list[best_cluster].join(remaining_attr)
-        del cluster_list[random_df_il]
-        
-    #Compute new mode for each cluster
-    for location, cluster in enumerate(cluster_list): 
-        cluster_list[location] = sri(cluster)
-
-    #Write out clustering at each iteration k 
-    outf.writelines('\n'*2 + 'Clusters at Iteration K = ' + str(k) + '\n')
-    for cluster in cluster_list:
-        outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
+#Write out clustering at each iteration k 
+outf.writelines('\n'*2 + 'Clusters at Iteration K = ' + str(k) + '\n')
+for cluster in cluster_list:
+    outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
 
 outf.close()
 spinner.stop()
