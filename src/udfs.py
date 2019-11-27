@@ -8,9 +8,9 @@ def sri(cluster):
     cluster_mode = pd.Series() 
     for location, i in enumerate(cluster): 
         for j in cluster:        
-            if cluster[i].name != cluster[j].name:
+            if (cluster[i].name != cluster[j].name):
                 sum_rii += nmis(cluster[i], cluster[j], average_method = 'arithmetic')
-        if sum_rii > max_sum:
+        if (sum_rii > max_sum):
             max_sum, cluster_mode, ix = sum_rii, cluster[i], location
     if cluster_mode.empty == True:
         del cluster_mode
