@@ -2,9 +2,9 @@ from libconfig import *
 from udfs import *
 
 #prompts "Choose File" window to select a file to read as input
-#tk.Tk().withdraw()
-#file_path = filedialog.askopenfilename()
-#file = open(file_path) 
+tk.Tk().withdraw()
+file_path = filedialog.askopenfilename()
+file = open(file_path) 
 
 #Spinner. Helpful with large sequences
 spinner = Halo(text='Running  ', spinner='simpleDots', color='green')
@@ -13,13 +13,13 @@ spinner.start()
 start_time = time.perf_counter()
  
 #Data input stream use file in arg
-df = pd.read_csv('testsequence.csv', encoding='utf-8', header=None)
+df = pd.read_csv(file, encoding='utf-8', header=None)
 df = df.drop(df.columns[[0]], axis=1)
 df.index+=1
 
 #File MSA Output 
 outf = open('outfile.txt', 'w')
-#outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index = False) + '\n'*2)
+outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index = False) + '\n'*2)
 
 n = len(df.columns)
 k = n
@@ -52,14 +52,14 @@ while (k  > 2):
     
     k -= 1
     
-    #Select a random  mode
+    #Newly enumerate the list and select a random mode
     enumerated_list = list(enumerate(cluster_list))
     random_df_il, random_df = random.choice(enumerated_list)
     new_mode = random_df[random_df.columns[0]] 
     
+    #Add chosen mode to best cluster 
     rii = 0
-    max_rii = 0
-    #Add random mode to best cluster 
+    max_rii = 0 
     for location, cluster in enumerated_list:
         cluster_mode = cluster[cluster.columns[0]]
         if (location != random_df_il):
@@ -90,22 +90,20 @@ while (k  > 2):
     else:
         print('\nThere was a problem breaking up a cluster.\n')
     
-    #Compute new mode for each cluster
+    #Compute new mode for each cluster. See udfs.py for sri.
     for location, cluster in enumerate(cluster_list): 
         cluster_list[location] = sri(cluster)
 
-    #Write out clustering at each iteration k 
-    outf.writelines('\n'*2 + 'Clusters at Iteration K = ' + str(k) + '\n')
-    outf.writelines('\nUnsorted: \n')
-    for cluster in cluster_list:
-        outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
-    outf.writelines('\n'*3)
-
-    outf.writelines('\nSorted: \n')
+    #Sort and write out clustering at each iteration k 
+    outf.writelines('\nClusters at Iteration K = ' + str(k) + '\n')
+    sorted_list = []
     for cluster in cluster_list:
         cluster = cluster.reindex(sorted(cluster.columns), axis=1)
+        sorted_list.append(cluster)
+    sorted_list = sorted(sorted_list, key=lambda x: x.columns[0])
+    for cluster in sorted_list:
         outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
-    outf.writelines('\n'*3)
+    outf.writelines('\n'*2)
 
 outf.close()
 spinner.stop()

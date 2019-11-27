@@ -1,4 +1,5 @@
 import operator
+from operator import itemgetter
 import tkinter as tk
 import sys 
 import itertools 
