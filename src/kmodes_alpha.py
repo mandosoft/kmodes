@@ -19,7 +19,7 @@ df.index+=1
 
 #File MSA Output 
 outf = open('outfile.txt', 'w')
-outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index = False) + '\n'*2)
+#outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index = False) + '\n'*2)
 
 n = len(df.columns)
 k = n
@@ -43,7 +43,8 @@ cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], remaining_at
 #Write out initial pairwise clustering
 outf.writelines('First Pairwise Association at K = ' + str(k) + '\n')
 for cluster in cluster_list:
-    outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
+    if (len(cluster.columns) > 1):
+        outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
 outf.writelines('\n'*2)
 
 
@@ -102,7 +103,8 @@ while (k  > 2):
         sorted_list.append(cluster)
     sorted_list = sorted(sorted_list, key=lambda x: x.columns[0])
     for cluster in sorted_list:
-        outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
+        if (len(cluster.columns) > 1):
+            outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
     outf.writelines('\n'*2)
 
 outf.close()
