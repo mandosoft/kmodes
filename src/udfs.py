@@ -2,6 +2,8 @@ from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
 import pandas as pd
 
 def sri(cluster):
+    outd = open('outfile_udfs.txt', 'w')
+    outd.writelines('Cluster Values' + str(cluster.columns.values))
     sum_rii = 0
     max_sum = 0
     sr_mode = None
@@ -9,6 +11,7 @@ def sri(cluster):
     for location, i in enumerate(cluster): 
         for j in cluster:        
             if (cluster[i].name != cluster[j].name):
+                outd.writelines('\nCluster Name 1: ' + str(cluster[i].name) + '\nCluster Name 2: ' + str(cluster[j].name) + '\n'*2)
                 sum_rii += nmis(cluster[i], cluster[j], average_method = 'arithmetic')
                 if (sum_rii > max_sum):
                     max_sum, cluster_mode, ix = sum_rii, cluster[i], location
@@ -20,7 +23,7 @@ def sri(cluster):
         cols = cluster.columns.tolist()
         cols = cols[-1:] + cols[:-1]
         cluster = cluster[cols] 
-    
+    outd.close()
     return cluster
 
   

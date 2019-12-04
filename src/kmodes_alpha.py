@@ -15,7 +15,8 @@ start_time = time.perf_counter()
 #Data input stream use file in arg
 df = pd.read_csv(file, encoding='utf-8', header=None)
 df = df.drop(df.columns[[0]], axis=1)
-df.index+=1
+#df.index+=6
+df = df.rename(columns=lambda x: x+5)
 
 #File MSA Output 
 outf = open('outfile.txt', 'w')
@@ -92,8 +93,25 @@ while (k  > 2):
         print('\nThere was a problem breaking up a cluster.\n')
     
     #Compute new mode for each cluster. See udfs.py for sri.
-    for location, cluster in enumerate(cluster_list): 
-        cluster_list[location] = sri(cluster)
+    for cluster in cluster_list:
+        max_sum = 0
+        cluster_mode = pd.Series()
+        for location, i in enumerate(cluster):
+            sum_rii = 0
+            for j in cluster:
+                if (cluster[i].name != cluster[j].name):
+                    sum_rii += nmis(cluster[i], cluster[j], average_method = 'arithmetic')
+            if (sum_rii > max_sum):
+                max_sum, cluster_mode, ix = sum_rii, cluster[i], location
+        if cluster_mode.empty == True:
+            del cluster_mode
+        else:
+            cluster = cluster.drop(cluster.columns[ix], axis = 1)
+            cluster = pd.concat([cluster, cluster_mode], axis=1)
+            cols = cluster.columns.tolist()
+            cols = cols[-1:] + cols[:-1]
+            cluster = cluster[cols]
+ 
 
     #Sort and write out clustering at each iteration k 
     outf.writelines('\nClusters at Iteration K = ' + str(k) + '\n')
@@ -103,9 +121,10 @@ while (k  > 2):
         sorted_list.append(cluster)
     sorted_list = sorted(sorted_list, key=lambda x: x.columns[0])
     for cluster in sorted_list:
-        if (len(cluster.columns) > 1):
-            outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
+        #if (len(cluster.columns) > 1):
+        outf.writelines(str(cluster.columns.values).replace('[','(').replace(']',')'))
     outf.writelines('\n'*2)
+
 
 outf.close()
 spinner.stop()
