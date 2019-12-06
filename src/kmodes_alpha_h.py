@@ -1,4 +1,6 @@
-from libconfig import * 
+from itertools import combinations
+
+from libconfig import *
 
 # Prompts "Choose File" window to select a file to read as input
 tk.Tk().withdraw()
@@ -20,14 +22,57 @@ df = df.rename(columns=lambda x: x+5)
 outf = open('outfile.txt', 'w')
 
 # Optional:
-# outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index = False) + '\n'*2)
+# outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index=False) + '\n'*2)
 
 n = len(df.columns)
 k = n
 
 # Initialization
-k -= 1
-k_random_samples = df.sample(k, axis = 1)
+cluster_list = [pd.DataFrame(df[i]) for i in df]
+each_2nd_col = df[df.columns[::2]]
+
+for i in each_2nd_col:
+    max_rii = 0
+    rii = 0
+    for location, cluster in enumerate(cluster_list):
+        cluster_mode = cluster[cluster.columns[0]]
+        if each_2nd_col[i].name != cluster_mode.name:
+            rii = nmis(each_2nd_col[i], cluster_mode, average_method='arithmetic')
+            if rii > max_rii:
+                max_rii, best_cluster = rii, location
+    # noinspection PyUnboundLocalVariable
+    cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], each_2nd_col[i]], axis=1)
+
+not_ranked_list = [cluster for cluster in cluster_list if len(cluster.columns) >= 2]
+ranked_dict = {}
+
+outf.writelines('Not Ranked List: \n')
+for cluster in not_ranked_list:
+    outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
+outf.writelines('\n' * 2)
+
+# SR(Mode) Calculation
+for cluster in not_ranked_list:
+    max_sum = 0
+    cc = len(list(combinations(cluster.columns, 2)))
+    for i in cluster:
+        sum_rii = 0
+        for j in cluster:
+            if cluster[i].name != cluster[j].name:
+                sum_rii += nmis(cluster[i], cluster[j], average_method='arithmetic')
+        if sum_rii > max_sum:
+            max_sum = sum_rii
+    sr_mode = max_sum/cc
+    ranked_dict[sr_mode] = cluster.columns.values
+
+dict_list = list(ranked_dict.items())
+dict_list.sort(reverse=True)
+new_dict = dict(dict_list)
+f = open("sr_mode_dict.txt", "w")
+f.write(str(dict_list))
+f.close()
+
+'''
 cluster_list = [pd.DataFrame(k_random_samples[i]) for i in k_random_samples]
 remaining_attr = df[df.columns.difference(k_random_samples.columns, False)]
 max_rii = 0 
@@ -125,7 +170,7 @@ while k > 2:
         if len(cluster.columns) > 1:
             outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
     outf.writelines('\n'*2)
-
+'''
 outf.close()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
