@@ -1,5 +1,4 @@
 from itertools import combinations
-
 from libconfig import *
 
 # Prompts "Choose File" window to select a file to read as input
@@ -24,11 +23,9 @@ outf = open('outfile.txt', 'w')
 # Optional:
 # outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index=False) + '\n'*2)
 
-n = len(df.columns)
-k = n
-
 # Initialization
 cluster_list = [pd.DataFrame(df[i]) for i in df]
+cluster_list_clean = cluster_list.copy()
 each_2nd_col = df[df.columns[::2]]
 
 for i in each_2nd_col:
@@ -44,9 +41,9 @@ for i in each_2nd_col:
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], each_2nd_col[i]], axis=1)
 
 not_ranked_list = [cluster for cluster in cluster_list if len(cluster.columns) == 2]
-ranked_dict = {}
+sr_mode_dict = {}
 
-outf.writelines('Not Ranked List: \n')
+outf.writelines('Discovered Pairwise Associations: \n')
 for cluster in not_ranked_list:
     outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
 outf.writelines('\n' * 2)
@@ -63,34 +60,49 @@ for cluster in not_ranked_list:
         if sum_rii > max_sum:
             max_sum = sum_rii
     sr_mode = max_sum/cc
-    ranked_dict[sr_mode] = cluster.columns.values
+    sr_mode_dict[sr_mode] = cluster
 
-dict_list = list(ranked_dict.items())
-dict_list.sort(reverse=True)
-new_dict = dict(dict_list)
-f = open("sr_mode_dict.txt", "w")
-f.write(str(dict_list))
-f.close()
+# Handles case where an attribute appears in more than one pairwise cluster
+r = dict(sr_mode_dict)
+for key_1, cluster in sr_mode_dict.items():
+    for key_2, other_cluster in sr_mode_dict.items():
+        if (other_cluster.columns.values != cluster.columns.values).all() and (
+                other_cluster.columns.values == cluster.columns.values).any():
+            del r[key_2]
+r_list = list(r.values())
 
-'''
-cluster_list = [pd.DataFrame(k_random_samples[i]) for i in k_random_samples]
-remaining_attr = df[df.columns.difference(k_random_samples.columns, False)]
-max_rii = 0 
+outf.writelines('\nAfter duplicates removed based on SR(Mode) Value\n')
+for cluster in r_list:
+    outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
+
+# Produces a final list of all strong pairwise associations and remaining attributes
+list1 = []
+for cluster in r_list:
+    for i in cluster:
+        list1.append(i)
+list2 = []
+for cluster in cluster_list_clean:
+    for j in cluster:
+        list2.append(j)
+
+final_set = [item for item in list2 if item not in list1]
+
+diff_df_set = []
+for i in cluster_list_clean:
+    for j in final_set:
+        if j == i.columns.values:
+            diff_df_set.append(pd.DataFrame(i))
+r_list.extend(diff_df_set)
+cluster_list = r_list.copy()
+
+# Main globals
+k = len(cluster_list)
+max_rii = 0
 rii = 0
 
-# Initial pairwise clustering on random values
-for location, cluster in enumerate(cluster_list):
-    cluster_mode = cluster[cluster.columns[0]] 
-    rii = nmis(remaining_attr[remaining_attr.columns[0]], cluster_mode, average_method='arithmetic')
-    if rii > max_rii:
-        max_rii, best_cluster = rii, location       
-cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], remaining_attr], axis=1)
-
-# Write out initial pairwise clustering
-outf.writelines('First Pairwise Association at K = ' + str(k) + '\n')
+outf.writelines('\n' + '\nStarting List at K = ' + str(k) + '\n')
 for cluster in cluster_list:
-    if len(cluster.columns) > 1:
-        outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
+    outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
 outf.writelines('\n'*2)
 
 # Subsequent iterative steps
@@ -170,7 +182,7 @@ while k > 2:
         if len(cluster.columns) > 1:
             outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
     outf.writelines('\n'*2)
-'''
+
 outf.close()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
