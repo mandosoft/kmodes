@@ -43,7 +43,7 @@ for i in each_2nd_col:
     # noinspection PyUnboundLocalVariable
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], each_2nd_col[i]], axis=1)
 
-not_ranked_list = [cluster for cluster in cluster_list if len(cluster.columns) >= 2]
+not_ranked_list = [cluster for cluster in cluster_list if len(cluster.columns) == 2]
 ranked_dict = {}
 
 outf.writelines('Not Ranked List: \n')
