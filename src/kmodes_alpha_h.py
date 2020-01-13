@@ -12,10 +12,9 @@ file = open(file_path)
 # Spinner. Helpful with large sequences
 spinner = Halo(text='Running  ', spinner='simpleDots', color='green')
 spinner.start()
-
 start_time = time.perf_counter()
 
-# Data input stream use file in arg
+# MSA Data Input
 df = pd.read_csv(file, encoding='utf-8', header=None)
 df = df.drop(df.columns[[0]], axis=1)
 df = df.rename(columns=lambda x: x + 5)
@@ -78,7 +77,7 @@ outf.writelines('\nAfter duplicates removed based on SR(Mode) Value\n')
 for cluster in r_list:
     outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
 
-# Produces a final list of all strong pairwise associations and remaining attributes
+# Produces a final set of all strong pairwise associations and remaining attributes
 list1 = []
 for cluster in r_list:
     for i in cluster:
@@ -98,10 +97,11 @@ for i in cluster_list_clean:
 r_list.extend(diff_df_set)
 cluster_list = r_list.copy()
 
-# Main globals
+# Main globals. Use wisely.
 k = len(cluster_list)
 max_rii = 0
 rii = 0
+csv_dict = dict()
 
 outf.writelines('\n' + '\nStarting List at K = ' + str(k) + '\n')
 for cluster in cluster_list:
@@ -188,9 +188,9 @@ while k > 2:
                 if sum_rii > max_sum:
                     max_sum = sum_rii
             sr_mode = max_sum / cc
-            sr_mode_dict[sr_mode] = cluster
+            csv_dict[tuple(cluster)] = sr_mode
 
-    # Sort and write out clustering at each iteration k.
+    # Text File Writer
     outf.writelines('\nClusters at Iteration K = ' + str(k) + '\n')
     sorted_list = []
     cluster_list_cpy = cluster_list
@@ -203,10 +203,11 @@ while k > 2:
             outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
     outf.writelines('\n' * 2)
 
-# CSV Writer
+# CSV Writer Output
 w = csv.writer(open("output.csv", "w"))
-for key, val in sr_mode_dict.items():
-    w.writerow([round(key, 3), sorted(val.columns.values)])
+for key, val in csv_dict.items():
+    w.writerow([sorted(key), round(val, 3)])
+
 outf.close()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
