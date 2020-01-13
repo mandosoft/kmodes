@@ -5,7 +5,7 @@ import sys
 import itertools
 import time
 import random
-
+import csv
 from collections import defaultdict
 from tkinter import filedialog
 
@@ -15,10 +15,10 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.cluster import adjusted_mutual_info_score as amis
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
-from warnings import simplefilter
+import warnings
 import copy
 
-simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def main():
