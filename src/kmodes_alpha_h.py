@@ -1,6 +1,6 @@
 from itertools import combinations
 from tkinter import filedialog
-
+from collections import OrderedDict
 import tk as tk
 import numpy as np
 from libconfig import *
@@ -79,7 +79,7 @@ csv_dict = dict()
 
 
 def sr_mode_calculator():
-    global cluster, max_sum, i, sum_rii, j
+    global max_sum
     for cluster in cluster_list:
         if len(cluster.columns) == 1:
             break
@@ -96,11 +96,11 @@ def sr_mode_calculator():
             sr_mode = max_sum / cc
             csv_dict[tuple(cluster)] = sr_mode
 
-# Main Loop
 
-
+# Function called here and at end of the Main Loop
 sr_mode_calculator()
 
+# Main Loop
 while k > 2:
 
     k -= 1
@@ -143,7 +143,7 @@ while k > 2:
     else:
         print('\nThere was a problem breaking up a cluster.\n')
 
-    # Compute new mode for each cluster.
+    # Compute new mode for each cluster and calculate Sr(Mode).
     for cluster in cluster_list:
         max_sum = 0
         cluster_mode = pd.Series()
@@ -165,13 +165,13 @@ while k > 2:
             cols = cols[-1:] + cols[:-1]
             cluster = cluster[cols]
 
-    # SR(Mode) Calculation
     sr_mode_calculator()
 
 # CSV Writer Output
 w = csv.writer(open("output.csv", "w"))
 for key, val in csv_dict.items():
-    w.writerow([sorted(key), round(val, 3)])
+    if val > 0.2:
+        w.writerow([sorted(key), round(val, 3)])
 
 outf.close()
 spinner.stop()
