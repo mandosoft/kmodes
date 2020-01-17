@@ -2,6 +2,7 @@ from itertools import combinations
 from tkinter import filedialog
 
 import tk as tk
+import numpy as np
 from libconfig import *
 
 # Prompts "Choose File" window to select a file to read as input
@@ -22,9 +23,6 @@ df = df.rename(columns=lambda x: x + 5)
 # File write out
 outf = open('outfile.txt', 'w')
 
-# Optional:
-# outf.writelines('\nMultiple Sequence Alignment\n' + df.to_string(index=False) + '\n'*2)
-
 # Initialization
 cluster_list = [pd.DataFrame(df[i]) for i in df]
 cluster_list_clean = cluster_list.copy()
@@ -42,42 +40,18 @@ for i in each_2nd_col:
     # noinspection PyUnboundLocalVariable
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], each_2nd_col[i]], axis=1)
 
+# Pre-processing for input into k-modes algorithm
 not_ranked_list = [cluster for cluster in cluster_list if len(cluster.columns) == 2]
-sr_mode_dict = {}
+temp_list = [list(cluster.columns.values) for cluster in not_ranked_list]
+seen = set()
+unique_list = [x for x in temp_list if frozenset(x) not in seen and not seen.add(frozenset(x))]
 
-outf.writelines('Discovered Pairwise Associations: \n')
+r_list = []
 for cluster in not_ranked_list:
-    outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
-outf.writelines('\n' * 2)
+    for i in unique_list:
+        if (cluster.columns.values == i).all():
+            r_list.append(cluster)
 
-# SR(Mode) Calculation
-for cluster in not_ranked_list:
-    max_sum = 0
-    cc = len(list(combinations(cluster.columns, 2)))
-    for i in cluster:
-        sum_rii = 0
-        for j in cluster:
-            if cluster[i].name != cluster[j].name:
-                sum_rii += nmis(cluster[i], cluster[j], average_method='arithmetic')
-        if sum_rii > max_sum:
-            max_sum = sum_rii
-    sr_mode = max_sum / cc
-    sr_mode_dict[sr_mode] = cluster
-
-# Handles case where an attribute appears in more than one pairwise cluster
-r = dict(sr_mode_dict)
-for key_1, cluster in sr_mode_dict.items():
-    for key_2, other_cluster in sr_mode_dict.items():
-        if (other_cluster.columns.values != cluster.columns.values).all() and (
-                other_cluster.columns.values == cluster.columns.values).any():
-            del r[key_2]
-r_list = list(r.values())
-
-outf.writelines('\nAfter duplicates removed based on SR(Mode) Value\n')
-for cluster in r_list:
-    outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
-
-# Produces a final set of all strong pairwise associations and remaining attributes
 list1 = []
 for cluster in r_list:
     for i in cluster:
@@ -103,12 +77,7 @@ max_rii = 0
 rii = 0
 csv_dict = dict()
 
-outf.writelines('\n' + '\nStarting List at K = ' + str(k) + '\n')
-for cluster in cluster_list:
-    outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
-outf.writelines('\n' * 2)
-
-# Subsequent iterative steps
+# Main loop
 while k > 2:
 
     k -= 1
@@ -173,7 +142,7 @@ while k > 2:
             cols = cols[-1:] + cols[:-1]
             cluster = cluster[cols]
 
-    # REFACTOR: SR(Mode) Calculation - Needs a stored UDF
+    # SR(Mode) Calculation
     for cluster in cluster_list:
         if len(cluster.columns) == 1:
             break
@@ -189,7 +158,7 @@ while k > 2:
                     max_sum = sum_rii
             sr_mode = max_sum / cc
             csv_dict[tuple(cluster)] = sr_mode
-
+'''
     # Text File Writer
     outf.writelines('\nClusters at Iteration K = ' + str(k) + '\n')
     sorted_list = []
@@ -202,7 +171,7 @@ while k > 2:
         if len(cluster.columns) > 1:
             outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
     outf.writelines('\n' * 2)
-
+'''
 # CSV Writer Output
 w = csv.writer(open("output.csv", "w"))
 for key, val in csv_dict.items():
