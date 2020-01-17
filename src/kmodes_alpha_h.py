@@ -77,7 +77,30 @@ max_rii = 0
 rii = 0
 csv_dict = dict()
 
-# Main loop
+
+def sr_mode_calculator():
+    global cluster, max_sum, i, sum_rii, j
+    for cluster in cluster_list:
+        if len(cluster.columns) == 1:
+            break
+        else:
+            max_sum = 0
+            cc = len(list(combinations(cluster.columns, 2)))
+            for i in cluster:
+                sum_rii = 0
+                for j in cluster:
+                    if cluster[i].name != cluster[j].name:
+                        sum_rii += nmis(cluster[i], cluster[j], average_method='arithmetic')
+                if sum_rii > max_sum:
+                    max_sum = sum_rii
+            sr_mode = max_sum / cc
+            csv_dict[tuple(cluster)] = sr_mode
+
+# Main Loop
+
+
+sr_mode_calculator()
+
 while k > 2:
 
     k -= 1
@@ -143,35 +166,8 @@ while k > 2:
             cluster = cluster[cols]
 
     # SR(Mode) Calculation
-    for cluster in cluster_list:
-        if len(cluster.columns) == 1:
-            break
-        else:
-            max_sum = 0
-            cc = len(list(combinations(cluster.columns, 2)))
-            for i in cluster:
-                sum_rii = 0
-                for j in cluster:
-                    if cluster[i].name != cluster[j].name:
-                        sum_rii += nmis(cluster[i], cluster[j], average_method='arithmetic')
-                if sum_rii > max_sum:
-                    max_sum = sum_rii
-            sr_mode = max_sum / cc
-            csv_dict[tuple(cluster)] = sr_mode
-'''
-    # Text File Writer
-    outf.writelines('\nClusters at Iteration K = ' + str(k) + '\n')
-    sorted_list = []
-    cluster_list_cpy = cluster_list
-    for cluster in cluster_list_cpy:
-        cluster = cluster.reindex(sorted(cluster.columns), axis=1)
-        sorted_list.append(cluster)
-    sorted_list = sorted(sorted_list, key=lambda x: x.columns[0])
-    for cluster in sorted_list:
-        if len(cluster.columns) > 1:
-            outf.writelines(str(cluster.columns.values).replace('[', '(').replace(']', ')'))
-    outf.writelines('\n' * 2)
-'''
+    sr_mode_calculator()
+
 # CSV Writer Output
 w = csv.writer(open("output.csv", "w"))
 for key, val in csv_dict.items():
