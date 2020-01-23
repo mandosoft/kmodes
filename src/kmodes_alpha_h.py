@@ -1,6 +1,5 @@
 from itertools import combinations
 from tkinter import filedialog
-from collections import OrderedDict
 import tk as tk
 import numpy as np
 from libconfig import *
@@ -46,20 +45,16 @@ temp_list = [list(cluster.columns.values) for cluster in not_ranked_list]
 seen = set()
 unique_list = [x for x in temp_list if frozenset(x) not in seen and not seen.add(frozenset(x))]
 
+# not worth a list comp
 r_list = []
 for cluster in not_ranked_list:
     for i in unique_list:
         if (cluster.columns.values == i).all():
             r_list.append(cluster)
 
-list1 = []
-for cluster in r_list:
-    for i in cluster:
-        list1.append(i)
-list2 = []
-for cluster in cluster_list_clean:
-    for j in cluster:
-        list2.append(j)
+list1 = [i for cluster in r_list for i in cluster]
+
+list2 = [j for cluster in cluster_list_clean for j in cluster]
 
 final_set = [item for item in list2 if item not in list1]
 
