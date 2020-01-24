@@ -118,6 +118,27 @@ while k > 2:
     cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random_df_il].columns[0], axis=1)
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], new_mode], axis=1)
 
+    # Calculate new mode for best_cluster
+    max_sum = 0
+    cluster_mode = pd.Series()
+    for location, i in enumerate(cluster_list[best_cluster]):
+        sum_rii = 0
+        for j in cluster_list[best_cluster]:
+            if cluster_list[best_cluster][i].name != cluster_list[best_cluster][j].name:
+                sum_rii += nmis(cluster_list[best_cluster][i], cluster_list[best_cluster][j], average_method='arithmetic')
+        if sum_rii > max_sum:
+            max_sum, cluster_mode, ix = sum_rii, cluster_list[best_cluster][i], location
+    if cluster_mode.empty:
+        print('Something went wrong')
+    else:
+        # Mode will always be leftmost column.
+        # Drop designated mode, append to end of DataFrame, and reverse string ;)
+        cluster_list[best_cluster] = cluster_list[best_cluster].drop(cluster_list[best_cluster].columns[ix], axis=1)
+        cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], cluster_mode], axis=1)
+        cols = cluster_list[best_cluster].columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        cluster_list[best_cluster] = cluster_list[best_cluster][cols]
+
     # Handles the cluster where mode has been removed
     if cluster_list[random_df_il].empty:
         del cluster_list[random_df_il]
@@ -139,7 +160,7 @@ while k > 2:
     else:
         print('\nThere was a problem breaking up a cluster.\n')
 
-    # Compute new mode for each cluster and calculate Sr(Mode).
+    # Compute new mode for each cluster after breaking up and calculate Sr(Mode).
     for cluster in cluster_list:
         max_sum = 0
         cluster_mode = pd.Series()
