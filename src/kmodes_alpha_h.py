@@ -73,11 +73,11 @@ rii = 0
 csv_dict = dict()
 
 
-def sr_mode_calculator():
+def sr_mode_calculator(cluster_list:'list of dfs') -> cluster_list:
     global max_sum
     for cluster in cluster_list:
-        if len(cluster.columns) == 1:
-            break
+        if len(cluster.columns) < 2:
+            continue
         else:
             max_sum = 0
             cc = len(list(combinations(cluster.columns, 2)))
@@ -89,11 +89,12 @@ def sr_mode_calculator():
                 if sum_rii > max_sum:
                     max_sum = sum_rii
             sr_mode = max_sum / cc
-            csv_dict[tuple(cluster)] = sr_mode
+            csv_dict[tuple([tuple(sorted(cluster)), 'k = ' + str(k)])] = round(sr_mode, 3)
+            outf.writelines(str(csv_dict) + '\n')
 
 
 # Function called here and at end of the Main Loop
-sr_mode_calculator()
+sr_mode_calculator(cluster_list)
 
 # Main Loop
 while k > 2:
@@ -160,13 +161,7 @@ while k > 2:
             cols = cols[-1:] + cols[:-1]
             cluster = cluster[cols]
 
-    sr_mode_calculator()
-
-# CSV Writer Output
-w = csv.writer(open("output.csv", "w"))
-for key, val in csv_dict.items():
-    if val > 0.2:
-        w.writerow([sorted(key), round(val, 3)])
+    sr_mode_calculator(cluster_list)
 
 outf.close()
 spinner.stop()
