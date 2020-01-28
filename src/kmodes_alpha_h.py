@@ -1,6 +1,7 @@
 from itertools import combinations
 from tkinter import filedialog
 import tk as tk
+import cProfile, pstats, io
 import numpy as np
 from libconfig import *
 
@@ -27,6 +28,7 @@ cluster_list = [pd.DataFrame(df[i]) for i in df]
 cluster_list_clean = cluster_list.copy()
 each_2nd_col = df[df.columns[::2]]
 
+# Compare each second column to whole list. This finds pairwise associations quickly.
 for i in each_2nd_col:
     max_rii = 0
     rii = 0
@@ -73,7 +75,25 @@ rii = 0
 csv_dict = dict()
 
 
-def sr_mode_calculator(cluster_list:'list of dfs') -> cluster_list:
+def profile(fnc):
+    """A decorator that uses cProfile to profile a function"""
+
+    def inner(*args, **kwargs):
+        pr = cProfile.Profile()
+        pr.enable()
+        retval = fnc(*args, **kwargs)
+        pr.disable()
+        s = io.StringIO()
+        sortby = 'cumulative'
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print(s.getvalue())
+        return retval
+
+    return inner
+
+@profile
+def sr_mode_calculator(cluster_list):
     global max_sum
     for cluster in cluster_list:
         if len(cluster.columns) < 2:
@@ -85,12 +105,12 @@ def sr_mode_calculator(cluster_list:'list of dfs') -> cluster_list:
                 sum_rii = 0
                 for j in cluster:
                     if cluster[i].name != cluster[j].name:
+                        # thread here
                         sum_rii += nmis(cluster[i], cluster[j], average_method='arithmetic')
                 if sum_rii > max_sum:
                     max_sum = sum_rii
             sr_mode = max_sum / cc
             csv_dict[tuple([tuple(sorted(cluster)), 'k = ' + str(k)])] = round(sr_mode, 3)
-            outf.writelines(str(csv_dict) + '\n')
 
 
 # Function called here and at end of the Main Loop
