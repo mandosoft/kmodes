@@ -1,31 +1,70 @@
 import multiprocessing
 from itertools import combinations
-from tkinter import filedialog
+from tkinter import *
+from tkinter import filedialog, simpledialog
 import tk as tk
 import cProfile, pstats, io
 from multiprocessing import Pool
 import numpy as np
 from libconfig import *
 
-# Prompts "Choose File" window to select a file to read as input
-tk.Tk().withdraw()
-file_path = filedialog.askopenfilename()
-file = open(file_path)
+# ------ GUI --------------------------
+# Get variables file_path, label_number, and cut_off
+
+window = Tk()
+window.title('K Modes Alpha H')
+window.geometry('560x650')
+
+label1 = Label(window, text='Select a CSV file for upload:', anchor=CENTER, pady=30)
+label2 = Label(window, text='Enter label number for\n first aligned attribute:', anchor=CENTER, pady=30)
+label3 = Label(window, text='Set Sr(mode) cutoff value.\nRecommended value is .15:', anchor=CENTER, pady=30)
+
+label1.grid(column=0, row=0)
+label2.grid(column=0, row=3)
+label3.grid(column=0, row=5)
+
+label_number = IntVar()
+label_number.set(1)
+cut_off = DoubleVar()
+cut_off.set(.15)
+entry1 = Entry(width=30)
+entry2 = Entry(width=3, textvariable=label_number)
+entry3 = Entry(width=5, textvariable=cut_off)
+
+entry1.grid(column=0, row=1, padx=15, pady=8)
+entry2.grid(column=0, row=4)
+entry3.grid(column=0, row=6)
+
+
+def get_file_path():
+    get_file_path.file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
+    entry1.delete(0, END)
+    entry1.insert(0, get_file_path.file_path)
+
+
+button1 = Button(text='Select File', fg='white', bg='purple', command=get_file_path)
+button2 = Button(text='Submit and Run', fg='white', bg='purple', command=window.destroy)
+
+button1.grid(column=0, row=2)
+button2.grid(column=0, row=10, pady=30)
+
+window.mainloop()
+
+# -----------Pre-Processing--------------
+# MSA Data Input
+cut_off = cut_off.get()
+file = open(get_file_path.file_path)
+df = pd.read_csv(file, encoding='utf-8', header=None)
+df = df.drop(df.columns[[0]], axis=1)
+label_number = label_number.get() - 1
+df = df.rename(columns=lambda x: x + label_number)
 
 # Spinner. Helpful with large sequences
 spinner = Halo(text='Running  ', spinner='simpleDots', color='green')
 spinner.start()
 start_time = time.perf_counter()
 
-# MSA Data Input
-df = pd.read_csv(file, encoding='utf-8', header=None)
-df = df.drop(df.columns[[0]], axis=1)
-df = df.rename(columns=lambda x: x + 5)
-
-# File write out
-outf = open('outfile.txt', 'w')
-
-# Initialization
+# Cluster Initialization
 cluster_list = [pd.DataFrame(df[i]) for i in df]
 cluster_list_clean = cluster_list.copy()
 each_2nd_col = df[df.columns[::2]]
@@ -84,12 +123,12 @@ def sr_mode_calculator(x):
         sum_rii = 0
         for j in x:
             if x[i].name != x[j].name:
-                # thread here
                 sum_rii += nmis(x[i], x[j], average_method='arithmetic')
         if sum_rii > max_sum:
             max_sum = sum_rii
     sr_mode = max_sum / cc
-    csv_dict[tuple([tuple(sorted(x)), 'k = ' + str(k)])] = round(sr_mode, 3)
+    if sr_mode >= cut_off:
+        csv_dict[tuple([tuple(sorted(x)), 'k = ' + str(k)])] = round(sr_mode, 3)
 
 
 # Parallelize Sr(mode) computation
@@ -197,8 +236,6 @@ while k != 2:
     # pool.map_async(sr_mode_calculator, [i for i in cluster_list if len(i.columns) >= 2])
     # pool.close()
 
-print(csv_dict)
 # pool.terminate()
-outf.close()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
