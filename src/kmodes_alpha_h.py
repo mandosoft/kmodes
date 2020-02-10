@@ -1,7 +1,9 @@
+import multiprocessing
 from itertools import combinations
 from tkinter import filedialog
 import tk as tk
 import cProfile, pstats, io
+from multiprocessing import Pool
 import numpy as np
 from libconfig import *
 
@@ -72,52 +74,36 @@ cluster_list = r_list.copy()
 k = len(cluster_list)
 max_rii = 0
 rii = 0
-csv_dict = dict()
+csv_dict = multiprocessing.Manager().dict()
 
 
-def profile(fnc):
-    """A decorator that uses cProfile to profile a function"""
-
-    def inner(*args, **kwargs):
-        pr = cProfile.Profile()
-        pr.enable()
-        retval = fnc(*args, **kwargs)
-        pr.disable()
-        s = io.StringIO()
-        sortby = 'cumulative'
-        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-        ps.print_stats()
-        print(s.getvalue())
-        return retval
-
-    return inner
-
-@profile
-def sr_mode_calculator(cluster_list):
-    global max_sum
-    for cluster in cluster_list:
-        if len(cluster.columns) < 2:
-            continue
-        else:
-            max_sum = 0
-            cc = len(list(combinations(cluster.columns, 2)))
-            for i in cluster:
-                sum_rii = 0
-                for j in cluster:
-                    if cluster[i].name != cluster[j].name:
-                        # thread here
-                        sum_rii += nmis(cluster[i], cluster[j], average_method='arithmetic')
-                if sum_rii > max_sum:
-                    max_sum = sum_rii
-            sr_mode = max_sum / cc
-            csv_dict[tuple([tuple(sorted(cluster)), 'k = ' + str(k)])] = round(sr_mode, 3)
+def sr_mode_calculator(x):
+    max_sum = 0
+    cc = len(list(combinations(x.columns, 2)))
+    for i in x:
+        sum_rii = 0
+        for j in x:
+            if x[i].name != x[j].name:
+                # thread here
+                sum_rii += nmis(x[i], x[j], average_method='arithmetic')
+        if sum_rii > max_sum:
+            max_sum = sum_rii
+    sr_mode = max_sum / cc
+    csv_dict[tuple([tuple(sorted(x)), 'k = ' + str(k)])] = round(sr_mode, 3)
 
 
-# Function called here and at end of the Main Loop
-sr_mode_calculator(cluster_list)
+# Parallelize Sr(mode) computation
+# pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+# pool.map_async(sr_mode_calculator, [i for i in cluster_list if len(i.columns) >= 2], chunksize=1)
+# pool.close()
+
+for cluster in cluster_list:
+    if len(cluster.columns) >= 2:
+        sr_mode_calculator(cluster)
+
 
 # Main Loop
-while k > 2:
+while k != 2:
 
     k -= 1
 
@@ -202,8 +188,17 @@ while k > 2:
             cols = cols[-1:] + cols[:-1]
             cluster = cluster[cols]
 
-    sr_mode_calculator(cluster_list)
+    for cluster in cluster_list:
+        if len(cluster.columns) >= 2:
+            sr_mode_calculator(cluster)
 
+    # Parallelize Sr(mode) computation
+    # pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+    # pool.map_async(sr_mode_calculator, [i for i in cluster_list if len(i.columns) >= 2])
+    # pool.close()
+
+print(csv_dict)
+# pool.terminate()
 outf.close()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
