@@ -13,11 +13,13 @@ from libconfig import *
 
 window = Tk()
 window.title('K Modes Alpha H')
-window.geometry('560x650')
+window.geometry('570x800')
 
 label1 = Label(window, text='Select a CSV file for upload:', anchor=CENTER, pady=30)
 label2 = Label(window, text='Enter label number for\n first aligned attribute:', anchor=CENTER, pady=30)
-label3 = Label(window, text='Set Sr(mode) cutoff value.\nRecommended value is .15:', anchor=CENTER, pady=30)
+label3 = Label(window, text='\nSet Sr(mode) cutoff value.\nRecommended start value is 0.15.\n\n '
+                            'Changing the value will increase or \n '
+                            'decrease resolution of the tree:', anchor=CENTER, pady=30)
 
 label1.grid(column=0, row=0)
 label2.grid(column=0, row=3)
