@@ -35,5 +35,5 @@ def main():
         Logging.log_exception(exception, False)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#    main()
