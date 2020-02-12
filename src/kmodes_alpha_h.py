@@ -198,6 +198,8 @@ while k != 2:
     # pool.map_async(sr_mode_calculator, [i for i in cluster_list if len(i.columns) >= 2])
     # pool.close()
 
+
+
 # pool.terminate()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
