@@ -199,7 +199,6 @@ while k != 2:
     # pool.close()
 
 
-
 # pool.terminate()
 spinner.stop()
 print('Took', time.perf_counter() - start_time, 'seconds')
