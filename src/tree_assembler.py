@@ -45,7 +45,9 @@ def get_line_numbers_concat(line_nums):
 
 
 # -------- Loop ----------------
-
+# parent = False
+for i in G.nodes:
+    G.nodes[i]['parent'] = False
 n_order = 1
 while n_order < max_len:
 
@@ -57,12 +59,15 @@ while n_order < max_len:
                 next_set.remove(next_set[ix])
     next_set = [tuple(t) for t in next_set]
     next_set = sorted(list(set(next_set)))
-    G.add_nodes_from(next_set)
-
+    # G.add_nodes_from(next_set)
+    for i in next_set:
+        G.add_node(i, parent=False)
     for i in G.nodes:
-        for j in G.nodes:
-            if i != j and set(i).issubset(set(j)):
-                G.add_edge(i, j)
+        if not G.nodes[i]['parent']:
+            for j in G.nodes:
+                if i != j and set(i).issubset(set(j)):
+                    G.add_edge(i, j)
+                    G.nodes[i]['parent'] = True
 
 # ------------------------------
 # run "dot -Tpng test.dot >test.png"
@@ -72,10 +77,32 @@ G = nx.relabel_nodes(G, lambda x: get_line_numbers_concat(x))
 write_dot(G, 'test.dot')
 
 plt.title('K Modes Alpha H Tree Diagram')
-plt.ylabel('n order')
-plt.figure(figsize=(15, 15))
+plt.figure(figsize=(25, 15))
 pos = graphviz_layout(G, prog='dot')
 nx.draw(G, pos, with_labels=True, arrows=False, node_color='None', node_size=15,
+        font_size=9, width=.5, edge_color='red')
+plt.savefig('nx_test.jpg', optimize=True, dpi=300)
+
+
+'''
+# -------------Window Render---------------------
+fig = plt.figure(figsize=(11, 6))
+ax = fig.add_subplot(1, 1, 1)
+pos = graphviz_layout(G, prog='dot')
+nx.draw(G, pos=pos, ax=ax, with_labels=True, arrows=True, node_color='None', node_size=15,
         font_size=10, width=.5, edge_color='red')
-plt.savefig('nx_test.jpg', optimize=True, dpi=75)
+ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
+
+ax.yaxis.set_label_coords(0, 1.02)
+ax.axes.get_xaxis().set_visible(False)
+ax.patch.set_linewidth('0')
+plt.ylim(max_len, 2)
+tick_list = list(range(2, (max_len + 1)))
+ax.set_yticks(tick_list)
+ax.axes.grid(color='black', linestyle='-', linewidth=1)
+ax.tick_params(left=True, bottom=True, labelleft=True, labelbottom=True)
+plt.show()
+plt.savefig('nx_test.jpg')
+'''
+
 
