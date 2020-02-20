@@ -3,7 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import write_dot, graphviz_layout
 
-G = nx.DiGraph()
+G = nx.Graph()
 
 with open('output.csv') as f:
     lines = list(csv.reader(f))
@@ -62,47 +62,79 @@ while n_order < max_len:
     # G.add_nodes_from(next_set)
     for i in next_set:
         G.add_node(i, parent=False)
+
+    # Draw edges between nodes
+    # Supersets get priority followed by 80% of attributes
     for i in G.nodes:
+
+        # First pass checks for supersets
         if not G.nodes[i]['parent']:
             for j in G.nodes:
                 if i != j and set(i).issubset(set(j)):
                     G.add_edge(i, j)
                     G.nodes[i]['parent'] = True
 
-# ------------------------------
-# run "dot -Tpng test.dot >test.png"
+        # Second pass checks for 80% rule
+        if not G.nodes[i]['parent']:
+            for j in G.nodes:
+                if i != j and len(i) < len(j):
+                    count_elements = 0
+                    for each in i:
+                        count_elements += j.count(each)
+                    rule_eighty = count_elements / len(i)
+                    if rule_eighty >= .80:
+                        G.add_edge(i, j)
+                        G.nodes[i]['parent'] = True
+
+# ---Node Positioning Calculator----------
+
+pos = dict()
+x_pos = 0
+y_pos = 1000
+n_order = 1
+x_indent = 0
+y_indent = 0
+tick_list = list()
+tick_labels = list()
+max_node_len = max([len(s) for s in G.nodes])
+while n_order < max_node_len:
+    n_order += 1
+    next_set = [s for s in G.nodes if len(s) == n_order]
+    if len(next_set) != 0:
+        tick_labels.append(str(n_order))
+        y_pos -= (100 + (y_indent * .5))
+        tick_list.append(y_pos)
+        for each in next_set:
+            pos[get_line_numbers_concat(each)] = (x_pos, y_pos)
+            x_pos += (150 + x_indent / 2)
+        x_indent += 200
+        x_pos = x_indent
+        y_indent += 20
 
 # noinspection PyTypeChecker
 G = nx.relabel_nodes(G, lambda x: get_line_numbers_concat(x))
+
 write_dot(G, 'test.dot')
 
-plt.title('K Modes Alpha H Tree Diagram')
-plt.figure(figsize=(25, 15))
-pos = graphviz_layout(G, prog='dot')
-nx.draw(G, pos, with_labels=True, arrows=False, node_color='None', node_size=15,
-        font_size=9, width=.5, edge_color='red')
-plt.savefig('nx_test.jpg', optimize=True, dpi=300)
-
-
-'''
-# -------------Window Render---------------------
-fig = plt.figure(figsize=(11, 6))
+# plt.title('K Modes Alpha H Tree Diagram')
+fig = plt.figure(figsize=(25, 15))
 ax = fig.add_subplot(1, 1, 1)
-pos = graphviz_layout(G, prog='dot')
-nx.draw(G, pos=pos, ax=ax, with_labels=True, arrows=True, node_color='None', node_size=15,
-        font_size=10, width=.5, edge_color='red')
-ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
 
+ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
 ax.yaxis.set_label_coords(0, 1.02)
-ax.axes.get_xaxis().set_visible(False)
-ax.patch.set_linewidth('0')
-plt.ylim(max_len, 2)
-tick_list = list(range(2, (max_len + 1)))
-ax.set_yticks(tick_list)
-ax.axes.grid(color='black', linestyle='-', linewidth=1)
-ax.tick_params(left=True, bottom=True, labelleft=True, labelbottom=True)
+
+# Todo Fix Tick structure
+print(tick_list)
+print(tick_labels)
+nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='None')
+nx.draw_networkx_labels(G, pos=pos, ax=ax, font_weight='bold', font_size=6)
+nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color='red', alpha=.3)
+plt.grid(True, axis='y')
+# plt.yticks(tick_list)
+ax.yaxis.set_ticks(tick_list)
+ax.yaxis.set_ticklabels(tick_labels, visible=True)
+
+plt.savefig('nx_test.jpg', optimize=True, dpi=150)
 plt.show()
-plt.savefig('nx_test.jpg')
-'''
 
 
