@@ -48,6 +48,8 @@ def get_line_numbers_concat(line_nums):
 # parent = False
 for i in G.nodes:
     G.nodes[i]['parent'] = False
+    G.nodes[i]['split'] = False
+
 n_order = 1
 while n_order < max_len:
 
@@ -55,13 +57,14 @@ while n_order < max_len:
     next_set = [s for s in tree_list if len(s) == n_order]
     for i in next_set:
         for ix, j in enumerate(next_set):
+            # removes cases of non disjoint sets of same n_order
             if i != j and not set(i).isdisjoint(set(j)):
                 next_set.remove(next_set[ix])
     next_set = [tuple(t) for t in next_set]
     next_set = sorted(list(set(next_set)))
     # G.add_nodes_from(next_set)
     for i in next_set:
-        G.add_node(i, parent=False)
+        G.add_node(i, parent=False, split=False)
 
     # Draw edges between nodes
     # Supersets get priority followed by 80% of attributes
@@ -71,7 +74,7 @@ while n_order < max_len:
         if not G.nodes[i]['parent']:
             for j in G.nodes:
                 if i != j and set(i).issubset(set(j)):
-                    G.add_edge(i, j)
+                    G.add_edge(i, j, color='r')
                     G.nodes[i]['parent'] = True
 
         # Second pass checks for 80% rule
@@ -81,35 +84,50 @@ while n_order < max_len:
                     count_elements = 0
                     for each in i:
                         count_elements += j.count(each)
-                    rule_eighty = count_elements / len(i)
-                    if rule_eighty >= .80:
-                        G.add_edge(i, j)
-                        G.nodes[i]['parent'] = True
+                    percent_in_child = count_elements / len(i)
+                    if percent_in_child >= .33:
+                        if G.degree[i] < 2:
+                            G.add_edge(i, j, color='purple')
+                            G.nodes[i]['split'] = True
+                            if G.degree[i] == 2:
+                                G.nodes[i]['parent'] = True
+
 
 # ---Node Positioning Calculator----------
 
 pos = dict()
 x_pos = 0
 y_pos = 1000
+n_pos = 1
 n_order = 1
 x_indent = 0
 y_indent = 0
-tick_list = list()
-tick_labels = list()
+ytick_list = list()
+xtick_list = list()
+xtick_labels = list()
+ytick_labels = list()
 max_node_len = max([len(s) for s in G.nodes])
+
 while n_order < max_node_len:
+
     n_order += 1
     next_set = [s for s in G.nodes if len(s) == n_order]
+
+    if n_order == 2:
+        xtick_labels = [(next_set.index(x) + 1) for x in next_set]
+
     if len(next_set) != 0:
-        tick_labels.append(str(n_order))
-        y_pos -= (100 + (y_indent * .5))
-        tick_list.append(y_pos)
+        ytick_labels.append(str(n_order))
+        y_pos -= 100
+        ytick_list.append(y_pos)
+        x_pos += x_indent
         for each in next_set:
             pos[get_line_numbers_concat(each)] = (x_pos, y_pos)
-            x_pos += (150 + x_indent / 2)
-        x_indent += 200
-        x_pos = x_indent
-        y_indent += 20
+            xtick_list.append(x_pos)
+            x_pos += (n_pos + len(each))
+        x_indent = (20 * (1 / 3.75)) + n_order
+        x_pos = 0
+    # n_pos += .28
 
 # noinspection PyTypeChecker
 G = nx.relabel_nodes(G, lambda x: get_line_numbers_concat(x))
@@ -124,15 +142,20 @@ ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
 ax.yaxis.set_label_coords(0, 1.02)
 
 # Todo Fix Tick structure
-print(tick_list)
-print(tick_labels)
 nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='None')
-nx.draw_networkx_labels(G, pos=pos, ax=ax, font_weight='bold', font_size=6)
-nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color='red', alpha=.3)
+nx.draw_networkx_labels(G, pos=pos, ax=ax, font_weight='bold', font_size=5)
+
+colors = [G[u][v]['color'] for u, v in G.edges()]
+nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.5)
+
 plt.grid(True, axis='y')
-# plt.yticks(tick_list)
-ax.yaxis.set_ticks(tick_list)
-ax.yaxis.set_ticklabels(tick_labels, visible=True)
+
+ax.yaxis.set_ticks(ytick_list)
+ax.yaxis.set_ticklabels(ytick_labels, visible=True)
+
+ax.xaxis.set_ticks(xtick_list)
+ax.xaxis.set_ticklabels(xtick_labels, visible=True)
+
 
 plt.savefig('nx_test.jpg', optimize=True, dpi=150)
 plt.show()
