@@ -1,22 +1,11 @@
 import multiprocessing
 from itertools import combinations
-from gui import *
+from gui import *  # includes df for cluster_list
 from multiprocessing import Pool
 import numpy as np
 from libconfig import *
 
-
-# --------------- GUI --------------------------
-# Get variables file_path, label_number, and cut_off
-
-# -----------MSA-Processing---------------------
-# MSA Data Input
 cut_off = cut_off.get()
-file = open(get_file_path.file_path)
-df = pd.read_csv(file, encoding='utf-8', header=None)
-df = df.drop(df.columns[[0]], axis=1)
-label_number = label_number.get() - 1
-df = df.rename(columns=lambda x: x + label_number)
 
 # Spinner. Helpful with large sequences
 spinner = Halo(text='Running  ', spinner='simpleDots', color='green')
@@ -131,6 +120,7 @@ while k != 2:
     for location, i in enumerate(cluster_list[best_cluster]):
         sum_rii = 0
         for j in cluster_list[best_cluster]:
+            print(cluster_list[best_cluster][i].name)
             if cluster_list[best_cluster][i].name != cluster_list[best_cluster][j].name:
                 sum_rii += nmis(cluster_list[best_cluster][i], cluster_list[best_cluster][j], average_method='arithmetic')
         if sum_rii > max_sum:
