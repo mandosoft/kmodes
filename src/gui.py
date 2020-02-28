@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import filedialog
 import pandas as pd
+import importlib
+import time
 
 window = Tk()
 window.title('K Modes Alpha H')
@@ -12,25 +14,27 @@ f_color = 'white'
 
 window.configure(bg=b_color)
 
-label1 = Label(window, text='Select a CSV file for upload:', anchor=CENTER, pady=10, bg=b_color, fg=f_color)
+label1 = Label(window, text='\nSelect a CSV file for upload:' + '\n'*4, anchor=CENTER, bg=b_color, fg=f_color)
 
-label2 = Label(window, text='Set percentage of insertion data to exclude:\n', anchor=CENTER, padx=15,
+label2 = Label(window, text='\n\nSet percentage of insertion data to exclude:\n', anchor=CENTER, padx=15,
                bg=b_color, fg=f_color)
 
 label3 = Label(window, text='Enter label number for first aligned attribute\n (the actual sequence location '
                             'of the first aligned column)', anchor=CENTER, pady=100, bg=b_color, fg=f_color)
 
-label4 = Label(window, text='\nSet Sr(mode) cutoff value.\nRecommended start value is 0.15.\n\n '
-                            'Changing the value will increase or \n '
-                            'decrease resolution of the tree', anchor=CENTER, bg=b_color, fg=f_color)
+label4 = Label(window, text='\nSet Sr(mode) cutoff value.\nRecommended start value is 0.15:'
+               , anchor=CENTER, bg=b_color, fg=f_color)
 
 t = Text(window, height=18, width=85, bg='black', fg='white')
 t.grid(column=2, row=7)
 
 label1.grid(column=0, row=0)
 label2.grid(column=0, row=3)
-label3.grid(column=2, row=5)
-label4.grid(column=2, row=2)
+label3.grid(column=2, row=3)
+label4.grid(column=2, row=0)
+
+# progress = Progressbar(window, orient=HORIZONTAL, length=100, mode='determinate')
+# progress.grid(column=0, row=1)
 
 
 label_number = IntVar()
@@ -45,8 +49,8 @@ entry2 = Entry(width=3, textvariable=label_number)
 entry3 = Entry(width=5, textvariable=null_filter)
 entry4 = Entry(width=5, textvariable=cut_off)
 
-entry1.grid(column=0, row=1)
-entry2.grid(column=2, row=4)
+entry1.grid(column=0, row=0)
+entry2.grid(column=2, row=4, pady=50)
 entry3.grid(column=0, row=4)
 entry4.grid(column=2, row=1)
 
@@ -83,9 +87,19 @@ def trim_msa():
 
 def submit_and_run():
 
-    # submit_and_run.df = trim_msa.df
-    # df = trim_msa.df.drop(df.columns[[0]], axis=1)
-    window.destroy()
+    submit_and_run.df = trim_msa.df
+    submit_and_run.df = submit_and_run.df.drop(submit_and_run.df.columns[[0]], axis=1)
+
+    start_time = time.perf_counter()
+    importlib.import_module('kmodes_alpha_h')
+    importlib.import_module('preprocessor')
+    total_time = round((time.perf_counter() - start_time), 3)
+
+    importlib.import_module('tree_assembler')
+
+    time_out = 'Took', total_time, 'seconds'
+    t.delete(1.0, END)
+    t.insert(INSERT, time_out)
 
 
 button1 = Button(text='Select File', fg='white', bg='purple', command=get_file_path)
@@ -93,9 +107,9 @@ button2 = Button(text='Pre-Process MSA', fg='white', bg='purple', command=trim_m
 button3 = Button(text='Submit and Run', fg='white', bg='grey', command=submit_and_run)
 button3.config(state='disabled')
 
-button1.grid(column=0, row=2)
-button2.grid(column=3, row=2)
-button3.grid(column=3, row=1)
+button1.grid(column=0, row=1)
+button2.grid(column=2, row=20, pady=20)
+button3.grid(column=3, row=0)
 
 
 window.mainloop()

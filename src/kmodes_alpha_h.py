@@ -13,6 +13,7 @@ spinner.start()
 start_time = time.perf_counter()
 
 # Cluster Initialization
+df = submit_and_run.df  # df passed from gui.py
 cluster_list = [pd.DataFrame(df[i]) for i in df]
 cluster_list_clean = cluster_list.copy()
 each_2nd_col = df[df.columns[::2]]
@@ -120,7 +121,6 @@ while k != 2:
     for location, i in enumerate(cluster_list[best_cluster]):
         sum_rii = 0
         for j in cluster_list[best_cluster]:
-            print(cluster_list[best_cluster][i].name)
             if cluster_list[best_cluster][i].name != cluster_list[best_cluster][j].name:
                 sum_rii += nmis(cluster_list[best_cluster][i], cluster_list[best_cluster][j], average_method='arithmetic')
         if sum_rii > max_sum:
