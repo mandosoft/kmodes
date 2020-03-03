@@ -144,7 +144,7 @@ while k != 2:
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], new_mode], axis=1)
 
     # Calculate the new mode for the best cluster
-    calculate_new_mode(cluster_list[best_cluster])
+    cluster_list[best_cluster] = calculate_new_mode(cluster_list[best_cluster])
 
     # Go back to the cluster the random mode came from and auction off remaining attributes
     if cluster_list[random_df_il].empty:

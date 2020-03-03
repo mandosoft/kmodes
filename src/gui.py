@@ -3,6 +3,7 @@ from tkinter import filedialog
 import pandas as pd
 import importlib
 import time
+import runpy
 
 window = Tk()
 window.title('K Modes Alpha H')
@@ -90,14 +91,11 @@ def submit_and_run():
 
     submit_and_run.df = trim_msa.df
     submit_and_run.df = submit_and_run.df.drop(submit_and_run.df.columns[[0]], axis=1)
-
     start_time = time.perf_counter()
-    importlib.import_module('kmodes_alpha_h')
-    importlib.import_module('preprocessor')
+    runpy.run_module('kmodes_alpha_h')
+    runpy.run_module('preprocessor')
     total_time = round((time.perf_counter() - start_time), 3)
-
-    importlib.import_module('tree_assembler')
-
+    runpy.run_module('tree_assembler')
     time_out = 'Took', total_time, 'seconds'
     t.delete(1.0, END)
     t.insert(INSERT, time_out)
