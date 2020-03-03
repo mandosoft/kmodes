@@ -1,16 +1,11 @@
-import multiprocessing
+import random
+import itertools
 from itertools import combinations
 from gui import *  # includes df for cluster_list
-from multiprocessing import Pool
-import numpy as np
 from libconfig import *
 
+# Imported from GUI options
 cut_off = cut_off.get()
-
-# Spinner. Helpful with large sequences
-spinner = Halo(text='Running  ', spinner='simpleDots', color='green')
-spinner.start()
-start_time = time.perf_counter()
 
 # Cluster Initialization
 df = submit_and_run.df  # df passed from gui.py
@@ -23,7 +18,7 @@ for i in each_2nd_col:
     max_rii = 0
     rii = 0
     for location, cluster in enumerate(cluster_list):
-        cluster_mode = cluster[cluster.columns[0]]
+        cluster_mode = cluster[cluster.columns[0]]  # cluster mode is always first column
         if each_2nd_col[i].name != cluster_mode.name:
             rii = nmis(each_2nd_col[i], cluster_mode, average_method='arithmetic')
             if rii > max_rii:
@@ -31,79 +26,112 @@ for i in each_2nd_col:
     # noinspection PyUnboundLocalVariable
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], each_2nd_col[i]], axis=1)
 
-# Pre-processing for input into k-modes algorithm
-not_ranked_list = [cluster for cluster in cluster_list if len(cluster.columns) == 2]
-temp_list = [list(cluster.columns.values) for cluster in not_ranked_list]
-seen = set()
-unique_list = [x for x in temp_list if frozenset(x) not in seen and not seen.add(frozenset(x))]
 
+# --------Pre-processing for input into k-modes algorithm-----------------------
+# All list processing below prevents shared attributes between pairwise associations
 
-r_list = []
-for cluster in not_ranked_list:
+pairwise = 2
+# Get pairwise clusters
+pairwise_list = [cluster for cluster in cluster_list if len(cluster.columns) == pairwise]
+# Get all labels. List of ints not bounded by cluster
+pairwise_cluster_labels = [list(cluster.columns.values) for cluster in pairwise_list]
+unique_set = set()
+# Get only unique values in list
+unique_list = [x for x in pairwise_cluster_labels if frozenset(x) not in unique_set and not unique_set.add(frozenset(x))]
+cluster_sets_list = list()
+
+# Compare clusters to list of unique values
+# If every value in the cluster is unique, it passes into sets list
+for cluster in pairwise_list:
     for i in unique_list:
         if (cluster.columns.values == i).all():
-            r_list.append(cluster)
+            cluster_sets_list.append(cluster)
+# We now have all unique pairwise clusters.
 
-list1 = [i for cluster in r_list for i in cluster]
+# Get remaining data as single attributes
+sets_list = [i for cluster in cluster_sets_list for i in cluster]
+clean_list = [j for cluster in cluster_list_clean for j in cluster]
+final_set = [item for item in clean_list if item not in sets_list]
+diff_df_set = list()
 
-list2 = [j for cluster in cluster_list_clean for j in cluster]
-
-final_set = [item for item in list2 if item not in list1]
-
-diff_df_set = []
 for i in cluster_list_clean:
     for j in final_set:
         if j == i.columns.values:
-            diff_df_set.append(pd.DataFrame(i))
-r_list.extend(diff_df_set)
-cluster_list = r_list.copy()
+            diff_df_set.append(pd.DataFrame(i))  # loads single attributes into their own dataframes
+
+cluster_sets_list.extend(diff_df_set)
+
+# -------------------------------------------------------------------------------
+
+
+# Hard copy cluster list and ready for K modes algorithm
+cluster_list = cluster_sets_list.copy()
 
 # Main globals. Use wisely.
 k = len(cluster_list)
 max_rii = 0
 rii = 0
-csv_dict = multiprocessing.Manager().dict()
-
-# --------------------------------------------------
+csv_dict = dict()
 
 
-def sr_mode_calculator(x):
+def calculate_sr_mode(x):
+
+    if len(x.columns) >= 2:
+        max_sum = 0
+        cc = len(list(combinations(x.columns, 2)))
+        for i in x:
+            sum_rii = 0
+            for j in x:
+                if x[i].name != x[j].name:
+                    sum_rii += nmis(x[i], x[j], average_method='arithmetic')
+            if sum_rii > max_sum:
+                max_sum = sum_rii
+        sr_mode = max_sum / cc
+        if sr_mode >= cut_off:
+            csv_dict[tuple([tuple(sorted(x)), 'k = ' + str(k)])] = round(sr_mode, 3)
+
+    return x
+
+
+def calculate_new_mode(x):
+
     max_sum = 0
-    cc = len(list(combinations(x.columns, 2)))
-    for i in x:
+    cluster_mode = pd.Series()
+    for location, i in enumerate(x):
         sum_rii = 0
         for j in x:
             if x[i].name != x[j].name:
                 sum_rii += nmis(x[i], x[j], average_method='arithmetic')
         if sum_rii > max_sum:
-            max_sum = sum_rii
-    sr_mode = max_sum / cc
-    if sr_mode >= cut_off:
-        csv_dict[tuple([tuple(sorted(x)), 'k = ' + str(k)])] = round(sr_mode, 3)
+            max_sum, cluster_mode, ix = sum_rii, x[i], location
+
+    if cluster_mode.empty:
+        del cluster_mode
+    else:
+        x = x.drop(x.columns[ix], axis=1)
+        x = pd.concat([x, cluster_mode], axis=1)
+        cols = x.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        x = x[cols]
+
+    return x
 
 
-# Parallelize Sr(mode) computation
-# pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-# pool.map_async(sr_mode_calculator, [i for i in cluster_list if len(i.columns) >= 2], chunksize=1)
-# pool.close()
+# --------------- K Modes Algorithm --------------------
 
-for cluster in cluster_list:
-    if len(cluster.columns) >= 2:
-        sr_mode_calculator(cluster)
-
-
-# ------------ K Modes Algorithm ----------------
+# Store pairwise associations in dictionary
+cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
 
 while k != 2:
 
     k -= 1
 
-    # Newly enumerate the list and select a random mode
+    # Begin by selecting a random mode from list
     enumerated_list = list(enumerate(cluster_list))
     random_df_il, random_df = random.choice(enumerated_list)
     new_mode = random_df[random_df.columns[0]]
 
-    # Add chosen mode to best cluster
+    # Add random mode to best cluster
     rii = 0
     max_rii = 0
     for location, cluster in enumerated_list:
@@ -115,28 +143,10 @@ while k != 2:
     cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random_df_il].columns[0], axis=1)
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], new_mode], axis=1)
 
-    # Calculate new mode for best_cluster
-    max_sum = 0
-    cluster_mode = pd.Series()
-    for location, i in enumerate(cluster_list[best_cluster]):
-        sum_rii = 0
-        for j in cluster_list[best_cluster]:
-            if cluster_list[best_cluster][i].name != cluster_list[best_cluster][j].name:
-                sum_rii += nmis(cluster_list[best_cluster][i], cluster_list[best_cluster][j], average_method='arithmetic')
-        if sum_rii > max_sum:
-            max_sum, cluster_mode, ix = sum_rii, cluster_list[best_cluster][i], location
-    if cluster_mode.empty:
-        print('Something went wrong')
-    else:
-        # Mode will always be leftmost column.
-        # Drop designated mode, append to end of DataFrame, and reverse string ;)
-        cluster_list[best_cluster] = cluster_list[best_cluster].drop(cluster_list[best_cluster].columns[ix], axis=1)
-        cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], cluster_mode], axis=1)
-        cols = cluster_list[best_cluster].columns.tolist()
-        cols = cols[-1:] + cols[:-1]
-        cluster_list[best_cluster] = cluster_list[best_cluster][cols]
+    # Calculate the new mode for the best cluster
+    calculate_new_mode(cluster_list[best_cluster])
 
-    # Handles the cluster where mode has been removed
+    # Go back to the cluster the random mode came from and auction off remaining attributes
     if cluster_list[random_df_il].empty:
         del cluster_list[random_df_il]
 
@@ -157,38 +167,7 @@ while k != 2:
     else:
         print('\nThere was a problem breaking up a cluster.\n')
 
-    # Compute new mode for each cluster after breaking up and calculate Sr(Mode).
-    for cluster in cluster_list:
-        max_sum = 0
-        cluster_mode = pd.Series()
-        for location, i in enumerate(cluster):
-            sum_rii = 0
-            for j in cluster:
-                if cluster[i].name != cluster[j].name:
-                    sum_rii += nmis(cluster[i], cluster[j], average_method='arithmetic')
-            if sum_rii > max_sum:
-                max_sum, cluster_mode, ix = sum_rii, cluster[i], location
-        if cluster_mode.empty:
-            del cluster_mode
-        else:
-            # Mode will always be leftmost column.
-            # Drop designated mode, append to end of DataFrame, and reverse string.
-            cluster = cluster.drop(cluster.columns[ix], axis=1)
-            cluster = pd.concat([cluster, cluster_mode], axis=1)
-            cols = cluster.columns.tolist()
-            cols = cols[-1:] + cols[:-1]
-            cluster = cluster[cols]
+    # Compute new mode and sr mode for each cluster in the cluster list
+    cluster_list = [calculate_new_mode(cluster) for cluster in cluster_list]
+    cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
 
-    for cluster in cluster_list:
-        if len(cluster.columns) >= 2:
-            sr_mode_calculator(cluster)
-
-    # Parallelize Sr(mode) computation
-    # pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-    # pool.map_async(sr_mode_calculator, [i for i in cluster_list if len(i.columns) >= 2])
-    # pool.close()
-
-
-# pool.terminate()
-spinner.stop()
-print('Took', time.perf_counter() - start_time, 'seconds')

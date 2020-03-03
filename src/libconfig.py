@@ -8,9 +8,7 @@ import random
 import csv
 from collections import defaultdict
 from tkinter import filedialog
-
 from halo import Halo
-
 import pandas as pd
 import numpy as np
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
@@ -34,6 +32,3 @@ def main():
         # Output unexpected Exceptions.
         Logging.log_exception(exception, False)
 
-
-# if __name__ == "__main__":
-#    main()
