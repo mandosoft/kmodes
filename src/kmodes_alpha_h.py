@@ -105,6 +105,7 @@ def calculate_new_mode(x):
         if sum_rii > max_sum:
             max_sum, cluster_mode, ix = sum_rii, x[i], location
 
+    # these are already pandas pattern
     if cluster_mode.empty:
         del cluster_mode
     else:

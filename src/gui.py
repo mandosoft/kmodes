@@ -17,8 +17,8 @@ window.configure(bg=b_color)
 
 label1 = Label(window, text='\nSelect a CSV file for upload:' + '\n'*4, anchor=CENTER, bg=b_color, fg=f_color)
 
-label2 = Label(window, text='\n\nDelete columns that contain more than\n this'
-                            ' percentage of null values\n (removes insertions):\n', anchor=CENTER, padx=15,
+label2 = Label(window, text='\n\nSet what percentage of information      \n'
+                            'must be present in each column:\n', anchor=CENTER, padx=15,
                bg=b_color, fg=f_color)
 
 label3 = Label(window, text='Enter label number for first aligned attribute\n (the actual sequence location '
