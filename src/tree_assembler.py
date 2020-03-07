@@ -112,7 +112,7 @@ while n_order < max_node_len:
 
     n_order += 1
     next_set = [s for s in G.nodes if len(s) == n_order]
-
+    # Set x tick labels to identify pairwise cluster locations
     if n_order == 2:
         xtick_labels = [(next_set.index(x) + 1) for x in next_set]
 
@@ -120,13 +120,17 @@ while n_order < max_node_len:
         ytick_labels.append(str(n_order))
         y_pos -= 100
         ytick_list.append(y_pos)
-        x_pos += x_indent
+        # x_pos += x_indent
         for each in next_set:
+            if len(each) == 2:
+                x_pos += x_indent
+            else:
+                x_pos = sum(each)/len(each)
             pos[get_line_numbers_concat(each)] = (x_pos, y_pos)
             xtick_list.append(x_pos)
-            x_pos += (n_pos + len(each))
-        x_indent = (20 * (1 / 3.75)) + n_order
-        x_pos = 0
+            # x_pos += (n_pos + len(each))
+        # x_indent = (20 * (1 / 3.75)) + n_order
+        # x_pos = 0
     # n_pos += .28
 
 # noinspection PyTypeChecker

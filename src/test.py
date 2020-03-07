@@ -49,6 +49,30 @@ def time2():
     df = pd.read_csv('testsequence.csv', encoding='utf-8', header=None)
     calculate_new_mode(df)
 
-
 # print(timeit.timeit(time, number=100))
-print(timeit.timeit(time2, number=100))
+# print(timeit.timeit(time2, number=100))
+
+
+# ---------- Get labelling schema from first row ----------------------
+
+df = pd.read_csv('~/Desktop/kmodes/testfiles/TOPRIM pfam Yeast Top2.csv', encoding='utf-8', header=None)
+df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
+df = df.set_index('SEQUENCE_ID', drop=True)
+df = df.rename(columns=lambda x: x - 1)
+first_row_ix = df.index[0]
+ix_label = first_row_ix.rsplit('/', 1)
+ix_label = ix_label[1]
+ix_label = ix_label.rsplit('-', 1)
+df_label = int(ix_label[0])
+column_lab_dict = dict()
+stored = [df[i].iloc[0] for i in df]
+
+for i in df:
+    if df[i].iloc[0] != '-':
+        column_lab_dict[df.columns[i]] = df_label
+        df_label += 1
+    else:
+        column_lab_dict[df.columns[i]] = ''
+df = df.rename(columns=column_lab_dict)
+
+df.to_csv('testfile_out.csv', index=True, header=True)

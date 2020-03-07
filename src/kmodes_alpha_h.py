@@ -18,7 +18,7 @@ for i in each_2nd_col:
     max_rii = 0
     rii = 0
     for location, cluster in enumerate(cluster_list):
-        cluster_mode = cluster[cluster.columns[0]]  # cluster mode is always first column
+        cluster_mode = cluster[cluster.columns[0]]  # helps distinguish as Series object
         if each_2nd_col[i].name != cluster_mode.name:
             rii = nmis(each_2nd_col[i], cluster_mode, average_method='arithmetic')
             if rii > max_rii:
@@ -31,41 +31,45 @@ for i in each_2nd_col:
 # All list processing below prevents shared attributes between pairwise associations
 
 pairwise = 2
-# Get pairwise clusters
+
 pairwise_list = [cluster for cluster in cluster_list if len(cluster.columns) == pairwise]
-# Get all labels. List of ints not bounded by cluster
+
 pairwise_cluster_labels = [list(cluster.columns.values) for cluster in pairwise_list]
-unique_set = set()
-# Get only unique values in list
-unique_list = [x for x in pairwise_cluster_labels if frozenset(x) not in unique_set and not unique_set.add(frozenset(x))]
-cluster_sets_list = list()
+
+del_list = [x for each in pairwise_cluster_labels for x in each]
+
+unique_list = list()
+for each in pairwise_cluster_labels:
+    if set(each).issubset(set(del_list)):
+        del_list = list(filter((each[0]).__ne__, del_list))
+        del_list = list(filter((each[1]).__ne__, del_list))
+        unique_list.append(each)
 
 # Compare clusters to list of unique values
-# If every value in the cluster is unique, it passes into sets list
+unique_pairwise_clusters = list()
 for cluster in pairwise_list:
     for i in unique_list:
         if (cluster.columns.values == i).all():
-            cluster_sets_list.append(cluster)
+            unique_pairwise_clusters.append(cluster)  # list of dataframes
+
 # We now have all unique pairwise clusters.
-
 # Get remaining data as single attributes
-sets_list = [i for cluster in cluster_sets_list for i in cluster]
-clean_list = [j for cluster in cluster_list_clean for j in cluster]
-final_set = [item for item in clean_list if item not in sets_list]
-diff_df_set = list()
+series_from_upc = [i for cluster in unique_pairwise_clusters for i in cluster]
+series_clean_list = [j for cluster in cluster_list_clean for j in cluster]
+final_set = [item for item in series_clean_list if item not in series_from_upc]
 
+difference_set = list()
 for i in cluster_list_clean:
     for j in final_set:
         if j == i.columns.values:
-            diff_df_set.append(pd.DataFrame(i))  # loads single attributes into their own dataframes
+            difference_set.append(pd.DataFrame(i))  # loads single attributes into their own dataframes
 
-cluster_sets_list.extend(diff_df_set)
+unique_pairwise_clusters.extend(difference_set)
 
 # -------------------------------------------------------------------------------
 
-
 # Hard copy cluster list and ready for K modes algorithm
-cluster_list = cluster_sets_list.copy()
+cluster_list = unique_pairwise_clusters.copy()
 
 # Main globals. Use wisely.
 k = len(cluster_list)
@@ -99,18 +103,22 @@ def calculate_new_mode(x):
     cluster_mode = pd.Series()
     for location, i in enumerate(x):
         sum_rii = 0
-        for j in x:
-            if x[i].name != x[j].name:
+        for location2, j in enumerate(x):
+            if location != location2:
+                # print(x[i], type(x[i]), x[i].shape)
+                # print(x[j], type(x[j]), x[j].shape)
                 sum_rii += nmis(x[i], x[j], average_method='arithmetic')
         if sum_rii > max_sum:
             max_sum, cluster_mode, ix = sum_rii, x[i], location
 
-    # these are already pandas pattern
     if cluster_mode.empty:
         del cluster_mode
     else:
+        # print(x)
         x = x.drop(x.columns[ix], axis=1)
+        # print(x)
         x = pd.concat([x, cluster_mode], axis=1)
+        # print(x)
         cols = x.columns.tolist()
         cols = cols[-1:] + cols[:-1]
         x = x[cols]
@@ -121,11 +129,15 @@ def calculate_new_mode(x):
 # --------------- K Modes Algorithm --------------------
 
 # Store pairwise associations in dictionary
+
 cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
+
 
 while k != 2:
 
     k -= 1
+
+    print(k)
 
     # Begin by selecting a random mode from list
     enumerated_list = list(enumerate(cluster_list))
@@ -171,4 +183,7 @@ while k != 2:
     # Compute new mode and sr mode for each cluster in the cluster list
     cluster_list = [calculate_new_mode(cluster) for cluster in cluster_list]
     cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
+
+
+print('Run Complete!')
 

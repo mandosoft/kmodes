@@ -90,12 +90,13 @@ def trim_msa():
 def submit_and_run():
 
     submit_and_run.df = trim_msa.df
+    submit_and_run.df.to_csv('preprocessed_msa.csv', index=False, header=True)
     submit_and_run.df = submit_and_run.df.drop(submit_and_run.df.columns[[0]], axis=1)
     start_time = time.perf_counter()
-    runpy.run_module('kmodes_alpha_h')
-    runpy.run_module('preprocessor')
+    importlib.import_module('kmodes_alpha_h')
+    importlib.import_module('preprocessor')
     total_time = round((time.perf_counter() - start_time), 3)
-    runpy.run_module('tree_assembler')
+    importlib.import_module('tree_assembler')
     time_out = 'Took', total_time, 'seconds'
     t.delete(1.0, END)
     t.insert(INSERT, time_out)
