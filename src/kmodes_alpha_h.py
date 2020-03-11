@@ -103,10 +103,8 @@ def calculate_new_mode(x):
     cluster_mode = pd.Series()
     for location, i in enumerate(x):
         sum_rii = 0
-        for location2, j in enumerate(x):
-            if location != location2:
-                # print(x[i], type(x[i]), x[i].shape)
-                # print(x[j], type(x[j]), x[j].shape)
+        for j in x:
+            if x[i].name != x[j].name:
                 sum_rii += nmis(x[i], x[j], average_method='arithmetic')
         if sum_rii > max_sum:
             max_sum, cluster_mode, ix = sum_rii, x[i], location
@@ -114,11 +112,8 @@ def calculate_new_mode(x):
     if cluster_mode.empty:
         del cluster_mode
     else:
-        # print(x)
         x = x.drop(x.columns[ix], axis=1)
-        # print(x)
         x = pd.concat([x, cluster_mode], axis=1)
-        # print(x)
         cols = x.columns.tolist()
         cols = cols[-1:] + cols[:-1]
         x = x[cols]

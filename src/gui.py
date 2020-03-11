@@ -37,7 +37,9 @@ label4.grid(column=2, row=0)
 
 # progress = Progressbar(window, orient=HORIZONTAL, length=100, mode='determinate')
 # progress.grid(column=0, row=1)
-
+check_yes = IntVar()
+check_box = Checkbutton(window, text="Label based on 1st row mapping", bg=b_color, fg='red')
+check_box.grid(row=7, sticky=W)
 
 label_number = IntVar()
 label_number.set(1)

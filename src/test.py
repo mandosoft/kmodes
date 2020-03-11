@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
+import re
 import timeit
 
 
@@ -55,7 +56,7 @@ def time2():
 
 # ---------- Get labelling schema from first row ----------------------
 
-df = pd.read_csv('~/Desktop/kmodes/testfiles/TOPRIM pfam Yeast Top2.csv', encoding='utf-8', header=None)
+df = pd.read_csv('/home/thomastownsley/Desktop/kmodes/testfiles/B Lactamase2 PF13354.csv', encoding='utf-8', header=None)
 df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
 df = df.set_index('SEQUENCE_ID', drop=True)
 df = df.rename(columns=lambda x: x - 1)
@@ -67,8 +68,9 @@ df_label = int(ix_label[0])
 column_lab_dict = dict()
 stored = [df[i].iloc[0] for i in df]
 
+pattern = '^-'
 for i in df:
-    if df[i].iloc[0] != '-':
+    if not re.search(pattern, df[i].iloc[0]):
         column_lab_dict[df.columns[i]] = df_label
         df_label += 1
     else:
