@@ -2,6 +2,7 @@ import csv
 import networkx as nx
 import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import write_dot, graphviz_layout
+import math
 
 G = nx.Graph()
 
@@ -99,7 +100,6 @@ pos = dict()
 x_pos = 0
 y_pos = 1000
 n_order = 1
-flex_node = n_order * 2
 x_indent = 0
 y_indent = 0
 ytick_list = list()
@@ -107,6 +107,9 @@ xtick_list = list()
 xtick_labels = list()
 ytick_labels = list()
 max_node_len = max([len(s) for s in G.nodes])
+max_node_val = max([i for s in G.nodes for i in s])
+spacing_set_len = len([s for s in G.nodes if len(s) == 2])
+x_increment = max_node_val/spacing_set_len
 
 while n_order < max_node_len:
 
@@ -124,8 +127,9 @@ while n_order < max_node_len:
 
         for each in next_set:
             if len(each) == 2:
-                x_pos += 3.33
+                x_pos += x_increment
             else:
+                str_len = len(get_line_numbers_concat(each))
                 x_pos = sum(each)/len(each)
 
             pos[get_line_numbers_concat(each)] = (x_pos, y_pos)
