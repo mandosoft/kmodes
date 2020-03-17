@@ -1,6 +1,7 @@
 import csv
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 from networkx.drawing.nx_agraph import write_dot, graphviz_layout
 import math
 
@@ -129,11 +130,33 @@ while n_order < max_node_len:
             if len(each) == 2:
                 x_pos += x_increment
             else:
-                str_len = len(get_line_numbers_concat(each))
                 x_pos = sum(each)/len(each)
 
-            pos[get_line_numbers_concat(each)] = (x_pos, y_pos)
+            pos[each] = (x_pos, y_pos)
             xtick_list.append(x_pos)
+
+n_order = 2
+while n_order < max_node_len:
+    n_order += 1
+    value_list = list()
+    temp_dict = {each: values for (each, values) in pos.items() if len(each) == n_order}
+    for v, v1 in temp_dict.values():
+        value_list.append(v)
+
+    if len(value_list) > 5:
+        max_value_list = max(value_list)
+        min_value_list = min(value_list)
+        # Create an evenly spaced vector of x_pos values
+        lin_vector = np.linspace(min_value_list, max_value_list, num=len(value_list))
+        ind = 0
+        for k, v in temp_dict.items():
+            u, m = v
+            temp_dict[k] = (lin_vector[ind], m)
+            ind += 1
+
+    pos.update(temp_dict)
+
+pos = {get_line_numbers_concat(k): v for k, v in pos.items()}
 
 # noinspection PyTypeChecker
 G = nx.relabel_nodes(G, lambda x: get_line_numbers_concat(x))
@@ -148,11 +171,11 @@ ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
 ax.yaxis.set_label_coords(0, 1.02)
 
 # Todo Fix Tick structure
-nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='None')
+nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#4ede71', node_size=70)
 nx.draw_networkx_labels(G, pos=pos, ax=ax, font_weight='bold', font_size=5)
 
 colors = [G[u][v]['color'] for u, v in G.edges()]
-nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.5)
+nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.4)
 
 plt.grid(True, axis='y')
 
