@@ -3,7 +3,7 @@ from tkinter import filedialog
 import pandas as pd
 import importlib
 import time
-import runpy
+import re
 
 window = Tk()
 window.title('K Modes Alpha H')
@@ -38,7 +38,7 @@ label4.grid(column=2, row=0)
 # progress = Progressbar(window, orient=HORIZONTAL, length=100, mode='determinate')
 # progress.grid(column=0, row=1)
 check_yes = IntVar()
-check_box = Checkbutton(window, text="Label based on 1st row mapping", bg=b_color, fg='red')
+check_box = Checkbutton(window, variable=check_yes, text="Label based on 1st row mapping", bg=b_color, fg='red')
 check_box.grid(row=7, sticky=W)
 
 label_number = IntVar()
@@ -66,24 +66,57 @@ def get_file_path():
 
 
 def trim_msa():
+
     file = open(get_file_path.file_path)
     trim_msa.df = pd.read_csv(file, encoding='utf-8', header=None)
-    trim_msa.df = trim_msa.df.replace({'-': None})
 
+    def deweese_schema(df):
+        df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
+        df = df.set_index('SEQUENCE_ID', drop=True)
+        df = df.rename(columns=lambda x: x - 1)
+        first_row_ix = df.index[0]
+        ix_label = first_row_ix.rsplit('/', 1)
+        ix_label = ix_label[1]
+        ix_label = ix_label.rsplit('-', 1)
+        df_label = int(ix_label[0])
+        column_lab_dict = dict()
+
+        pattern = '^-'
+        for i in df:
+            if not re.search(pattern, df[i].iloc[0]):
+                column_lab_dict[df.columns[i]] = df_label
+                df_label += 1
+            else:
+                column_lab_dict[df.columns[i]] = ''
+        df = df.rename(columns=column_lab_dict)
+        return df
+
+    def durston_schema(df):
+        df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
+        df = df.set_index('SEQUENCE_ID', drop=True)
+        df.columns = range(len(df.columns))
+        label_val = label_number.get() - 1
+        df = df.rename(columns=lambda x: x + label_val)
+
+        return df
+
+    if check_yes.get() == 1:
+        trim_msa.df = deweese_schema(trim_msa.df)
+
+    # Remove High Insertion Areas
+    trim_msa.df = trim_msa.df.replace({'-': None})
     index_len = len(trim_msa.df.index)
     null_val = null_filter.get()
-
-    for i in trim_msa.df:
-        non_nulls = trim_msa.df[i].count()
+    for label, column in trim_msa.df.items():
+        non_nulls = column.count()
         info_amount = non_nulls / index_len
         if info_amount < null_val:
-            del trim_msa.df[i]
-
+            trim_msa.df = trim_msa.df.drop(columns=[label])
     trim_msa.df = trim_msa.df.replace({None: '-'})  # must return 'None' inserts to '-' str in order to run
-    trim_msa.df.columns = range(len(trim_msa.df.columns))
-    label = label_number.get() - 1
-    trim_msa.df = trim_msa.df.rename(columns=lambda x: x + label)
-    trim_msa.df = trim_msa.df.rename(columns={trim_msa.df.columns[0]: 'SEQUENCE_ID'})
+
+    if check_yes.get() == 0:
+        trim_msa.df = durston_schema(trim_msa.df)
+
     t.delete(1.0, END)
     t.insert(INSERT, trim_msa.df)
     button3.config(state='normal', bg='green')
@@ -93,7 +126,6 @@ def submit_and_run():
 
     submit_and_run.df = trim_msa.df
     submit_and_run.df.to_csv('preprocessed_msa.csv', index=False, header=True)
-    submit_and_run.df = submit_and_run.df.drop(submit_and_run.df.columns[[0]], axis=1)
     start_time = time.perf_counter()
     importlib.import_module('kmodes_alpha_h')
     importlib.import_module('preprocessor')

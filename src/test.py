@@ -55,26 +55,32 @@ def time2():
 
 
 # ---------- Get labelling schema from first row ----------------------
+calc = pd.read_csv('/home/thomastownsley/Desktop/kmodes/testfiles/TOPRIM pfam Yeast Top2.csv', encoding='utf-8', header=None)
 
-df = pd.read_csv('/home/thomastownsley/Desktop/kmodes/testfiles/B Lactamase2 PF13354.csv', encoding='utf-8', header=None)
-df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
-df = df.set_index('SEQUENCE_ID', drop=True)
-df = df.rename(columns=lambda x: x - 1)
-first_row_ix = df.index[0]
-ix_label = first_row_ix.rsplit('/', 1)
-ix_label = ix_label[1]
-ix_label = ix_label.rsplit('-', 1)
-df_label = int(ix_label[0])
-column_lab_dict = dict()
-stored = [df[i].iloc[0] for i in df]
 
-pattern = '^-'
-for i in df:
-    if not re.search(pattern, df[i].iloc[0]):
-        column_lab_dict[df.columns[i]] = df_label
-        df_label += 1
-    else:
-        column_lab_dict[df.columns[i]] = ''
-df = df.rename(columns=column_lab_dict)
+def schema_relabel(df):
+    df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
+    df = df.set_index('SEQUENCE_ID', drop=True)
+    df = df.rename(columns=lambda x: x - 1)
+    first_row_ix = df.index[0]
+    ix_label = first_row_ix.rsplit('/', 1)
+    ix_label = ix_label[1]
+    ix_label = ix_label.rsplit('-', 1)
+    df_label = int(ix_label[0])
+    column_lab_dict = dict()
 
-df.to_csv('testfile_out.csv', index=True, header=True)
+    pattern = '^-'
+    for i in df:
+        if not re.search(pattern, df[i].iloc[0]):
+            column_lab_dict[df.columns[i]] = df_label
+            df_label += 1
+        else:
+            column_lab_dict[df.columns[i]] = ''
+    df = df.rename(columns=column_lab_dict)
+
+    df.to_csv('testfile_out.csv', index=True, header=True)
+    print(df)
+
+
+schema_relabel(calc)
+
