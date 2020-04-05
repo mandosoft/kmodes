@@ -1,9 +1,0 @@
-SEQUENCE_ID,1,2,3,4,5,6,7,8,9,10,11,12,13,14
-C,C,C,C,C,C,C,T,T,T,T,T,S,S,S
--,G,N,D,A,G,N,D,A,G,N,D,A,G,N
-R,-,M,-,-,R,K,M,-,L,R,K,M,I,L
-C,C,C,L,C,-,C,T,T,T,T,T,S,S,S
-A,G,N,D,A,E,N,D,A,-,-,-,A,G,N
-W,Y,F,V,H,Q,E,P,W,Y,F,V,H,Q,E
-A,G,N,D,A,G,N,F,A,G,G,D,A,G,N
-A,G,Y,D,A,G,N,D,A,G,N,D,A,G,N
