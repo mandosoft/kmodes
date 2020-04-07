@@ -162,7 +162,7 @@ pos = {get_line_numbers_concat(k): v for k, v in pos.items()}
 # noinspection PyTypeChecker
 G = nx.relabel_nodes(G, lambda x: get_line_numbers_concat(x))
 
-write_dot(G, 'test.dot')
+write_dot(G, 'tree_viz/test.dot')
 
 # plt.title('K Modes Alpha H Tree Diagram')
 fig = plt.figure(figsize=(25, 15))
@@ -187,5 +187,5 @@ ax.yaxis.set_ticklabels(ytick_labels, visible=True)
 ax.xaxis.set_ticks(xtick_list)
 ax.xaxis.set_ticklabels(xtick_labels, visible=True)
 
-plt.savefig('nx_test.jpg', optimize=True, dpi=150)
+plt.savefig('outfiles/nx_test.jpg', optimize=True, dpi=150)
 plt.show()
