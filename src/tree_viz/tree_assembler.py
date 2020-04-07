@@ -7,7 +7,7 @@ import math
 
 G = nx.Graph()
 
-with open('../outfiles/tree_input.csv') as f:
+with open('tree_viz/tree_input.csv') as f:
     lines = list(csv.reader(f))
 values = lines[1:]
 tree_list = [entry[0].strip('()') for entry in values]

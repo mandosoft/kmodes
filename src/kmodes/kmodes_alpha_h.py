@@ -4,9 +4,6 @@ from itertools import combinations
 from gui import *  # includes df for cluster_list
 from libconfig import *
 
-# Imported from GUI options
-cut_off = cut_off.get()
-
 # Cluster Initialization
 df = submit_and_run.df  # df passed from gui.py
 cluster_list = [pd.DataFrame(df[i]) for i in df]
@@ -91,8 +88,7 @@ def calculate_sr_mode(x):
             if sum_rii > max_sum:
                 max_sum = sum_rii
         sr_mode = max_sum / cc
-        if sr_mode >= cut_off:
-            csv_dict[tuple([tuple(sorted(x)), 'k = ' + str(k)])] = round(sr_mode, 3)
+        csv_dict[tuple([tuple(sorted(x)), 'k = ' + str(k)])] = round(sr_mode, 3)
 
     return x
 
