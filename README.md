@@ -2,8 +2,9 @@
 Instructions for setup:
 
 Requires python 3.7+
-
-Setup Anaconda environment and run:
+- git clone  
+- Setup virtual environment
+ - 
 ```bash
 pip install -r requirements.txt
 ```
