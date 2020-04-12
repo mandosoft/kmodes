@@ -1,7 +1,7 @@
 # kmodes
 Instructions for setup:
 
-Requires python3.7+
+Requires python 3.7+
 
 Setup Anaconda environment and run:
 ```bash
