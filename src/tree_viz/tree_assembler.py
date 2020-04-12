@@ -187,5 +187,5 @@ ax.yaxis.set_ticklabels(ytick_labels, visible=True)
 ax.xaxis.set_ticks(xtick_list)
 ax.xaxis.set_ticklabels(xtick_labels, visible=True)
 
-plt.savefig('outfiles/nx_test.jpg', optimize=True, dpi=150)
+plt.savefig('outfiles/nx_test.svg', optimize=True, dpi=150)
 plt.show()
