@@ -46,8 +46,6 @@ def get_line_numbers_concat(line_nums):
     return final_str
 
 
-# -------- Loop ----------------
-# parent = False
 for i in G.nodes:
     G.nodes[i]['parent'] = False
     G.nodes[i]['split'] = False
@@ -164,28 +162,3 @@ G = nx.relabel_nodes(G, lambda x: get_line_numbers_concat(x))
 
 write_dot(G, 'tree_viz/test.dot')
 
-# plt.title('K Modes Alpha H Tree Diagram')
-fig = plt.figure(figsize=(25, 15))
-ax = fig.add_subplot(1, 1, 1)
-
-ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
-ax.yaxis.set_label_coords(0, 1.02)
-ax.set_xlabel('Site location in the Multiple Sequence Alignment', fontsize=4, weight='bold')
-ax.xaxis.set_label_coords(0.50, 1.02)
-
-nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#4ede71', node_size=60, alpha=.2)
-nx.draw_networkx_labels(G, pos=pos, ax=ax, font_weight='bold', font_size=5)
-
-colors = [G[u][v]['color'] for u, v in G.edges()]
-nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.6)
-
-plt.grid(True, axis='y')
-
-ax.yaxis.set_ticks(ytick_list)
-ax.yaxis.set_ticklabels(ytick_labels, visible=True)
-
-ax.xaxis.set_ticks(xtick_list)
-ax.xaxis.set_ticklabels(xtick_labels, visible=True)
-
-plt.savefig('outfiles/nx_test.svg', optimize=True, dpi=150)
-plt.show()

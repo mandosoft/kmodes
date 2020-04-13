@@ -5,18 +5,17 @@ import pandas as pd
 import importlib
 import time
 import re
-import sys
 
 window = Tk()
 window.title('K Modes Alpha H')
-window.geometry('730x700')
+window.geometry('710x650')
 
 # style macros
 b_color = '#3e434a'
 f_color = 'white'
 
 window.configure(bg=b_color)
-window.resizable(False, False)
+window.resizable(True, True)
 
 label1 = Label(window, text='\nSelect a CSV file for upload:' + '\n', anchor=CENTER, bg=b_color, fg=f_color)
 
@@ -148,6 +147,8 @@ def submit_and_run():
     time_out = 'Took', total_time, 'seconds'
     t.delete(1.0, END)
     t.insert(INSERT, time_out)
+    window.destroy()
+    importlib.import_module('src.tree_viz.tree_gui')
 
 
 button1 = Button(f1, text='Select File', fg='white', bg='purple', command=get_file_path)
