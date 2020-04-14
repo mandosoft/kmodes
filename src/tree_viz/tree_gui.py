@@ -56,6 +56,8 @@ class TreeTab(Frame):
         ax.xaxis.set_ticklabels(xtick_labels, visible=True)
         canvas = FigureCanvasTkAgg(fig, self)
         canvas.draw()
+        toolbar = NavigationToolbar2Tk(canvas, self)
+        toolbar.update()
         canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=True)
 
 
