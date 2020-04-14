@@ -19,6 +19,8 @@ class KmodesApp(Tk):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "K Modes Alpha")
         self.notebook = ttk.Notebook()
+        self.control_panel = ControlPanel(self)
+        self.control_panel.pack(side=RIGHT, fill=NONE, expand=False)
         self.add_tab()
         self.notebook.pack(side=TOP, fill=BOTH, expand=True)
 
@@ -33,6 +35,15 @@ class KmodesApp(Tk):
             self.destroy()
 
 
+class ControlPanel(Frame):
+    def __init__(self, name, *args, **kwargs):
+        Frame.__init__(self, *args, **kwargs)
+        self.name = name
+        # self.pack(side=LEFT, fill=NONE, expand=True)
+        button = Button(self, text="Redraw", fg="red")
+        button.pack(side=LEFT)
+
+
 class TreeTab(Frame):
     def __init__(self, name, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
@@ -42,8 +53,8 @@ class TreeTab(Frame):
         ax = fig.add_subplot(1, 1, 1)
         ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
         ax.yaxis.set_label_coords(0, 1.02)
-        ax.set_xlabel('Site location in the Multiple Sequence Alignment', fontsize=4, weight='bold')
-        ax.xaxis.set_label_coords(0.50, 1.02)
+        ax.set_xlabel('Site location in the Multiple Sequence Alignment', fontsize=8, weight='bold')
+        ax.xaxis.set_label_coords(0.5, 1.12)
 
         nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#4ede71', node_size=60, alpha=.2)
         nx.draw_networkx_labels(G, pos=pos, ax=ax, font_weight='bold', font_size=5)
@@ -54,6 +65,11 @@ class TreeTab(Frame):
         ax.yaxis.set_ticklabels(ytick_labels, visible=True)
         ax.xaxis.set_ticks(xtick_list)
         ax.xaxis.set_ticklabels(xtick_labels, visible=True)
+        for i, k in enumerate(ax.xaxis.get_ticklabels()):
+            label = ax.xaxis.get_ticklabels()[i]
+            label.set_bbox(dict(facecolor='none', edgecolor='blue'))
+        ax.tick_params(labelbottom=False, labeltop=True, labelleft=True, labelright=False, bottom=False,
+                       top=False, left=False, right=False)
         canvas = FigureCanvasTkAgg(fig, self)
         canvas.draw()
         toolbar = NavigationToolbar2Tk(canvas, self)
@@ -81,6 +97,7 @@ class CsvTab(Frame):
                 else:
                     self.canvas.add_row(*row)
                 parsed_rows += 1
+
         self.canvas.display()
 
 
