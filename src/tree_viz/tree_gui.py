@@ -1,16 +1,16 @@
 from src.tree_viz.tree_assembler import *
 
 from tkinter import *
-from tkinter import ttk
-from PIL import Image, ImageTk
+from tkinter import ttk, messagebox
+from tkdatacanvas import *
+
 import networkx as nx
+import io
 import csv
 
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.figure import Figure
-
 import matplotlib.pyplot as plt
 
 
@@ -28,15 +28,17 @@ class KmodesApp(Tk):
         self.notebook.add(tab, text="Tree View")
         self.notebook.add(tab2, text="Cluster Data")
 
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Are you sure want to quit?"):
+            self.destroy()
+
 
 class TreeTab(Frame):
     def __init__(self, name, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
-        # self.label = Label(self, text="Tree View")
-        # self.label.grid(row=1, column=0, padx=10, pady=10)
         self.name = name
-        fig = plt.figure(figsize=(5, 5))
 
+        fig = plt.figure(figsize=(5, 5))
         ax = fig.add_subplot(1, 1, 1)
         ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
         ax.yaxis.set_label_coords(0, 1.02)
@@ -58,12 +60,28 @@ class TreeTab(Frame):
 
 
 class CsvTab(Frame):
+
     def __init__(self, name, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
-        self.label = Label(self, text="CSV Data")
-        self.label.grid(row=1, column=0, padx=10, pady=10)
         self.name = name
+        self.canvas = DataCanvas(self)
+        self.write_data()
+        self.canvas.pack(side=TOP, fill=BOTH)
+
+    def write_data(self):
+        with io.open("outfiles/output.csv", "r", newline="") as csv_file:
+            reader = csv.reader(csv_file)
+            parsed_rows = 0
+            for row in reader:
+                if parsed_rows == 0:
+                    # Display the first row as a header
+                    self.canvas.add_header(*row)
+                else:
+                    self.canvas.add_row(*row)
+                parsed_rows += 1
+        self.canvas.display()
 
 
 app = KmodesApp()
+app.protocol("WM_DELETE_WINDOW", app.on_closing)
 app.mainloop()
