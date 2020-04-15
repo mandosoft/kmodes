@@ -53,11 +53,11 @@ class TreeTab(Frame):
     def __init__(self, cutoff, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
         self.cutoff = cutoff
-        self.draw_tree(0.05)
+        self.draw_tree(0)  # set cutoff to zero by default
 
     def draw_tree(self, cutoff):
         """
-        This is the main tree drawing module
+        This is the main tree drawing method
         """
         G = nx.Graph()
 
@@ -182,7 +182,7 @@ class TreeTab(Frame):
                     else:
                         x_pos = sum(each) / len(each)
 
-                    pos[each] = (x_pos, y_pos)
+                    pos[each] = (x_pos, (y_pos+5))  # y offset label from x axis
                     xtick_list.append(x_pos)
 
         n_order = 2
