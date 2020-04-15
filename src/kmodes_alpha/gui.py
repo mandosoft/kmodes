@@ -143,7 +143,7 @@ def submit_and_run():
     importlib.import_module('kmodes_alpha_h')
     importlib.import_module('preprocessor')
     total_time = round((time.perf_counter() - start_time), 3)
-    importlib.import_module('src.tree_viz.tree_assembler')
+    # importlib.import_module('src.tree_viz.tree_assembler')
     time_out = 'Took', total_time, 'seconds'
     t.delete(1.0, END)
     t.insert(INSERT, time_out)
