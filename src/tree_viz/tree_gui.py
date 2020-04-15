@@ -35,19 +35,18 @@ class KmodesApp(Tk):
             self.destroy()
 
 
+def update_tree(val):
+    val = float(val)
+    cut_off = val/100
+    print(cut_off)
+
+
 class ControlPanel(Frame):
     def __init__(self, name, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
         self.name = name
-        # self.slider()
-    """"
-    @classmethod
-    def slider(cls):
-        w = Scale(cls, from_=0, to=100, orient=HORIZONTAL)
-        w.pack(side=TOP, fill=BOTH, expand=True)
-        cls.cutoff = float(w.get())
-        return cls.cutoff
-    """
+        self.slider = Scale(self, from_=0, to=100, orient=HORIZONTAL, command=update_tree)
+        self.slider.pack(side=TOP, fill=BOTH, expand=True)
 
 
 class TreeTab(Frame):
@@ -61,12 +60,11 @@ class TreeTab(Frame):
         This is the main tree drawing module
         """
         G = nx.Graph()
-        # cutoff = ControlPanel.slider()
 
         with open('tree_viz/tree_input.csv') as f:
             lines = list(csv.reader(f))
         values = lines[1:]  # ignores header
-        values = [entry for entry in values if float(entry[2]) >= 0]
+        values = [entry for entry in values if float(entry[2]) >= 0]  # modified variable
         tree_list = [entry[0].strip('()') for entry in values]
         tree_list = [i.split(',') for i in tree_list]
         tree_list = [list(map(int, i)) for i in tree_list]
