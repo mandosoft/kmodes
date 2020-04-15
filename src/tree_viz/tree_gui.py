@@ -36,8 +36,8 @@ class KmodesApp(Tk):
 
 
 def update_tree(val):
-    val = float(val)
-    cut_off = val/100
+    cut_off = float(val) / 100
+    # needs to call
     print(cut_off)
 
 
@@ -50,21 +50,21 @@ class ControlPanel(Frame):
 
 
 class TreeTab(Frame):
-    def __init__(self, name, *args, **kwargs):
+    def __init__(self, cutoff, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
-        self.name = name
-        self.draw_tree()
+        self.cutoff = cutoff
+        self.draw_tree(0.05)
 
-    def draw_tree(self):
+    def draw_tree(self, cutoff):
         """
         This is the main tree drawing module
         """
         G = nx.Graph()
 
-        with open('tree_viz/tree_input.csv') as f:
+        with open('tree_input.csv') as f:
             lines = list(csv.reader(f))
         values = lines[1:]  # ignores header
-        values = [entry for entry in values if float(entry[2]) >= 0]  # modified variable
+        values = [entry for entry in values if float(entry[2]) >= cutoff]  # modified variable
         tree_list = [entry[0].strip('()') for entry in values]
         tree_list = [i.split(',') for i in tree_list]
         tree_list = [list(map(int, i)) for i in tree_list]
@@ -212,7 +212,7 @@ class TreeTab(Frame):
         # noinspection PyTypeChecker
         G = nx.relabel_nodes(G, lambda x: get_line_numbers_concat(x))
 
-        write_dot(G, 'tree_viz/test.dot')
+        write_dot(G, 'test.dot')
 
         fig = plt.figure(figsize=(5, 5))
         ax = fig.add_subplot(1, 1, 1)
@@ -248,9 +248,10 @@ class CsvTab(Frame):
         Frame.__init__(self, *args, **kwargs)
         self.name = name
         self.canvas = DataCanvas(self)
-        self.write_data()
+        # self.write_data()
         self.canvas.pack(side=TOP, fill=BOTH)
 
+    """
     def write_data(self):
         with io.open("outfiles/output.csv", "r", newline="") as csv_file:
             reader = csv.reader(csv_file)
@@ -264,6 +265,7 @@ class CsvTab(Frame):
                 parsed_rows += 1
 
         self.canvas.display()
+    """
 
 
 app = KmodesApp()
