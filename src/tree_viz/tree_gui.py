@@ -47,7 +47,7 @@ class TreeTab(Frame):
         self.canvas = canvas
         self.draw_tree(0)  # set cutoff to zero by default
         self.slider = Scale(self, from_=0, to=100, orient=VERTICAL, command=self.update_tree)
-        self.slider.pack(side=BOTTOM, fill=BOTH, expand=True)
+        self.slider.pack(side=BOTTOM, fill=X, expand=True)
 
     def update_tree(self, val):  # val changes as slider is moved
         cutoff = float(val) / 100
