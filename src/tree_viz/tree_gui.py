@@ -12,7 +12,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
-
+import matplotlib.patches as mpatches
 
 class KmodesApp(Tk):
     def __init__(self, *args, **kwargs):
@@ -48,11 +48,12 @@ class TreeTab(Frame):
         Frame.config(self, bg="white")
         self.canvas = canvas
         self.draw_tree(0)  # set cutoff to zero by default
-        self.slider = Spinbox(self, from_=0, to=100, command=self.update_tree)
-        self.slider.pack(side=BOTTOM, fill=NONE, expand=False)
+        self.spinbox = Spinbox(self, from_=0, to=100, command=self.update_tree)
+        self.spinbox.pack(side=BOTTOM, fill=NONE, expand=False)
 
     def update_tree(self):  # val changes as slider is moved
-        cutoff = float(self.slider.get()) / 100
+        cutoff = float(self.spinbox.get()) / 100
+        self.fig.clf()  # memory manage figures
         self.canvas.get_tk_widget().pack_forget()
         self.toolbar.destroy()
         return self.draw_tree(cutoff)
@@ -131,7 +132,7 @@ class TreeTab(Frame):
                 if not G.nodes[i]['parent']:
                     for j in G.nodes:
                         if i != j and set(i).issubset(set(j)):
-                            G.add_edge(i, j, color='r')
+                            G.add_edge(i, j, color='blue')
                             G.nodes[i]['parent'] = True
 
                 # Second pass checks for 80% rule
@@ -144,7 +145,7 @@ class TreeTab(Frame):
                             percent_in_child = count_elements / len(i)
                             if percent_in_child >= .33:
                                 if G.degree[i] < 2:
-                                    G.add_edge(i, j, color='purple')
+                                    G.add_edge(i, j, color='r')
                                     G.nodes[i]['split'] = True
                                     if G.degree[i] == 2:
                                         G.nodes[i]['parent'] = True
@@ -216,8 +217,8 @@ class TreeTab(Frame):
 
         write_dot(G, 'test.dot')
 
-        fig = plt.figure(figsize=(5, 5))
-        ax = fig.add_subplot(1, 1, 1)
+        self.fig = plt.figure(figsize=(5, 5))
+        ax = self.fig.add_subplot(1, 1, 1)
         ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
         ax.yaxis.set_label_coords(0, 1.02)
         ax.set_xlabel('Site location in the Multiple Sequence Alignment', fontsize=8, weight='bold')
@@ -232,12 +233,16 @@ class TreeTab(Frame):
         ax.yaxis.set_ticklabels(ytick_labels, visible=True)
         ax.xaxis.set_ticks(xtick_list)
         ax.xaxis.set_ticklabels(xtick_labels, visible=True)
+        split_patch = mpatches.Patch(color='red', label='cluster split')
+        perfect_patch = mpatches.Patch(color='blue', label='perfect superset')
+        ax.legend(handles=([perfect_patch, split_patch]), loc='upper center', bbox_to_anchor=(0.5, -0.05),
+                  fancybox=True, shadow=True, ncol=2)
         for i, k in enumerate(ax.xaxis.get_ticklabels()):
             label = ax.xaxis.get_ticklabels()[i]
             label.set_bbox(dict(facecolor='yellow', edgecolor='black'))
         ax.tick_params(labelbottom=False, labeltop=True, labelleft=True, labelright=False, bottom=False,
                        top=False, left=False, right=False)
-        self.canvas = FigureCanvasTkAgg(fig, self)
+        self.canvas = FigureCanvasTkAgg(self.fig, self)
         self.canvas.draw()
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
@@ -253,7 +258,6 @@ class CsvTab(Frame):
         # self.write_data()
         self.canvas.pack(side=TOP, fill=BOTH)
 
-    """
     def write_data(self):
         with io.open("outfiles/output.csv", "r", newline="") as csv_file:
             reader = csv.reader(csv_file)
@@ -267,7 +271,6 @@ class CsvTab(Frame):
                 parsed_rows += 1
 
         self.canvas.display()
-    """
 
 
 app = KmodesApp()
