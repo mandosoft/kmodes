@@ -19,8 +19,8 @@ class KmodesApp(Tk):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "K Modes Alpha")
         self.notebook = ttk.Notebook()
-        self.control_panel = ControlPanel(self)
-        self.control_panel.pack(side=RIGHT, fill=NONE, expand=False)
+        # self.control_panel = ControlPanel(self)
+        # self.control_panel.pack(side=RIGHT, fill=NONE, expand=False)
         self.add_tab()
         self.notebook.pack(side=TOP, fill=BOTH, expand=True)
 
@@ -34,31 +34,27 @@ class KmodesApp(Tk):
         if messagebox.askokcancel("Quit", "Are you sure want to quit?"):
             self.destroy()
 
-"""
-def update_tree(val):
-    cutoff = float(val) / 100
-    return cutoff
-"""
-
 
 class ControlPanel(Frame):
     def __init__(self, name, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
         self.name = name
-        self.slider = Scale(self, from_=0, to=100, orient=HORIZONTAL, command=TreeTab.update_tree)
-        self.slider.pack(side=TOP, fill=BOTH, expand=True)
 
 
 class TreeTab(Frame):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, canvas, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
-        self.draw_tree(self.update_tree(0))  # set cutoff to zero by default
+        self.canvas = canvas
+        self.draw_tree(0)  # set cutoff to zero by default
+        self.slider = Scale(self, from_=0, to=100, orient=VERTICAL, command=self.update_tree)
+        self.slider.pack(side=BOTTOM, fill=BOTH, expand=True)
 
-    @classmethod
-    def update_tree(cls, val):  # val changes as slider is moved
+    def update_tree(self, val):  # val changes as slider is moved
         cutoff = float(val) / 100
-        print(cutoff)
-        return cutoff
+        self.canvas.get_tk_widget().pack_forget()
+        self.toolbar.destroy()
+
+        return self.draw_tree(cutoff)
 
     def draw_tree(self, cutoff):
         """
@@ -240,11 +236,11 @@ class TreeTab(Frame):
             label.set_bbox(dict(facecolor='yellow', edgecolor='black'))
         ax.tick_params(labelbottom=False, labeltop=True, labelleft=True, labelright=False, bottom=False,
                        top=False, left=False, right=False)
-        canvas = FigureCanvasTkAgg(fig, self)
-        canvas.draw()
-        toolbar = NavigationToolbar2Tk(canvas, self)
-        toolbar.update()
-        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=True)
+        self.canvas = FigureCanvasTkAgg(fig, self)
+        self.canvas.draw()
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self)
+        self.toolbar.update()
+        self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=True)
 
 
 class CsvTab(Frame):
