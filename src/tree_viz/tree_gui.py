@@ -42,18 +42,19 @@ class ControlPanel(Frame):
 
 
 class TreeTab(Frame):
+
     def __init__(self, canvas, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
+        Frame.config(self, bg="white")
         self.canvas = canvas
         self.draw_tree(0)  # set cutoff to zero by default
         self.slider = Spinbox(self, from_=0, to=100, command=self.update_tree)
-        self.slider.pack(side=BOTTOM, fill=X, expand=False)
+        self.slider.pack(side=BOTTOM, fill=NONE, expand=False)
 
     def update_tree(self):  # val changes as slider is moved
         cutoff = float(self.slider.get()) / 100
         self.canvas.get_tk_widget().pack_forget()
         self.toolbar.destroy()
-
         return self.draw_tree(cutoff)
 
     def draw_tree(self, cutoff):
