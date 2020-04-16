@@ -46,11 +46,11 @@ class TreeTab(Frame):
         Frame.__init__(self, *args, **kwargs)
         self.canvas = canvas
         self.draw_tree(0)  # set cutoff to zero by default
-        self.slider = Scale(self, from_=0, to=100, orient=VERTICAL, command=self.update_tree)
-        self.slider.pack(side=BOTTOM, fill=X, expand=True)
+        self.slider = Spinbox(self, from_=0, to=100, command=self.update_tree)
+        self.slider.pack(side=BOTTOM, fill=X, expand=False)
 
-    def update_tree(self, val):  # val changes as slider is moved
-        cutoff = float(val) / 100
+    def update_tree(self):  # val changes as slider is moved
+        cutoff = float(self.slider.get()) / 100
         self.canvas.get_tk_widget().pack_forget()
         self.toolbar.destroy()
 
@@ -183,7 +183,7 @@ class TreeTab(Frame):
                     else:
                         x_pos = sum(each) / len(each)
 
-                    pos[each] = (x_pos, (y_pos+20))  # y offset label from x axis
+                    pos[each] = (x_pos, (y_pos+10))  # y offset label from x axis
                     xtick_list.append(x_pos)
 
         n_order = 2
