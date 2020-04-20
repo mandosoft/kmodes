@@ -14,19 +14,30 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
+
 class KmodesApp(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "K Modes Alpha")
         self.notebook = ttk.Notebook()
-        # self.control_panel = ControlPanel(self)
-        # self.control_panel.pack(side=RIGHT, fill=NONE, expand=False)
-        self.add_tab()
+        self.control_panel = ControlPanel(self)
+        self.add_features()
         self.notebook.pack(side=TOP, fill=BOTH, expand=True)
+        self.control_panel.pack(side=RIGHT, fill=BOTH, expand=False)
 
-    def add_tab(self):
+    def add_features(self):
         tab = TreeTab(self.notebook)
         tab2 = CsvTab(self.notebook)
+
+        def get_val():
+            tab.val = self.control_panel.spinbox.get()
+            tab.update_tree()
+
+        self.control_panel.spinbox = Spinbox(self, from_=0, to=100, command=get_val, text="Hi")
+        self.control_panel.spinbox.pack(side=RIGHT, fill=NONE, expand=False)
+        self.control_panel.label = Label(self, text="Zoom by Sr Mode Value")
+        self.control_panel.label.pack(side=RIGHT, fill=NONE, expand=False)
+
         self.notebook.add(tab, text="Tree View")
         self.notebook.add(tab2, text="Cluster Data")
 
@@ -36,9 +47,10 @@ class KmodesApp(Tk):
 
 
 class ControlPanel(Frame):
-    def __init__(self, name, *args, **kwargs):
+    def __init__(self, spinbox, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
-        self.name = name
+        self.spinbox = spinbox
+        self.label = None
 
 
 class TreeTab(Frame):
@@ -47,12 +59,11 @@ class TreeTab(Frame):
         Frame.__init__(self, *args, **kwargs)
         Frame.config(self, bg="white")
         self.canvas = canvas
+        self.val = 0
         self.draw_tree(0)  # set cutoff to zero by default
-        self.spinbox = Spinbox(self, from_=0, to=100, command=self.update_tree)
-        self.spinbox.pack(side=BOTTOM, fill=NONE, expand=False)
 
-    def update_tree(self):  # val changes as slider is moved
-        cutoff = float(self.spinbox.get()) / 100
+    def update_tree(self):  # val changes as spinbox is moved
+        cutoff = float(self.val) / 100
         self.fig.clf()  # memory manage figures
         self.canvas.get_tk_widget().pack_forget()
         self.toolbar.destroy()
@@ -135,6 +146,7 @@ class TreeTab(Frame):
                             G.add_edge(i, j, color='blue')
                             G.nodes[i]['parent'] = True
 
+                # TODO FIx getitem. Likely just needs an instance method
                 # Second pass checks for 80% rule
                 if not G.nodes[i]['parent']:
                     for j in G.nodes:
@@ -223,9 +235,8 @@ class TreeTab(Frame):
         ax.yaxis.set_label_coords(0, 1.02)
         ax.set_xlabel('Site location in the Multiple Sequence Alignment', fontsize=8, weight='bold')
         ax.xaxis.set_label_coords(0.5, 1.12)
-
         nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#4ede71', node_size=60, alpha=.2)
-        nx.draw_networkx_labels(G, pos=pos, ax=ax, font_weight='bold', font_size=5)
+        nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
         colors = [G[u][v]['color'] for u, v in G.edges()]
         nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.6)
         plt.grid(True, axis='y')
@@ -242,6 +253,7 @@ class TreeTab(Frame):
             label.set_bbox(dict(facecolor='yellow', edgecolor='black'))
         ax.tick_params(labelbottom=False, labeltop=True, labelleft=True, labelright=False, bottom=False,
                        top=False, left=False, right=False)
+
         self.canvas = FigureCanvasTkAgg(self.fig, self)
         self.canvas.draw()
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
