@@ -33,9 +33,10 @@ class KmodesApp(Tk):
             tab.val = self.control_panel.spinbox.get()
             tab.update_tree()
 
-        self.control_panel.spinbox = Spinbox(self, from_=0, to=100, command=get_val, text="Hi")
+        self.control_panel.spinbox = Spinbox(self, from_=0, to=100, command=get_val)
         self.control_panel.spinbox.pack(side=RIGHT, fill=NONE, expand=False)
-        self.control_panel.label = Label(self, text="Zoom by Sr Mode Value")
+        self.control_panel.label = Label(self, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
+                                         font=("Helvetica", 6))
         self.control_panel.label.pack(side=RIGHT, fill=NONE, expand=False)
 
         self.notebook.add(tab, text="Tree View")
