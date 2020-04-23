@@ -120,12 +120,13 @@ class TreeTab(Frame):
             final_str = ''.join(('(', final_str, ')'))
             return final_str
 
-        # TODO: Include metadata for high Sr Mode clusters
+        # set default attributes for nodes
         for i in G.nodes:
             G.nodes[i]['parent'] = False
             G.nodes[i]['split'] = False
+            G.nodes[i]['color'] = 'k'
             G.nodes[i]['sr_mode'] = None
-            G.nodes[i]['prime_cluster'] = True
+            G.nodes[i]['prime_cluster'] = False
 
         n_order = 1
         while n_order < max_len:
@@ -143,7 +144,7 @@ class TreeTab(Frame):
 
             # G.add_nodes_from(next_set)
             for i in next_set:
-                G.add_node(i[0], parent=False, split=False, sr_mode=i[1], prime_cluster=False)
+                G.add_node(i[0], color='k', parent=False, split=False, sr_mode=i[1], prime_cluster=False)
 
             # Draw edges between nodes
             # Supersets get priority followed by 80% of attributes
@@ -151,6 +152,7 @@ class TreeTab(Frame):
 
                 if G.nodes[i]['sr_mode'] >= .3:
                     G.nodes[i]['prime_cluster'] = True
+                    G.nodes[i]['color'] = 'r'
 
                 # First pass checks for supersets
                 if not G.nodes[i]['parent']:
@@ -248,9 +250,9 @@ class TreeTab(Frame):
         ax.yaxis.set_label_coords(0, 1.02)
         ax.set_xlabel('Site location in the Multiple Sequence Alignment', fontsize=8, weight='bold')
         ax.xaxis.set_label_coords(0.5, 1.12)
-
-        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='red', node_size=30, alpha=1)
-        #  nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
+        node_colors = [G.nodes[i]['color'] for i in G.nodes]
+        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color=node_colors, node_size=30, alpha=.3)
+        nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
         colors = [G[u][v]['color'] for u, v in G.edges()]
         nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.6)
         plt.grid(True, axis='y')
