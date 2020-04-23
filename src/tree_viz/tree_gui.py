@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from tkdatacanvas import *
-
+from itertools import count
 import networkx as nx
 from networkx.drawing.nx_agraph import write_dot
 import numpy as np
@@ -16,6 +16,9 @@ import matplotlib.patches as mpatches
 
 
 class KmodesApp(Tk):
+    """
+    Window for model view controller
+    """
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "K Modes Alpha")
@@ -55,6 +58,7 @@ class ControlPanel(Frame):
 
 
 class TreeTab(Frame):
+    """Tree canvas. Note instance is refreshed when tree is updated."""
 
     def __init__(self, canvas, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
@@ -78,12 +82,13 @@ class TreeTab(Frame):
 
         with open('tree_input.csv') as f:
             lines = list(csv.reader(f))
-        values = lines[1:]  # ignores header
-        values = [entry for entry in values if float(entry[2]) >= cutoff]  # modified variable
-        tree_list = [entry[0].strip('()') for entry in values]
-        tree_list = [i.split(',') for i in tree_list]
-        tree_list = [list(map(int, i)) for i in tree_list]
-        max_len = max([len(s) for s in tree_list])
+        # TODO: Refactor this area
+        data = lines[1:]  # ignores header
+        values = [entry for entry in data if float(entry[2]) >= cutoff]  # modified variable
+        tree_list = [(entry[0].strip('()'), entry[2]) for entry in values]
+        tree_list = [(i[0].split(','), i[1]) for i in tree_list]
+        tree_list = [(list(map(int, i[0])), float(i[1])) for i in tree_list]
+        max_len = max([len(s[0]) for s in tree_list])
 
         # reformat sequence of numbers with hyphens
         def get_line_numbers_concat(line_nums):
@@ -119,26 +124,33 @@ class TreeTab(Frame):
         for i in G.nodes:
             G.nodes[i]['parent'] = False
             G.nodes[i]['split'] = False
+            G.nodes[i]['sr_mode'] = None
+            G.nodes[i]['prime_cluster'] = True
 
         n_order = 1
         while n_order < max_len:
 
             n_order += 1
-            next_set = [s for s in tree_list if len(s) == n_order]
+            next_set = [(s[0], s[1]) for s in tree_list if len(s[0]) == n_order]
+
             for i in next_set:
                 for ix, j in enumerate(next_set):
                     # removes cases of non disjoint sets of same n_order
-                    if i != j and not set(i).isdisjoint(set(j)):
+                    if i[0] != j[0] and not set(i[0]).isdisjoint(set(j[0])):
                         next_set.remove(next_set[ix])
-            next_set = [tuple(t) for t in next_set]
+            next_set = [(tuple(t[0]), t[1]) for t in next_set]
             next_set = sorted(list(set(next_set)))
+
             # G.add_nodes_from(next_set)
             for i in next_set:
-                G.add_node(i, parent=False, split=False)
+                G.add_node(i[0], parent=False, split=False, sr_mode=i[1], prime_cluster=False)
 
             # Draw edges between nodes
             # Supersets get priority followed by 80% of attributes
             for i in G.nodes:
+
+                if G.nodes[i]['sr_mode'] >= .3:
+                    G.nodes[i]['prime_cluster'] = True
 
                 # First pass checks for supersets
                 if not G.nodes[i]['parent']:
@@ -147,8 +159,8 @@ class TreeTab(Frame):
                             G.add_edge(i, j, color='blue')
                             G.nodes[i]['parent'] = True
 
-                # TODO FIx getitem. Likely just needs an instance method
-                # Second pass checks for 80% rule
+                # TODO Fix getitem. Likely just needs an instance method
+                # Second pass checks for cluster splits
                 if not G.nodes[i]['parent']:
                     for j in G.nodes:
                         if i != j and len(i) < len(j):
@@ -158,7 +170,7 @@ class TreeTab(Frame):
                             percent_in_child = count_elements / len(i)
                             if percent_in_child >= .33:
                                 if G.degree[i] < 2:
-                                    G.add_edge(i, j, color='r')
+                                    G.add_edge(i, j, color='red')
                                     G.nodes[i]['split'] = True
                                     if G.degree[i] == 2:
                                         G.nodes[i]['parent'] = True
@@ -236,8 +248,9 @@ class TreeTab(Frame):
         ax.yaxis.set_label_coords(0, 1.02)
         ax.set_xlabel('Site location in the Multiple Sequence Alignment', fontsize=8, weight='bold')
         ax.xaxis.set_label_coords(0.5, 1.12)
-        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#4ede71', node_size=60, alpha=.2)
-        nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
+
+        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='red', node_size=30, alpha=1)
+        #  nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
         colors = [G[u][v]['color'] for u, v in G.edges()]
         nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.6)
         plt.grid(True, axis='y')
