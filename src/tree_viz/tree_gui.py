@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from tkdatacanvas import *
-from itertools import count
+import mplcursors
+
 import networkx as nx
 from networkx.drawing.nx_agraph import write_dot
 import numpy as np
@@ -124,7 +125,7 @@ class TreeTab(Frame):
         for i in G.nodes:
             G.nodes[i]['parent'] = False
             G.nodes[i]['split'] = False
-            G.nodes[i]['color'] = 'k'
+            G.nodes[i]['color'] = None
             G.nodes[i]['sr_mode'] = None
             G.nodes[i]['prime_cluster'] = False
 
@@ -153,12 +154,14 @@ class TreeTab(Frame):
                 if G.nodes[i]['sr_mode'] >= .3:
                     G.nodes[i]['prime_cluster'] = True
                     G.nodes[i]['color'] = 'r'
+                else:
+                    G.nodes[i]['color'] = '#00000000'
 
                 # First pass checks for supersets
                 if not G.nodes[i]['parent']:
                     for j in G.nodes:
                         if i != j and set(i).issubset(set(j)):
-                            G.add_edge(i, j, color='blue')
+                            G.add_edge(i, j, color='k')
                             G.nodes[i]['parent'] = True
 
                 # TODO Fix getitem. Likely just needs an instance method
@@ -172,7 +175,7 @@ class TreeTab(Frame):
                             percent_in_child = count_elements / len(i)
                             if percent_in_child >= .33:
                                 if G.degree[i] < 2:
-                                    G.add_edge(i, j, color='red')
+                                    G.add_edge(i, j, color='r')
                                     G.nodes[i]['split'] = True
                                     if G.degree[i] == 2:
                                         G.nodes[i]['parent'] = True
@@ -244,6 +247,9 @@ class TreeTab(Frame):
 
         write_dot(G, 'test.dot')
 
+        """
+        All of the custom graph drawing 
+        """
         self.fig = plt.figure(figsize=(5, 5))
         ax = self.fig.add_subplot(1, 1, 1)
         ax.set_ylabel('Order \n (n)', rotation=-0, fontsize=8, weight='bold')
@@ -251,26 +257,32 @@ class TreeTab(Frame):
         ax.set_xlabel('Site location in the Multiple Sequence Alignment', fontsize=8, weight='bold')
         ax.xaxis.set_label_coords(0.5, 1.12)
         node_colors = [G.nodes[i]['color'] for i in G.nodes]
-        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color=node_colors, node_size=30, alpha=.3)
+
+        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color=node_colors, node_size=90)
         nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
         colors = [G[u][v]['color'] for u, v in G.edges()]
-        nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.6)
+        nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.3)
+
         plt.grid(True, axis='y')
         ax.yaxis.set_ticks(ytick_list)
         ax.yaxis.set_ticklabels(ytick_labels, visible=True)
         ax.xaxis.set_ticks(xtick_list)
         ax.xaxis.set_ticklabels(xtick_labels, visible=True)
         split_patch = mpatches.Patch(color='red', label='cluster split')
-        perfect_patch = mpatches.Patch(color='blue', label='perfect superset')
+        perfect_patch = mpatches.Patch(color='black', label='perfect superset')
         ax.legend(handles=([perfect_patch, split_patch]), loc='upper center', bbox_to_anchor=(0.5, -0.05),
                   fancybox=True, shadow=True, ncol=2)
         for i, k in enumerate(ax.xaxis.get_ticklabels()):
             label = ax.xaxis.get_ticklabels()[i]
-            label.set_bbox(dict(facecolor='yellow', edgecolor='black'))
+            label.set_bbox(dict(facecolor='white', edgecolor='black'))
         ax.tick_params(labelbottom=False, labeltop=True, labelleft=True, labelright=False, bottom=False,
                        top=False, left=False, right=False)
 
+        # Canvas settings
+
         self.canvas = FigureCanvasTkAgg(self.fig, self)
+
+        # self.canvas.mpl_connect('pick_event', onpick)
         self.canvas.draw()
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
