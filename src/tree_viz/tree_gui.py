@@ -41,6 +41,7 @@ class KmodesApp(Tk):
         self.control_panel.spinbox.pack(side=RIGHT, fill=NONE, expand=False)
         self.control_panel.label = Label(self, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
                                          font=("Helvetica", 6))
+
         self.control_panel.label.pack(side=RIGHT, fill=NONE, expand=False)
 
         self.notebook.add(tab, text="Tree View")
@@ -126,6 +127,7 @@ class TreeTab(Frame):
             G.nodes[i]['parent'] = False
             G.nodes[i]['split'] = False
             G.nodes[i]['color'] = None
+            G.nodes[i]['weight'] = None
             G.nodes[i]['sr_mode'] = None
             G.nodes[i]['prime_cluster'] = False
 
@@ -145,15 +147,15 @@ class TreeTab(Frame):
 
             # G.add_nodes_from(next_set)
             for i in next_set:
-                G.add_node(i[0], color='k', parent=False, split=False, sr_mode=i[1], prime_cluster=False)
+                G.add_node(i[0], color='k', parent=False, split=False, weight=1, sr_mode=i[1], prime_cluster=False)
 
             # Draw edges between nodes
             # Supersets get priority followed by 80% of attributes
             for i in G.nodes:
 
-                if G.nodes[i]['sr_mode'] >= .3:
+                if G.nodes[i]['sr_mode'] >= .3:  # set prime cluster value
                     G.nodes[i]['prime_cluster'] = True
-                    G.nodes[i]['color'] = 'r'
+                    G.nodes[i]['color'] = '#be0000'
                 else:
                     G.nodes[i]['color'] = '#00000000'
 
@@ -161,7 +163,7 @@ class TreeTab(Frame):
                 if not G.nodes[i]['parent']:
                     for j in G.nodes:
                         if i != j and set(i).issubset(set(j)):
-                            G.add_edge(i, j, color='k')
+                            G.add_edge(i, j, color='k', weight=1.5)
                             G.nodes[i]['parent'] = True
 
                 # TODO Fix getitem. Likely just needs an instance method
@@ -175,7 +177,7 @@ class TreeTab(Frame):
                             percent_in_child = count_elements / len(i)
                             if percent_in_child >= .33:
                                 if G.degree[i] < 2:
-                                    G.add_edge(i, j, color='r')
+                                    G.add_edge(i, j, color='r', weight=.5)
                                     G.nodes[i]['split'] = True
                                     if G.degree[i] == 2:
                                         G.nodes[i]['parent'] = True
@@ -258,10 +260,12 @@ class TreeTab(Frame):
         ax.xaxis.set_label_coords(0.5, 1.12)
         node_colors = [G.nodes[i]['color'] for i in G.nodes]
 
-        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color=node_colors, node_size=90)
+        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#00000000', edgecolors=node_colors, node_shape='o', node_size=400)
         nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
+
         colors = [G[u][v]['color'] for u, v in G.edges()]
-        nx.draw_networkx_edges(G, pos=pos, ax=ax, edge_color=colors, alpha=.3)
+        weights = [G[u][v]['weight'] for u, v in G.edges]
+        nx.draw_networkx_edges(G, pos=pos, ax=ax, style='dashed', edge_color=colors, width=weights, alpha=.4)
 
         plt.grid(True, axis='y')
         ax.yaxis.set_ticks(ytick_list)
@@ -295,17 +299,19 @@ class CsvTab(Frame):
         Frame.__init__(self, *args, **kwargs)
         self.name = name
         self.canvas = DataCanvas(self)
-        # self.write_data()
-        self.canvas.pack(side=TOP, fill=BOTH)
+        self.write_data()
+        self.canvas.pack(side=TOP, fill=BOTH, expand=True)
 
     def write_data(self):
-        with io.open("outfiles/output.csv", "r", newline="") as csv_file:
+        with io.open("../outfiles/output.csv", "r", newline="") as csv_file:
             reader = csv.reader(csv_file)
             parsed_rows = 0
             for row in reader:
                 if parsed_rows == 0:
                     # Display the first row as a header
                     self.canvas.add_header(*row)
+                elif float(row[2]) > .300:
+                    self.canvas.add_row(*row, fg="#be0000")
                 else:
                     self.canvas.add_row(*row)
                 parsed_rows += 1
