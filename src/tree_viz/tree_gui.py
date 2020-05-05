@@ -126,8 +126,8 @@ class TreeTab(Frame):
         for i in G.nodes:
             G.nodes[i]['parent'] = False
             G.nodes[i]['split'] = False
+            G.nodes[i]['split_full'] = False  # Prevents nodes from splitting into more than two clusters
             G.nodes[i]['color'] = None
-            G.nodes[i]['weight'] = None
             G.nodes[i]['sr_mode'] = None
             G.nodes[i]['prime_cluster'] = False
 
@@ -147,7 +147,7 @@ class TreeTab(Frame):
 
             # G.add_nodes_from(next_set)
             for i in next_set:
-                G.add_node(i[0], color='k', parent=False, split=False, weight=1, sr_mode=i[1], prime_cluster=False)
+                G.add_node(i[0], color=None, parent=False, split=False, split_full=False, sr_mode=i[1], prime_cluster=False)
 
             # Draw edges between nodes
             # Supersets get priority followed by 80% of attributes
@@ -157,18 +157,18 @@ class TreeTab(Frame):
                     G.nodes[i]['prime_cluster'] = True
                     G.nodes[i]['color'] = '#be0000'
                 else:
-                    G.nodes[i]['color'] = '#00000000'
+                    G.nodes[i]['color'] = '#00000000'  # everything else is a clear color
 
                 # First pass checks for supersets
-                if not G.nodes[i]['parent']:
+                if G.nodes[i]['parent'] is not True:
                     for j in G.nodes:
                         if i != j and set(i).issubset(set(j)):
-                            G.add_edge(i, j, color='k', weight=1.5)
+                            G.add_edge(i, j)
                             G.nodes[i]['parent'] = True
 
                 # TODO Fix getitem. Likely just needs an instance method
                 # Second pass checks for cluster splits
-                if not G.nodes[i]['parent']:
+                if G.nodes[i]['split_full'] is not True and G.nodes[i]['parent'] is not True:
                     for j in G.nodes:
                         if i != j and len(i) < len(j):
                             count_elements = 0
@@ -177,11 +177,15 @@ class TreeTab(Frame):
                             percent_in_child = count_elements / len(i)
                             if percent_in_child >= .33:
                                 if G.degree[i] < 2:
-                                    G.add_edge(i, j, color='r', weight=.5)
+                                    G.add_edge(i, j)
                                     G.nodes[i]['split'] = True
                                     if G.degree[i] == 2:
-                                        G.nodes[i]['parent'] = True
-
+                                        G.nodes[i]['split_full'] = True
+        for v, w in G.edges:
+            if G.nodes[v]["parent"] is True and G.nodes[v]["split"] is False:
+                G.edges[v, w]["subset"] = True
+            else:
+                G.edges[v, w]["subset"] = False
         # -------Node Positioning Calculator----------
 
         pos = dict()
@@ -260,12 +264,15 @@ class TreeTab(Frame):
         ax.xaxis.set_label_coords(0.5, 1.12)
         node_colors = [G.nodes[i]['color'] for i in G.nodes]
 
+        # Draw nodes
         nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#00000000', edgecolors=node_colors, node_shape='o', node_size=400)
         nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
 
-        colors = [G[u][v]['color'] for u, v in G.edges()]
-        weights = [G[u][v]['weight'] for u, v in G.edges]
-        nx.draw_networkx_edges(G, pos=pos, ax=ax, style='dashed', edge_color=colors, width=weights, alpha=.4)
+        # Draw edges
+        edges_p = [e for e in G.edges if G.edges[e]["subset"]]
+        edges_s = [e for e in G.edges if not G.edges[e]["subset"]]
+        nx.draw_networkx_edges(G, pos=pos, ax=ax, style='solid', edgelist=edges_p, edge_color='k', alpha=.7)
+        nx.draw_networkx_edges(G, pos=pos, ax=ax, style='dashed', edge_color='r', edgelist=edges_s, alpha=.4)
 
         plt.grid(True, axis='y')
         ax.yaxis.set_ticks(ytick_list)
@@ -309,11 +316,11 @@ class CsvTab(Frame):
             for row in reader:
                 if parsed_rows == 0:
                     # Display the first row as a header
-                    self.canvas.add_header(*row)
+                    self.canvas.add_header(*row[::-1])
                 elif float(row[2]) > .300:
-                    self.canvas.add_row(*row, fg="#be0000")
+                    self.canvas.add_row(*row[::-1], fg="#be0000")
                 else:
-                    self.canvas.add_row(*row)
+                    self.canvas.add_row(*row[::-1])
                 parsed_rows += 1
 
         self.canvas.display()
