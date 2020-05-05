@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from tkdatacanvas import *
-import mplcursors
 
 import networkx as nx
 from networkx.drawing.nx_agraph import write_dot
@@ -265,14 +264,18 @@ class TreeTab(Frame):
         node_colors = [G.nodes[i]['color'] for i in G.nodes]
 
         # Draw nodes
-        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#00000000', edgecolors=node_colors, node_shape='o', node_size=400)
+        rx, ry = .6, .25
+        area = rx * ry * np.pi
+        theta = np.arange(0, 2 * np.pi + 0.01, 0.1)
+        verts = np.column_stack([rx / area * np.cos(theta), ry / area * np.sin(theta)])
+        nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#00000000', edgecolors=node_colors, node_shape=verts, node_size=1000)
         nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
 
         # Draw edges
         edges_p = [e for e in G.edges if G.edges[e]["subset"]]
         edges_s = [e for e in G.edges if not G.edges[e]["subset"]]
-        nx.draw_networkx_edges(G, pos=pos, ax=ax, style='solid', edgelist=edges_p, edge_color='k', alpha=.7)
-        nx.draw_networkx_edges(G, pos=pos, ax=ax, style='dashed', edge_color='r', edgelist=edges_s, alpha=.4)
+        nx.draw_networkx_edges(G, pos=pos, ax=ax, style='solid', edgelist=edges_p, edge_color='k', alpha=.5)
+        nx.draw_networkx_edges(G, pos=pos, ax=ax, style='dashed', edge_color='#DB7093', edgelist=edges_s, width=1.5, alpha=.5)
 
         plt.grid(True, axis='y')
         ax.yaxis.set_ticks(ytick_list)
