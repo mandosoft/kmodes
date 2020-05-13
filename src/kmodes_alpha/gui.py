@@ -108,7 +108,7 @@ def trim_msa():
         df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
         df = df.set_index('SEQUENCE_ID', drop=True)
         df.columns = range(len(df.columns))
-        label_val = label_number.get() - 1
+        label_val = label_number.get()
         df = df.rename(columns=lambda x: x + label_val)
 
         return df
@@ -162,6 +162,5 @@ button3.pack(side="right")
 # was column 2 now 0
 # button2.grid(column=2, row=8, padx=10)
 #button3.grid(column=2, row=8, padx=10)
-
 
 window.mainloop()
