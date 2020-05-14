@@ -30,18 +30,24 @@ class KmodesApp(Tk):
 
     def add_features(self):
         tab = TreeTab(self.notebook)
-        tab2 = CsvTab(self.notebook)
+        print(tab.prime_cluster)
+        tab2 = CsvTab(self.notebook, tab.prime_cluster)
 
         def get_val():
             tab.val = self.control_panel.spinbox.get()
+            tab.font_size = self.control_panel.font_spinbox.get()
+            tab.pc_val = self.control_panel.pc_entry.get()
             tab.update_tree()
 
         self.control_panel.spinbox = Spinbox(self, from_=0, to=100, command=get_val)
         self.control_panel.spinbox.pack(side=RIGHT, fill=NONE, expand=False)
         self.control_panel.label = Label(self, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
                                          font=("Helvetica", 6))
-
         self.control_panel.label.pack(side=RIGHT, fill=NONE, expand=False)
+        self.control_panel.font_spinbox = Spinbox(self, from_=1, to=100, command=get_val)
+        self.control_panel.font_spinbox.pack(side=TOP, fill=NONE, expand=False)
+        self.control_panel.pc_entry = Entry(self, textvariable=tab.pc_val)
+        self.control_panel.pc_entry.pack(side=TOP, fill=NONE, expand=False)
 
         self.notebook.add(tab, text="Tree View")
         self.notebook.add(tab2, text="Cluster Data")
@@ -55,6 +61,8 @@ class ControlPanel(Frame):
     def __init__(self, spinbox, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
         self.spinbox = spinbox
+        self.font_spinbox = None
+        self.pc_entry = None
         self.label = None
 
 
@@ -66,16 +74,21 @@ class TreeTab(Frame):
         Frame.config(self, bg="white")
         self.canvas = canvas
         self.val = 0
-        self.draw_tree(0)  # set cutoff to zero by default
+        self.font_size = 5
+        self.pc_val = DoubleVar()
+        self.prime_cluster = 0
+        self.pc_val.set(.33)
+        self.draw_tree(0, .33)  # set cutoff to zero by default
 
     def update_tree(self):  # val changes as spinbox is moved
         cutoff = float(self.val) / 100
+        self.prime_cluster = float(self.pc_val)
         self.fig.clf()  # memory manage figures
         self.canvas.get_tk_widget().pack_forget()
         self.toolbar.destroy()
-        return self.draw_tree(cutoff)
+        return self.draw_tree(cutoff, self.prime_cluster)
 
-    def draw_tree(self, cutoff):
+    def draw_tree(self, cutoff, prime_cluster):
         """
         This is the main tree drawing method
         """
@@ -85,6 +98,8 @@ class TreeTab(Frame):
             lines = list(csv.reader(f))
         # TODO: Refactor this area
         data = lines[1:]  # ignores header
+        #TODO fix this using split or other method
+        data = [e for e in data if len(e) != 0]
         values = [entry for entry in data if float(entry[2]) >= cutoff]  # modified variable
         tree_list = [(entry[0].strip('()'), entry[2]) for entry in values]
         tree_list = [(i[0].split(','), i[1]) for i in tree_list]
@@ -151,8 +166,7 @@ class TreeTab(Frame):
             # Draw edges between nodes
             # Supersets get priority followed by 80% of attributes
             for i in G.nodes:
-
-                if G.nodes[i]['sr_mode'] >= .3:  # set prime cluster value
+                if G.nodes[i]['sr_mode'] >= prime_cluster:  # set prime cluster value
                     G.nodes[i]['prime_cluster'] = True
                     G.nodes[i]['color'] = '#be0000'
                 else:
@@ -269,7 +283,7 @@ class TreeTab(Frame):
         theta = np.arange(0, 2 * np.pi + 0.01, 0.1)
         verts = np.column_stack([rx / area * np.cos(theta), ry / area * np.sin(theta)])
         nx.draw_networkx_nodes(G, pos=pos, ax=ax, node_color='#00000000', edgecolors=node_colors, node_shape=verts, node_size=1000)
-        nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=5)
+        nx.draw_networkx_labels(G, pos=pos, ax=ax, font_color='k', font_weight='bold', font_size=self.font_size)
 
         # Draw edges
         edges_p = [e for e in G.edges if G.edges[e]["subset"]]
@@ -305,9 +319,9 @@ class TreeTab(Frame):
 
 class CsvTab(Frame):
 
-    def __init__(self, name, *args, **kwargs):
+    def __init__(self, prime_cluster, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
-        self.name = name
+        self.prime_cluster = prime_cluster
         self.canvas = DataCanvas(self)
         self.write_data()
         self.canvas.pack(side=TOP, fill=BOTH, expand=True)
@@ -320,10 +334,10 @@ class CsvTab(Frame):
                 if parsed_rows == 0:
                     # Display the first row as a header
                     self.canvas.add_header(*row[::-1])
-                elif float(row[2]) > .300:
+                elif float(row[2]) > .33:
                     self.canvas.add_row(*row[::-1], fg="#be0000")
                 else:
-                    self.canvas.add_row(*row[::-1])
+                    self.canvas.add_row(*row[::-1], fg="#000000")
                 parsed_rows += 1
 
         self.canvas.display()
