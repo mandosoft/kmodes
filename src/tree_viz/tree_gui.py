@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from tkdatacanvas import *
 
 import networkx as nx
@@ -8,6 +8,7 @@ import numpy as np
 import io
 import os
 import csv
+import glob
 
 import matplotlib
 matplotlib.use("TkAgg")
@@ -24,9 +25,9 @@ class KmodesApp(Tk):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "K Modes Alpha")
         self.notebook = ttk.Notebook()
-        self.control_panel = ControlPanel(self)
+        self.control_panel = ControlPanel(self, padx=25)
         self.add_features()
-        self.notebook.pack(side=TOP, fill=BOTH, expand=True)
+        self.notebook.pack(side=LEFT, fill=BOTH, expand=True)
         self.control_panel.pack(side=RIGHT, fill=BOTH, expand=False)
 
     def add_features(self):
@@ -39,15 +40,32 @@ class KmodesApp(Tk):
             tab.pc_val = self.control_panel.pc_entry.get()
             tab.update_tree()
 
-        self.control_panel.spinbox = Spinbox(self, from_=0, to=100, command=get_val)
-        self.control_panel.spinbox.pack(side=RIGHT, fill=NONE, expand=False)
-        self.control_panel.label = Label(self, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
+        # SR Mode zoom
+        self.control_panel.label = Label(self.control_panel, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
                                          font=("Helvetica", 6))
-        self.control_panel.label.pack(side=RIGHT, fill=NONE, expand=False)
-        self.control_panel.font_spinbox = Spinbox(self, from_=1, to=100, command=get_val)
+        self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(50, 5))
+        self.control_panel.spinbox = Spinbox(self.control_panel, from_=0, to=100, command=get_val)
+        self.control_panel.spinbox.pack(side=TOP, fill=NONE, expand=False)
+
+        # Font selector
+        self.control_panel.label = Label(self.control_panel, text="Select Font Size", anchor=W, justify=LEFT,
+                                         font=("Helvetica", 6))
+        self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(20, 5))
+        self.control_panel.font_spinbox = Spinbox(self.control_panel, from_=1, to=100, command=get_val)
         self.control_panel.font_spinbox.pack(side=TOP, fill=NONE, expand=False)
-        self.control_panel.pc_entry = Entry(self, textvariable=tab.pc_val)
+
+        # Prime cluster value selector
+        self.control_panel.label = Label(self.control_panel, text="Set Prime Cluster Value", anchor=W, justify=LEFT,
+                                         font=("Helvetica", 6))
+        self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(20, 5))
+        self.control_panel.pc_entry = Entry(self.control_panel, textvariable=tab.pc_val)
         self.control_panel.pc_entry.pack(side=TOP, fill=NONE, expand=False)
+
+        self.control_panel.directory = Listbox(self.control_panel, highlightcolor='purple', highlightbackground='purple')
+        files_names = map(os.path.basename, glob.glob("outfiles/*.csv"))
+        for i, j in enumerate(files_names):
+            self.control_panel.directory.insert(i, j)
+        self.control_panel.directory.pack(side=TOP, fill=None, expand=False, pady=(100, 5))
 
         self.notebook.add(tab, text="Tree View")
         self.notebook.add(tab2, text="Cluster Data")
@@ -64,6 +82,7 @@ class ControlPanel(Frame):
         self.font_spinbox = None
         self.pc_entry = None
         self.label = None
+        self.directory = None
 
 
 class TreeTab(Frame):
@@ -93,8 +112,8 @@ class TreeTab(Frame):
         This is the main tree drawing method
         """
         G = nx.Graph()
-
-        with open('tree_viz/tree_input.csv') as f:
+        tree_path = os.path.abspath('tree_viz/tree_input.csv')
+        with open(tree_path) as f:
             lines = list(csv.reader(f))
         # TODO: Refactor this area
         data = lines[1:]  # ignores header
