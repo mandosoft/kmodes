@@ -8,14 +8,14 @@ import re
 
 window = Tk()
 window.title('K Modes Alpha H')
-window.geometry('710x650')
+window.geometry('650x650')
 
 # style macros
 b_color = '#3e434a'
 f_color = 'white'
 
 window.configure(bg=b_color)
-window.resizable(True, True)
+window.resizable(False, False)
 
 label1 = Label(window, text='\nSelect a CSV file for upload:' + '\n', anchor=CENTER, bg=b_color, fg=f_color)
 
