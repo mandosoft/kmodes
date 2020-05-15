@@ -13,6 +13,7 @@ import glob
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from subprocess import Popen
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
@@ -49,7 +50,10 @@ class KmodesApp(Tk):
             w = evt.widget
             index = w.curselection()[0]
             value = w.get(index)
-            print(value)
+            path = 'outfiles'
+            load_path = os.path.join(path, value)
+            tab_extra = OutfileTab(load_path)
+            self.notebook.add(tab_extra, text=str(value))
 
         # SR Mode zoom
         self.control_panel.label = Label(self.control_panel, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
@@ -81,8 +85,6 @@ class KmodesApp(Tk):
 
         self.notebook.add(tab, text="Tree View")
         self.notebook.add(tab2, text="Cluster Data")
-
-
 
 
 class ControlPanel(Frame):
@@ -356,7 +358,6 @@ class CsvTab(Frame):
         self.canvas.pack(side=TOP, fill=BOTH, expand=True)
 
     def write_data(self):
-        print(os.getcwd())
         path = os.path.abspath("outfiles/output.csv")
         with io.open(path, "r", newline="") as csv_file:
             reader = csv.reader(csv_file)
@@ -371,6 +372,25 @@ class CsvTab(Frame):
                     self.canvas.add_row(*row[::-1], fg="#000000")
                 parsed_rows += 1
 
+        self.canvas.display()
+
+
+class OutfileTab(Frame):
+
+    def __init__(self, pathname, *args, **kwargs):
+        Frame.__init__(self, *args, **kwargs)
+        self.pathname = pathname
+        self.canvas = DataCanvas(self)
+        self.write_data()
+        self.canvas.pack(side=TOP, fill=BOTH, expand=True)
+
+    def write_data(self):
+        with io.open(self.pathname, "r", newline="") as csv_file:
+            reader = csv.reader(csv_file)
+            parsed_rows = 0
+            for row in reader:
+                self.canvas.add_row(*row, fg="#000000")
+                parsed_rows += 1
         self.canvas.display()
 
 
