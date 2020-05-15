@@ -30,6 +30,10 @@ class KmodesApp(Tk):
         self.notebook.pack(side=LEFT, fill=BOTH, expand=True)
         self.control_panel.pack(side=RIGHT, fill=BOTH, expand=False)
 
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Are you sure want to quit?"):
+            exit()
+
     def add_features(self):
         tab = TreeTab(self.notebook)
         tab2 = CsvTab(self.notebook, tab.prime_cluster)
@@ -39,6 +43,13 @@ class KmodesApp(Tk):
             tab.font_size = self.control_panel.font_spinbox.get()
             tab.pc_val = self.control_panel.pc_entry.get()
             tab.update_tree()
+
+        def onselect(evt):
+            # Note here that Tkinter passes an event object to onselect()
+            w = evt.widget
+            index = w.curselection()[0]
+            value = w.get(index)
+            print(value)
 
         # SR Mode zoom
         self.control_panel.label = Label(self.control_panel, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
@@ -61,7 +72,8 @@ class KmodesApp(Tk):
         self.control_panel.pc_entry = Entry(self.control_panel, textvariable=tab.pc_val)
         self.control_panel.pc_entry.pack(side=TOP, fill=NONE, expand=False)
 
-        self.control_panel.directory = Listbox(self.control_panel, highlightcolor='purple', highlightbackground='purple')
+        self.control_panel.directory = Listbox(self.control_panel, highlightcolor='purple', selectbackground='#c38bd9')
+        self.control_panel.directory.bind('<<ListboxSelect>>', onselect)
         files_names = map(os.path.basename, glob.glob("outfiles/*.csv"))
         for i, j in enumerate(files_names):
             self.control_panel.directory.insert(i, j)
@@ -70,9 +82,7 @@ class KmodesApp(Tk):
         self.notebook.add(tab, text="Tree View")
         self.notebook.add(tab2, text="Cluster Data")
 
-    def on_closing(self):
-        if messagebox.askokcancel("Quit", "Are you sure want to quit?"):
-            exit()
+
 
 
 class ControlPanel(Frame):
