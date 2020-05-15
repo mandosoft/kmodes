@@ -23,7 +23,7 @@ label2 = Label(window, text='\nPercentage of information present in each column:
                bg=b_color, fg=f_color)
 
 label3 = Label(window, text='\nEnter label number for actual sequence location of first column, '
-                            'or label based on first row', anchor=CENTER, bg=b_color, fg=f_color)
+                            'or automatically label based on first row', anchor=CENTER, bg=b_color, fg=f_color)
 
 '''
 label4 = Label(window, text='\nSet Sr(mode) cutoff value.\nRecommended start value is 0.15:'
@@ -55,8 +55,8 @@ label_number = IntVar()
 label_number.set(1)
 cut_off = DoubleVar()
 cut_off.set(.15)
-null_filter = DoubleVar()
-null_filter.set(.12)
+null_filter = StringVar()
+null_filter.set("20%")
 
 entry1 = Entry(f1, width=30)
 entry2 = Entry(f2, width=3, textvariable=label_number)
@@ -119,7 +119,8 @@ def trim_msa():
     # Remove High Insertion Areas
     trim_msa.df = trim_msa.df.replace({'-': None})
     index_len = len(trim_msa.df.index)
-    null_val = null_filter.get()
+    null_val = float(null_filter.get().split("%")[0]) / 100
+    print(null_val)
     for label, column in trim_msa.df.items():
         non_nulls = column.count()
         info_amount = non_nulls / index_len
