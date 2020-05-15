@@ -5,6 +5,7 @@ import pandas as pd
 import importlib
 import time
 import re
+import os
 
 window = Tk()
 window.title('K Modes Alpha H')
@@ -45,7 +46,6 @@ f3.grid(row=8, column=2, pady=20)
 label1.grid(column=2, row=0)
 label2.grid(column=2, row=3)
 label3.grid(column=2, row=5)
-# label4.grid(column=2, row=0)
 
 check_yes = IntVar()
 check_box = Checkbutton(f2, variable=check_yes, text="Label using 1st row", bg=b_color, fg='#90EE90')
@@ -120,7 +120,6 @@ def trim_msa():
     trim_msa.df = trim_msa.df.replace({'-': None})
     index_len = len(trim_msa.df.index)
     null_val = float(null_filter.get().split("%")[0]) / 100
-    print(null_val)
     for label, column in trim_msa.df.items():
         non_nulls = column.count()
         info_amount = non_nulls / index_len
@@ -139,7 +138,8 @@ def trim_msa():
 def submit_and_run():
 
     submit_and_run.df = trim_msa.df
-    submit_and_run.df.to_csv('outfiles/preprocessed_msa.csv', index=True, header=True)
+    path = os.path.abspath('outfiles/preprocessed_msa.csv')
+    submit_and_run.df.to_csv(path, index=True, header=True)
     start_time = time.perf_counter()
     importlib.import_module('kmodes_alpha_h')
     importlib.import_module('preprocessor')
@@ -149,7 +149,6 @@ def submit_and_run():
     t.delete(1.0, END)
     t.insert(INSERT, time_out)
     window.destroy()
-    importlib.import_module('src.tree_viz.tree_gui')
 
 
 button1 = Button(f1, text='Select File', fg='white', bg='purple', command=get_file_path)

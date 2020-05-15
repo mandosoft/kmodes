@@ -6,6 +6,7 @@ import networkx as nx
 from networkx.drawing.nx_agraph import write_dot
 import numpy as np
 import io
+import os
 import csv
 
 import matplotlib
@@ -30,7 +31,6 @@ class KmodesApp(Tk):
 
     def add_features(self):
         tab = TreeTab(self.notebook)
-        print(tab.prime_cluster)
         tab2 = CsvTab(self.notebook, tab.prime_cluster)
 
         def get_val():
@@ -54,7 +54,7 @@ class KmodesApp(Tk):
 
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Are you sure want to quit?"):
-            self.destroy()
+            exit()
 
 
 class ControlPanel(Frame):
@@ -94,7 +94,7 @@ class TreeTab(Frame):
         """
         G = nx.Graph()
 
-        with open('tree_input.csv') as f:
+        with open('tree_viz/tree_input.csv') as f:
             lines = list(csv.reader(f))
         # TODO: Refactor this area
         data = lines[1:]  # ignores header
@@ -327,7 +327,9 @@ class CsvTab(Frame):
         self.canvas.pack(side=TOP, fill=BOTH, expand=True)
 
     def write_data(self):
-        with io.open("../outfiles/output.csv", "r", newline="") as csv_file:
+        print(os.getcwd())
+        path = os.path.abspath("outfiles/output.csv")
+        with io.open(path, "r", newline="") as csv_file:
             reader = csv.reader(csv_file)
             parsed_rows = 0
             for row in reader:
