@@ -12,8 +12,8 @@ window.title('K Modes Alpha H')
 window.geometry('650x650')
 
 # style macros
-b_color = '#3e434a'
-f_color = 'white'
+b_color = 'light gray'
+f_color = 'black'
 
 window.configure(bg=b_color)
 window.resizable(False, False)
@@ -31,7 +31,7 @@ label4 = Label(window, text='\nSet Sr(mode) cutoff value.\nRecommended start val
                , anchor=CENTER, bg=b_color, fg=f_color)
 '''
 
-t = Text(window, height=18, width=85, bg='black', fg='white')
+t = Text(window, height=18, width=85, bg='white', fg='black')
 t.grid(column=2, row=7, padx=20)
 
 f1 = Frame(window)
@@ -48,7 +48,7 @@ label2.grid(column=2, row=3)
 label3.grid(column=2, row=5)
 
 check_yes = IntVar()
-check_box = Checkbutton(f2, variable=check_yes, text="Label using 1st row", bg=b_color, fg='#90EE90')
+check_box = Checkbutton(f2, variable=check_yes, text="Label using 1st row", bg=b_color, fg='purple')
 check_box.pack(side="right")
 
 label_number = IntVar()
@@ -141,8 +141,8 @@ def submit_and_run():
     path = os.path.abspath('outfiles/preprocessed_msa.csv')
     submit_and_run.df.to_csv(path, index=True, header=True)
     start_time = time.perf_counter()
-    importlib.import_module('kmodes_alpha_h')
-    importlib.import_module('preprocessor')
+    importlib.import_module('src.kmodes_alpha.kmodes_alpha_h')
+    importlib.import_module('src.kmodes_alpha.preprocessor')
     total_time = round((time.perf_counter() - start_time), 3)
     # importlib.import_module('src.tree_viz.tree_assembler')
     time_out = 'Took', total_time, 'seconds'

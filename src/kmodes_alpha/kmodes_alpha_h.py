@@ -1,8 +1,8 @@
 import random
 import itertools
 from itertools import combinations
-from gui import *  # includes df for cluster_list
-from libconfig import *
+from src.kmodes_alpha.gui import *  # includes df for cluster_list
+from src.kmodes_alpha.libconfig import *
 
 # Cluster Initialization
 df = submit_and_run.df  # df passed from gui.py

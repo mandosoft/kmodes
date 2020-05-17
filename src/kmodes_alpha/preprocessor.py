@@ -1,4 +1,4 @@
-from kmodes_alpha_h import csv_dict
+from src.kmodes_alpha.kmodes_alpha_h import csv_dict
 import csv
 import pandas as pd
 
