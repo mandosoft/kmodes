@@ -6,4 +6,5 @@ networkx==2.4
 matplotlib==3.2.1
 pygraphviz==1.5
 tkdatacanvas==0.1.1
+mplcursors==0.3
 

@@ -13,7 +13,7 @@ import glob
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from subprocess import Popen
+from sys import exit
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
@@ -39,7 +39,7 @@ class KmodesApp(Tk):
         tab = TreeTab(self.notebook)
         tab2 = CsvTab(self.notebook, tab.prime_cluster)
 
-        def get_val():
+        def get_val(*args):
             tab.val = self.control_panel.spinbox.get()
             tab.font_size = self.control_panel.font_spinbox.get()
             tab.pc_val = self.control_panel.pc_entry.get()
@@ -60,6 +60,7 @@ class KmodesApp(Tk):
                                          font=("Helvetica", 6))
         self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(50, 5))
         self.control_panel.spinbox = Spinbox(self.control_panel, from_=0, to=100, command=get_val)
+        self.control_panel.spinbox.bind("<Return>", get_val)
         self.control_panel.spinbox.pack(side=TOP, fill=NONE, expand=False)
 
         # Font selector
@@ -67,6 +68,7 @@ class KmodesApp(Tk):
                                          font=("Helvetica", 6))
         self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(20, 5))
         self.control_panel.font_spinbox = Spinbox(self.control_panel, from_=1, to=100, command=get_val)
+        self.control_panel.font_spinbox.bind("<Return>", get_val)
         self.control_panel.font_spinbox.pack(side=TOP, fill=NONE, expand=False)
 
         # Prime cluster value selector
@@ -74,6 +76,7 @@ class KmodesApp(Tk):
                                          font=("Helvetica", 6))
         self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(20, 5))
         self.control_panel.pc_entry = Entry(self.control_panel, textvariable=tab.pc_val)
+        self.control_panel.pc_entry.bind("<Return>", get_val)
         self.control_panel.pc_entry.pack(side=TOP, fill=NONE, expand=False)
 
         self.control_panel.directory = Listbox(self.control_panel, highlightcolor='purple', selectbackground='#c38bd9')

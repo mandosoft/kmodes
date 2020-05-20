@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import filedialog
+from tkinter.filedialog import askopenfilename
 
 import pandas as pd
 import importlib
@@ -71,7 +71,7 @@ entry3.grid(column=2, row=4, pady=6)
 
 
 def get_file_path():
-    get_file_path.file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
+    get_file_path.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
     entry1.delete(0, END)
     entry1.insert(0, get_file_path.file_path)
 
