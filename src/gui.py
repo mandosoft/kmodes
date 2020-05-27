@@ -18,13 +18,9 @@ window.configure(bg=b_color)
 window.resizable(False, False)
 
 label1 = Label(window, text='\nSelect a CSV file for upload:' + '\n', anchor=CENTER, bg=b_color, fg=f_color)
-
-label2 = Label(window, text='\nPercentage of information present in each column:', anchor=CENTER,
-               bg=b_color, fg=f_color)
-
+label2 = Label(window, text='\nPercentage of information present in each column:', anchor=CENTER, bg=b_color, fg=f_color)
 label3 = Label(window, text='\nEnter label number for actual sequence location of first column, '
                             'or automatically label based on first row', anchor=CENTER, bg=b_color, fg=f_color)
-
 
 t = Text(window, height=18, width=85, bg='white', fg='black')
 t.grid(column=2, row=7, padx=20)
@@ -73,7 +69,7 @@ def trim_msa():
     file = open(get_file_path.file_path)
     trim_msa.df = pd.read_csv(file, encoding='utf-8', header=None)
 
-    def deweese_schema(df):
+    def deweese_schema(df: pd.DataFrame) -> pd.DataFrame:
         df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
         df = df.set_index('SEQUENCE_ID', drop=True)
         df = df.rename(columns=lambda x: x - 1)
@@ -93,15 +89,16 @@ def trim_msa():
                 column_lab_dict[df.columns[i]] = ''
         df = df.rename(columns=column_lab_dict)
         df = df.drop(columns=[''])
+        df = df.rename(columns=lambda x: int(x))
 
         return df
 
-    def durston_schema(df):
+    def durston_schema(df: pd.DataFrame) -> pd.DataFrame:
         df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
         df = df.set_index('SEQUENCE_ID', drop=True)
         df.columns = range(len(df.columns))
         label_val = label_number.get()
-        df = df.rename(columns=lambda x: x + label_val)
+        df = df.rename(columns=lambda x: int(x) + label_val)
 
         return df
 

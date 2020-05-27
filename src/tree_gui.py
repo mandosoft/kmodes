@@ -6,16 +6,16 @@ import networkx as nx
 from networkx.drawing.nx_agraph import write_dot
 import numpy as np
 import io
-import os
 import csv
 import glob
-
 import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from sys import exit
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+matplotlib.use("TkAgg")
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from sys import exit
+
 
 
 class KmodesApp(Tk):
