@@ -45,6 +45,7 @@ class KmodesApp(Tk):
             tab.pc_val = self.control_panel.pc_entry.get()
             tab.update_tree()
 
+        """
         def onselect(evt):
             # Note here that Tkinter passes an event object to onselect()
             w = evt.widget
@@ -54,6 +55,7 @@ class KmodesApp(Tk):
             load_path = os.path.join(path, value)
             tab_extra = OutfileTab(load_path)
             self.notebook.add(tab_extra, text=str(value))
+        """
 
         # SR Mode zoom
         self.control_panel.label = Label(self.control_panel, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
@@ -79,12 +81,15 @@ class KmodesApp(Tk):
         self.control_panel.pc_entry.bind("<Return>", get_val)
         self.control_panel.pc_entry.pack(side=TOP, fill=NONE, expand=False)
 
+        """
+        # Experimental Feature
         self.control_panel.directory = Listbox(self.control_panel, highlightcolor='purple', selectbackground='#c38bd9')
         self.control_panel.directory.bind('<<ListboxSelect>>', onselect)
         files_names = map(os.path.basename, glob.glob("outfiles/*.csv"))
         for i, j in enumerate(files_names):
             self.control_panel.directory.insert(i, j)
         self.control_panel.directory.pack(side=TOP, fill=None, expand=False, pady=(100, 5))
+        """
 
         self.notebook.add(tab, text="Tree View")
         self.notebook.add(tab2, text="Cluster Data")
