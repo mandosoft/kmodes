@@ -7,7 +7,7 @@ from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
 from src.gui import *
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-sys.stderr.write("\nLooking for strong pairwise associations...")
+sys.stdout.write("\nLooking for strong pairwise associations...")
 
 # Cluster Initialization
 df = submit_and_run.df  # df passed from gui.py
@@ -126,7 +126,7 @@ cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
 while k != 2:
 
     k -= 1
-    sys.stderr.write("\n***Running K modes at iteration #:" + str(k))
+    sys.stdout.write("\n***Running K modes at iteration #:" + str(k))
 
     # Begin by selecting a random mode from list
     enumerated_list = list(enumerate(cluster_list))
@@ -173,5 +173,4 @@ while k != 2:
     cluster_list = [calculate_new_mode(cluster) for cluster in cluster_list]
     cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
 
-sys.stderr.write('\nRun Complete!')
-
+sys.stdout.write('\nRun Complete!')

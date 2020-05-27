@@ -9,13 +9,16 @@ import re
 window = Tk()
 window.title('K Modes Alpha H')
 window.geometry('650x650')
+old_stdout = sys.stdout
 
 
-class RedirectText(object):
+class RedirectStdIO(object):
     def __init__(self, text_ctrl):
         self.output = text_ctrl
 
     def write(self, string):
+        self.output.update_idletasks()
+        self.output.delete(1.0, END)
         self.output.insert(tkinter.END, string)
 
 
@@ -34,13 +37,15 @@ label3 = Label(window, text='\nEnter label number for actual sequence location o
 # Stderr Text Redirect
 t = Text(window, height=18, width=85, bg='white', fg='black')
 t.grid(column=2, row=7, padx=20)
-redirect = RedirectText(t)
+redirect = RedirectStdIO(t)
+sys.stdout = redirect
 sys.stderr = redirect
-sys.stderr.write("Welcome to K Modes Alpha!"
+
+sys.stdout.write("Welcome to K Modes Alpha!\n"
                  "\n(1) Please choose an MSA to run."
                  "\n(2) You may choose 'Preprocess-MSA' to filter high insertion sites."
                  "\n(3) Label your columns according to your preference."
-                 "\n(4) When ready, press Submit and Run to begin."
+                 "\n(4) When ready, press 'Submit and Run' to begin."
                  "\n\n\nPlease send error reports to ttownsley@mail.lipscomb.edu ")
 
 f1 = Frame(window)
@@ -83,7 +88,6 @@ def get_file_path():
 
 
 def trim_msa():
-
     file = open(get_file_path.file_path)
     trim_msa.df = pd.read_csv(file, encoding='utf-8', header=None)
 
@@ -145,6 +149,7 @@ def trim_msa():
 def submit_and_run():
     submit_and_run.df = trim_msa.df
     path = 'preprocessed_msa.csv'
+    sys.stdout.write("Writing preprocessed MSA to file...")
     submit_and_run.df.to_csv(path, index=True, header=True)
     importlib.import_module('src.kmodes_alpha_h')
     importlib.import_module('src.preprocessor')
