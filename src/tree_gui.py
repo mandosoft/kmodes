@@ -132,7 +132,7 @@ class TreeTab(Frame):
         This is the main tree drawing method
         """
         G = nx.Graph()
-        tree_path = os.path.abspath('tree_viz/tree_input.csv')
+        tree_path = 'tree_input.csv'
         with open(tree_path) as f:
             lines = list(csv.reader(f))
         # TODO: Refactor this area
@@ -303,7 +303,7 @@ class TreeTab(Frame):
         # noinspection PyTypeChecker
         G = nx.relabel_nodes(G, lambda x: get_line_numbers_concat(x))
 
-        write_dot(G, 'test.dot')
+        # write_dot(G, 'test.dot')
 
         """
         All of the custom graph drawing 
@@ -346,10 +346,7 @@ class TreeTab(Frame):
                        top=False, left=False, right=False)
 
         # Canvas settings
-
         self.canvas = FigureCanvasTkAgg(self.fig, self)
-
-        # self.canvas.mpl_connect('pick_event', onpick)
         self.canvas.draw()
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
@@ -366,7 +363,7 @@ class CsvTab(Frame):
         self.canvas.pack(side=TOP, fill=BOTH, expand=True)
 
     def write_data(self):
-        path = os.path.abspath("outfiles/output.csv")
+        path = 'output.csv'
         with io.open(path, "r", newline="") as csv_file:
             reader = csv.reader(csv_file)
             parsed_rows = 0

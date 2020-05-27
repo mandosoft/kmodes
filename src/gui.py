@@ -5,7 +5,6 @@ import pandas as pd
 import importlib
 import time
 import re
-import os
 
 window = Tk()
 window.title('K Modes Alpha H')
@@ -26,10 +25,6 @@ label2 = Label(window, text='\nPercentage of information present in each column:
 label3 = Label(window, text='\nEnter label number for actual sequence location of first column, '
                             'or automatically label based on first row', anchor=CENTER, bg=b_color, fg=f_color)
 
-'''
-label4 = Label(window, text='\nSet Sr(mode) cutoff value.\nRecommended start value is 0.15:'
-               , anchor=CENTER, bg=b_color, fg=f_color)
-'''
 
 t = Text(window, height=18, width=85, bg='white', fg='black')
 t.grid(column=2, row=7, padx=20)
@@ -61,13 +56,10 @@ null_filter.set("20%")
 entry1 = Entry(f1, width=30)
 entry2 = Entry(f2, width=3, textvariable=label_number)
 entry3 = Entry(width=5, textvariable=null_filter)
-# entry4 = Entry(width=5, textvariable=cut_off)
 
-# entry1.grid(column=2, row=1)
 entry1.pack(side="left")
 entry2.pack(side="left")
 entry3.grid(column=2, row=4, pady=6)
-# entry4.grid(column=2, row=1)
 
 
 def get_file_path():
@@ -138,13 +130,12 @@ def trim_msa():
 def submit_and_run():
 
     submit_and_run.df = trim_msa.df
-    path = os.path.abspath('outfiles/preprocessed_msa.csv')
+    path = 'preprocessed_msa.csv'
     submit_and_run.df.to_csv(path, index=True, header=True)
     start_time = time.perf_counter()
-    importlib.import_module('src.kmodes_alpha.kmodes_alpha_h')
-    importlib.import_module('src.kmodes_alpha.preprocessor')
+    importlib.import_module('src.kmodes_alpha_h')
+    importlib.import_module('src.preprocessor')
     total_time = round((time.perf_counter() - start_time), 3)
-    # importlib.import_module('src.tree_viz.tree_assembler')
     time_out = 'Took', total_time, 'seconds'
     t.delete(1.0, END)
     t.insert(INSERT, time_out)
@@ -158,9 +149,6 @@ button3.config(state='disabled')
 button1.pack(side="right")
 button2.pack(side="left")
 button3.pack(side="right")
-# button1.grid(column=2, row=2)
-# was column 2 now 0
-# button2.grid(column=2, row=8, padx=10)
-#button3.grid(column=2, row=8, padx=10)
+
 
 window.mainloop()

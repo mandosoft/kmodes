@@ -1,8 +1,13 @@
+#!/bin/env python3
+
+import warnings
 import random
-import itertools
 from itertools import combinations
-from src.kmodes_alpha.gui import *  # includes df for cluster_list
-from src.kmodes_alpha.libconfig import *
+from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
+from src.gui import *
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
+sys.stderr.write("\nLooking for strong pairwise associations...")
 
 # Cluster Initialization
 df = submit_and_run.df  # df passed from gui.py
@@ -23,16 +28,12 @@ for i in each_2nd_col:
     # noinspection PyUnboundLocalVariable
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], each_2nd_col[i]], axis=1)
 
-
 # --------Pre-processing for input into k-modes algorithm-----------------------
 # All list processing below prevents shared attributes between pairwise associations
 
 pairwise = 2
-
 pairwise_list = [cluster for cluster in cluster_list if len(cluster.columns) == pairwise]
-
 pairwise_cluster_labels = [list(cluster.columns.values) for cluster in pairwise_list]
-
 del_list = [x for each in pairwise_cluster_labels for x in each]
 
 unique_list = list()
@@ -75,60 +76,58 @@ rii = 0
 csv_dict = dict()
 
 
-def calculate_sr_mode(x):
+def calculate_sr_mode(c: pd.DataFrame) -> pd.DataFrame:
 
-    if len(x.columns) >= 2:
+    if len(c.columns) >= 2:
         max_sum = 0
-        cc = len(list(combinations(x.columns, 2)))
-        for i in x:
+        cc = len(list(combinations(c.columns, 2)))
+        for i in c:
             sum_rii = 0
-            for j in x:
-                if x[i].name != x[j].name:
-                    sum_rii += nmis(x[i], x[j], average_method='arithmetic')
+            for j in c:
+                if c[i].name != c[j].name:
+                    sum_rii += nmis(c[i], c[j], average_method='arithmetic')
             if sum_rii > max_sum:
                 max_sum = sum_rii
         sr_mode = max_sum / cc
-        csv_dict[tuple([tuple(sorted(x)), 'k = ' + str(k)])] = round(sr_mode, 3)
+        csv_dict[tuple([tuple(sorted(c)), 'k = ' + str(k)])] = round(sr_mode, 3)
 
-    return x
+    return c
 
 
-def calculate_new_mode(x):
+def calculate_new_mode(c: pd.DataFrame) -> pd.DataFrame:
 
     max_sum = 0
     cluster_mode = pd.Series()
-    for location, i in enumerate(x):
+    for location, i in enumerate(c):
         sum_rii = 0
-        for j in x:
-            if x[i].name != x[j].name:
-                sum_rii += nmis(x[i], x[j], average_method='arithmetic')
+        for j in c:
+            if c[i].name != c[j].name:
+                sum_rii += nmis(c[i], c[j], average_method='arithmetic')
         if sum_rii > max_sum:
-            max_sum, cluster_mode, ix = sum_rii, x[i], location
+            max_sum, cluster_mode, ix = sum_rii, c[i], location
 
     if cluster_mode.empty:
         del cluster_mode
     else:
-        x = x.drop(x.columns[ix], axis=1)
-        x = pd.concat([x, cluster_mode], axis=1)
-        cols = x.columns.tolist()
+        c = c.drop(c.columns[ix], axis=1)
+        c = pd.concat([c, cluster_mode], axis=1)
+        cols = c.columns.tolist()
         cols = cols[-1:] + cols[:-1]
-        x = x[cols]
+        c = c[cols]
 
-    return x
+    return c
 
 
 # --------------- K Modes Algorithm --------------------
 
 # Store pairwise associations in dictionary
-
 cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
 
 
 while k != 2:
 
     k -= 1
-
-    print(k)
+    sys.stderr.write("\nRunning K modes at iteration #:" + str(k))
 
     # Begin by selecting a random mode from list
     enumerated_list = list(enumerate(cluster_list))
@@ -169,7 +168,7 @@ while k != 2:
         del cluster_list[random_df_il]
 
     else:
-        print('\nThere was a problem breaking up a cluster.\n')
+        sys.stderr.write('\nThere was a problem breaking up a cluster.')
 
     # Compute new mode and sr mode for each cluster in the cluster list
     cluster_list = [calculate_new_mode(cluster) for cluster in cluster_list]
