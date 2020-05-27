@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv('../outfiles/output.csv', header=None)
+df = pd.read_csv('output.csv', header=None)
 df[0] = df[0].str.replace('[', '(')
 df[0] = df[0].str.replace(']', ')')
 df.columns = ['Cluster', 'Sr(Mode)']

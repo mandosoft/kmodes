@@ -1,6 +1,6 @@
+import tkinter
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-
 import pandas as pd
 import importlib
 import time
@@ -9,6 +9,15 @@ import re
 window = Tk()
 window.title('K Modes Alpha H')
 window.geometry('650x650')
+
+
+class RedirectText(object):
+    def __init__(self, text_ctrl):
+        self.output = text_ctrl
+
+    def write(self, string):
+        self.output.insert(tkinter.END, string)
+
 
 # style macros
 b_color = 'light gray'
@@ -22,8 +31,17 @@ label2 = Label(window, text='\nPercentage of information present in each column:
 label3 = Label(window, text='\nEnter label number for actual sequence location of first column, '
                             'or automatically label based on first row', anchor=CENTER, bg=b_color, fg=f_color)
 
+# Stderr Text Redirect
 t = Text(window, height=18, width=85, bg='white', fg='black')
 t.grid(column=2, row=7, padx=20)
+redirect = RedirectText(t)
+sys.stderr = redirect
+sys.stderr.write("Welcome to K Modes Alpha!"
+                 "\n(1) Please choose an MSA to run."
+                 "\n(2) You may choose 'Preprocess-MSA' to filter high insertion sites."
+                 "\n(3) Label your columns according to your preference."
+                 "\n(4) When ready, press Submit and Run to begin."
+                 "\n\n\nPlease send error reports to ttownsley@mail.lipscomb.edu ")
 
 f1 = Frame(window)
 f1.grid(column=2, row=1)
@@ -125,17 +143,11 @@ def trim_msa():
 
 
 def submit_and_run():
-
     submit_and_run.df = trim_msa.df
     path = 'preprocessed_msa.csv'
     submit_and_run.df.to_csv(path, index=True, header=True)
-    start_time = time.perf_counter()
     importlib.import_module('src.kmodes_alpha_h')
     importlib.import_module('src.preprocessor')
-    total_time = round((time.perf_counter() - start_time), 3)
-    time_out = 'Took', total_time, 'seconds'
-    t.delete(1.0, END)
-    t.insert(INSERT, time_out)
     window.destroy()
 
 
