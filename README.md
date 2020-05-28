@@ -11,6 +11,5 @@ pip3 install -r requirements.txt
 ```
 - Run using python main.py
 
-<p align="center">
-![MSA Data Cleansing Demo](demo/demo.gif)
-</p>
+![MSA Data Cleansing Demo](demo/demo.gif)(align="center")
+
