@@ -70,32 +70,31 @@ csv_dict = dict()
 
 def calculate_sr_mode(c: pd.DataFrame) -> pd.DataFrame:
 
-    if len(c.columns) >= 2:
-        max_sum = 0
-        cc = len(list(combinations(c.columns, 2)))
-        for i in c:
-            sum_rii = 0
-            for j in c:
-                if c[i].name != c[j].name:
-                    sum_rii += nmis(c[i], c[j], average_method='arithmetic')
-            if sum_rii > max_sum:
-                max_sum = sum_rii
-        sr_mode = max_sum / cc
-        csv_dict[tuple([tuple(sorted(c)), 'k = ' + str(k)])] = round(sr_mode, 3)
+    n_mis = nmis
+    cc = len(list(combinations(c.columns, 2)))
+
+    if len(c.columns) < 2:
+        return c
+    elif len(c.columns) == 2:
+        max_sum = n_mis(c[c.columns[0]], c[c.columns[1]], average_method='arithmetic')
+    else:
+        max_sum = max([sum([n_mis(c[i], c[j], average_method='arithmetic') for j in c if c[i].name != c[j].name]) for i in c])
+
+    sr_mode = max_sum / cc
+    csv_dict[tuple([tuple(sorted(c)), 'k = ' + str(k)])] = round(sr_mode, 3)
 
     return c
 
 
 def calculate_new_mode(c: pd.DataFrame) -> pd.DataFrame:
-
+    n_mis = nmis
     max_sum = 0
-    # TODO specify dtype explicitly
-    cluster_mode = pd.Series()
+    cluster_mode = pd.Series(dtype=object)
     for location, i in enumerate(c):
         sum_rii = 0
         for j in c:
             if c[i].name != c[j].name:
-                sum_rii += nmis(c[i], c[j], average_method='arithmetic')
+                sum_rii += n_mis(c[i], c[j], average_method='arithmetic')
         if sum_rii > max_sum:
             max_sum, cluster_mode, ix = sum_rii, c[i], location
 
@@ -136,8 +135,9 @@ while k != 2:
     cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random_df_il].columns[0], axis=1)
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], new_mode], axis=1)
 
-    """Calculate the new mode for the best cluster"""
+    """Calculate the new mode and sr_mode for the best cluster"""
     cluster_list[best_cluster] = calculate_new_mode(cluster_list[best_cluster])
+    cluster_list[best_cluster] = calculate_sr_mode(cluster_list[best_cluster])
 
     """Go back to the cluster the random mode came from and auction off remaining attributes"""
     if cluster_list[random_df_il].empty:
@@ -153,15 +153,14 @@ while k != 2:
                 if location != random_df_il:
                     rii = nmis(remaining_attr, cluster_mode, average_method='arithmetic')
                     if rii > max_rii:
-                        max_rii, best_cluster = rii, location
-            cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], remaining_attr], axis=1)
+                        max_rii, attr_winner = rii, location
+            # noinspection PyUnboundLocalVariable
+            cluster_list[attr_winner] = pd.concat([cluster_list[attr_winner], remaining_attr], axis=1)
+            cluster_list[attr_winner] = calculate_new_mode(cluster_list[attr_winner])
+            cluster_list[attr_winner] = calculate_sr_mode(cluster_list[attr_winner])
         del cluster_list[random_df_il]
 
     else:
         sys.stderr.write('\nThere was a problem breaking up a cluster.')
-
-    """Compute new mode and sr mode for each cluster in the cluster list"""
-    cluster_list = [calculate_new_mode(cluster) for cluster in cluster_list]
-    cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
 
 sys.stdout.write('\nRun Complete!')
