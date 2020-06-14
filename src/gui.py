@@ -3,7 +3,6 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 import pandas as pd
 import importlib
-import time
 import re
 
 window = Tk()

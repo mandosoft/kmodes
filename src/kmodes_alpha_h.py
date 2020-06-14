@@ -3,6 +3,7 @@
 import warnings
 import random
 from itertools import combinations
+# TODO problem importing
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
 from src.gui import *
 
