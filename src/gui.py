@@ -1,6 +1,7 @@
 import tkinter
 from tkinter import *
 from tkinter.filedialog import askopenfilename
+import tkinter.font as tkfont
 import pandas as pd
 import importlib
 import re
@@ -34,7 +35,9 @@ label3 = Label(window, text='\nEnter label number for actual sequence location o
                             'or automatically label based on first row', anchor=CENTER, bg=b_color, fg=f_color)
 
 # Stderr Text Redirect
+dialog_font = tkfont.Font(size=10)
 t = Text(window, height=18, width=85, bg='white', fg='black')
+t['font'] = dialog_font
 t.grid(column=2, row=7, padx=20)
 redirect = RedirectStdIO(t)
 sys.stdout = redirect
@@ -87,6 +90,8 @@ def get_file_path():
 
 
 def trim_msa():
+
+    t['font'] = "TkFixedFont"
     file = open(get_file_path.file_path)
     trim_msa.df = pd.read_csv(file, encoding='utf-8', header=None)
 
@@ -146,6 +151,7 @@ def trim_msa():
 
 
 def submit_and_run():
+    t['font'] = dialog_font
     submit_and_run.df = trim_msa.df
     path = 'preprocessed_msa.csv'
     sys.stdout.write("Writing preprocessed MSA to file...")

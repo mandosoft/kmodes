@@ -2,10 +2,11 @@
 
 import warnings
 import random
-from itertools import combinations
-# TODO problem importing
-from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
 from src.gui import *
+from itertools import combinations
+from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
+# from normalized_mutual_info import normalized_mutual_info_score as nmis
+
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 sys.stdout.write("\nLooking for strong pairwise associations...")
@@ -22,7 +23,7 @@ for i in each_2nd_col:
     for location, cluster in enumerate(cluster_list):
         cluster_mode = cluster[cluster.columns[0]]
         if each_2nd_col[i].name != cluster_mode.name:
-            rii = nmis(each_2nd_col[i], cluster_mode, average_method='arithmetic')
+            rii = nmis(each_2nd_col[i], cluster_mode, average_method='geometric')
             if rii > max_rii:
                 max_rii, best_cluster = rii, location
     # noinspection PyUnboundLocalVariable
@@ -77,9 +78,10 @@ def calculate_sr_mode(c: pd.DataFrame) -> pd.DataFrame:
     if len(c.columns) < 2:
         return c
     elif len(c.columns) == 2:
-        max_sum = n_mis(c[c.columns[0]], c[c.columns[1]], average_method='arithmetic')
+        max_sum = n_mis(c[c.columns[0]], c[c.columns[1]], average_method='geometric')
     else:
-        max_sum = max([sum([n_mis(c[i], c[j], average_method='arithmetic') for j in c if c[i].name != c[j].name]) for i in c])
+        max_sum = max([sum([n_mis(c[i], c[j], average_method='geometric')
+                            for j in c if c[i].name != c[j].name]) for i in c])
 
     sr_mode = max_sum / cc
     csv_dict[tuple([tuple(sorted(c)), 'k = ' + str(k)])] = round(sr_mode, 3)
@@ -95,7 +97,7 @@ def calculate_new_mode(c: pd.DataFrame) -> pd.DataFrame:
         sum_rii = 0
         for j in c:
             if c[i].name != c[j].name:
-                sum_rii += n_mis(c[i], c[j], average_method='arithmetic')
+                sum_rii += n_mis(c[i], c[j], average_method='geometric')
         if sum_rii > max_sum:
             max_sum, cluster_mode, ix = sum_rii, c[i], location
 
@@ -130,7 +132,7 @@ while k != 2:
     for location, cluster in enumerated_list:
         cluster_mode = cluster[cluster.columns[0]]
         if location != random_df_il:
-            rii = nmis(new_mode, cluster_mode, average_method='arithmetic')
+            rii = nmis(new_mode, cluster_mode, average_method='geometric')
             if rii > max_rii:
                 max_rii, best_cluster = rii, location
     cluster_list[random_df_il] = cluster_list[random_df_il].drop(cluster_list[random_df_il].columns[0], axis=1)
@@ -152,7 +154,7 @@ while k != 2:
             for location, cluster in enumerated_list:
                 cluster_mode = cluster[cluster.columns[0]]
                 if location != random_df_il:
-                    rii = nmis(remaining_attr, cluster_mode, average_method='arithmetic')
+                    rii = nmis(remaining_attr, cluster_mode, average_method='geometric')
                     if rii > max_rii:
                         max_rii, attr_winner = rii, location
             # noinspection PyUnboundLocalVariable
@@ -163,5 +165,6 @@ while k != 2:
 
     else:
         sys.stderr.write('\nThere was a problem breaking up a cluster.')
+
 
 sys.stdout.write('\nRun Complete!')
