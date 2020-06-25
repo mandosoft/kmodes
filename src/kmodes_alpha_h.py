@@ -7,11 +7,10 @@ from itertools import combinations
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
 # from normalized_mutual_info import normalized_mutual_info_score as nmis
 
-
 warnings.simplefilter(action='ignore', category=FutureWarning)
 sys.stdout.write("\nLooking for strong pairwise associations...")
 
-df = submit_and_run.df
+df = submitted_df
 cluster_list = [pd.DataFrame(df[i]) for i in df]
 cluster_list_clean = cluster_list.copy()
 each_2nd_col = df[df.columns[::2]]

@@ -6,9 +6,6 @@ import pandas as pd
 import importlib
 import re
 
-window = Tk()
-window.title('K Modes Alpha H')
-window.geometry('650x650')
 old_stdout = sys.stdout
 
 
@@ -22,167 +19,187 @@ class RedirectStdIO(object):
         self.output.insert(tkinter.END, string)
 
 
-# style macros
-b_color = 'light gray'
-f_color = 'black'
+class Window(Tk):
+    """
+    Window for helper gui
+    """
+    def __init__(self, *args, **kwargs):
+        Tk.__init__(self, *args, **kwargs)
+        Tk.wm_title(self, "K Modes Alpha")
+        b_color = 'light gray'
+        f_color = 'black'
+        self.file_path = None
+        self.df = None
+        self.cut_off = DoubleVar()
+        self.cut_off.set(.15)
 
-window.configure(bg=b_color)
-window.resizable(False, False)
+        """Entry Area 1"""
+        label1 = Label(self, text='\nSelect a CSV file for upload:' + '\n', anchor=CENTER)
+        label1.pack(side="top", pady=(20, 5))
+        f1 = Frame(self)
+        self.entry1 = Entry(f1, width=30)
+        button1 = Button(f1, text='Load MSA', fg='white', bg='MediumPurple3', command=self.get_file_path)
+        button4 = Button(f1, text='Load Tree File', fg='white', bg='deep sky blue', command=self.load_tree_data)
+        button4.pack(side="right")
+        button1.pack(side="right")
+        self.entry1.pack(side="top", fill=NONE, expand=True)
+        f1.pack(side="top", fill=NONE, expand=False)
 
-label1 = Label(window, text='\nSelect a CSV file for upload:' + '\n', anchor=CENTER, bg=b_color, fg=f_color)
-label2 = Label(window, text='\nPercentage of information present in each column:', anchor=CENTER, bg=b_color, fg=f_color)
-label3 = Label(window, text='\nEnter label number for actual sequence location of first column, '
-                            'or automatically label based on first row', anchor=CENTER, bg=b_color, fg=f_color)
+        """Entry Area 2"""
+        label2 = Label(self, text='\nPercentage of information present in each column:', anchor=CENTER)
+        label2.pack(side="top", pady=(10, 5))
+        f2 = Frame(self)
+        self.null_filter = StringVar()
+        self.null_filter.set("20%")
+        self.entry3 = Entry(width=5, textvariable=self.null_filter)
+        self.entry3.pack(side="top")
 
-# Stderr Text Redirect
-dialog_font = tkfont.Font(size=10)
-t = Text(window, height=18, width=85, bg='white', fg='black')
-t['font'] = dialog_font
-t.grid(column=2, row=7, padx=20)
-redirect = RedirectStdIO(t)
-# sys.stdout = redirect
-# sys.stderr = redirect
+        f2.pack(side="top")
 
-sys.stdout.write("Welcome to K Modes Alpha!\n"
-                 "\n(1) Please choose an MSA to run."
-                 "\n(2) You may choose 'Preprocess-MSA' to filter high insertion sites."
-                 "\n(3) Label your columns according to your preference."
-                 "\n(4) When ready, press 'Submit and Run' to begin."
-                 "\n\n\nPlease send error reports to ttownsley@mail.lipscomb.edu ")
+        """Entry Area 3"""
+        label3 = Label(self, text='\nEnter label number for actual sequence location of first column, '
+                                  'or automatically label based on first row', anchor=CENTER)
+        label3.pack(side="top", pady=(10, 5))
+        f3 = Frame(self)
+        self.check_yes = IntVar()
+        check_box = Checkbutton(f3, variable=self.check_yes, text="Label using 1st row", bg=b_color, fg='purple')
+        check_box.pack(side="right")
+        self.label_number = IntVar()
+        self.label_number.set(1)
+        self.entry2 = Entry(f3, width=3, textvariable=self.label_number)
+        self.entry2.pack(side="top")
 
-f1 = Frame(window)
-f1.grid(column=2, row=1)
+        f3.pack(side="top", pady=(10, 5))
 
-f2 = Frame(window)
-f2.grid(column=2, row=6, pady=16)
+        """Text Window Area"""
+        self.dataframe_manager = TextFrame()
+        self.dataframe_manager.pack(side="top", fill=BOTH, expand=True, pady=(10, 5))
 
-f3 = Frame(window)
-f3.grid(row=8, column=2, pady=20)
+        """Submit Buttons Area"""
+        f4 = Frame(self)
+        button2 = Button(f4, text='Pre-Process MSA', fg='white', bg='MediumPurple3', command=self.preprocess_msa)
+        self.button3 = Button(f4, text='Submit and Run', fg='white', bg='grey', command=self.submit_and_run)
+        button2.pack(side="left")
+        self.button3.pack(side="right")
+        self.button3.config(state='disabled')
 
-label1.grid(column=2, row=0)
-label2.grid(column=2, row=3)
-label3.grid(column=2, row=5)
+        f4.pack(side="top", pady=(10, 30))
 
-check_yes = IntVar()
-check_box = Checkbutton(f2, variable=check_yes, text="Label using 1st row", bg=b_color, fg='purple')
-check_box.pack(side="right")
+    def get_file_path(self):
+        global tree_path
+        self.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
+        self.entry1.delete(0, END)
+        self.entry1.insert(0, self.file_path)
+        tree_path = None
 
-label_number = IntVar()
-label_number.set(1)
-cut_off = DoubleVar()
-cut_off.set(.15)
-null_filter = StringVar()
-null_filter.set("20%")
+        return tree_path
 
-entry1 = Entry(f1, width=30)
-entry2 = Entry(f2, width=3, textvariable=label_number)
-entry3 = Entry(width=5, textvariable=null_filter)
+    def load_tree_data(self):
+        global tree_path
+        self.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
+        tree_path = self.file_path
 
-entry1.pack(side="left")
-entry2.pack(side="left")
-entry3.grid(column=2, row=4, pady=6)
+        return tree_path, app.destroy()
 
+    def preprocess_msa(self):
 
-def get_file_path():
-    global tree_path
-    get_file_path.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
-    entry1.delete(0, END)
-    entry1.insert(0, get_file_path.file_path)
-    tree_path = None
+        if self.dataframe_manager.text['font'] != "TkFixedFont":
+            self.dataframe_manager.text['font'] = "TkFixedFont"
 
-    return tree_path
+        file = open(self.file_path)
+        print(file)
+        df = pd.read_csv(file, encoding='utf-8', header=None)
 
+        def deweese_schema(df: pd.DataFrame) -> pd.DataFrame:
+            df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
+            df = df.set_index('SEQUENCE_ID', drop=True)
+            df = df.rename(columns=lambda x: x - 1)
+            first_row_ix = df.index[0]
+            ix_label = first_row_ix.rsplit('/', 1)
+            ix_label = ix_label[1]
+            ix_label = ix_label.rsplit('-', 1)
+            df_label = int(ix_label[0])
+            column_lab_dict = dict()
 
-def load_tree_data():
-    global tree_path
-    get_file_path.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
-    tree_path = get_file_path.file_path
+            pattern = '^-'
+            for i in df:
+                if not re.search(pattern, df[i].iloc[0]):
+                    column_lab_dict[df.columns[i]] = df_label
+                    df_label += 1
+                else:
+                    column_lab_dict[df.columns[i]] = ''
+            df = df.rename(columns=column_lab_dict)
+            df = df.drop(columns=[''])
+            df = df.rename(columns=lambda x: int(x))
 
-    return tree_path, window.destroy()
+            return df
 
+        def durston_schema(df: pd.DataFrame) -> pd.DataFrame:
+            df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
+            df = df.set_index('SEQUENCE_ID', drop=True)
+            df.columns = range(len(df.columns))
+            label_val = self.label_number.get()
+            df = df.rename(columns=lambda x: int(x) + label_val)
 
-def trim_msa():
+            return df
 
-    t['font'] = "TkFixedFont"
-    file = open(get_file_path.file_path)
-    trim_msa.df = pd.read_csv(file, encoding='utf-8', header=None)
+        if self.check_yes.get() == 1:
+            df = deweese_schema(df)
 
-    def deweese_schema(df: pd.DataFrame) -> pd.DataFrame:
-        df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
-        df = df.set_index('SEQUENCE_ID', drop=True)
-        df = df.rename(columns=lambda x: x - 1)
-        first_row_ix = df.index[0]
-        ix_label = first_row_ix.rsplit('/', 1)
-        ix_label = ix_label[1]
-        ix_label = ix_label.rsplit('-', 1)
-        df_label = int(ix_label[0])
-        column_lab_dict = dict()
+        # Remove High Insertion Areas
+        df = df.replace({'-': None})
+        index_len = len(df.index)
+        null_val = float(self.null_filter.get().split("%")[0]) / 100
 
-        pattern = '^-'
-        for i in df:
-            if not re.search(pattern, df[i].iloc[0]):
-                column_lab_dict[df.columns[i]] = df_label
-                df_label += 1
-            else:
-                column_lab_dict[df.columns[i]] = ''
-        df = df.rename(columns=column_lab_dict)
-        df = df.drop(columns=[''])
-        df = df.rename(columns=lambda x: int(x))
+        for label, column in df.items():
+            non_nulls = column.count()
+            info_amount = non_nulls / index_len
+            if info_amount < null_val:
+                df = df.drop(columns=[label])
+        df = df.replace({None: '-'})  # must return 'None' inserts to '-' str in order to run
 
-        return df
+        if self.check_yes.get() == 0:
+            df = durston_schema(df)
 
-    def durston_schema(df: pd.DataFrame) -> pd.DataFrame:
-        df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
-        df = df.set_index('SEQUENCE_ID', drop=True)
-        df.columns = range(len(df.columns))
-        label_val = label_number.get()
-        df = df.rename(columns=lambda x: int(x) + label_val)
+        self.dataframe_manager.text.delete(1.0, END)
+        self.dataframe_manager.text.insert(INSERT, df)
+        self.df = df
+        self.button3.config(state='normal', bg='SeaGreen3')
 
-        return df
+    def submit_and_run(self):
+        self.dataframe_manager.text['font'] = tkfont.Font(size=10)
+        global submitted_df
+        submitted_df = self.df
+        path = 'preprocessed_msa.csv'
+        sys.stdout.write("Writing preprocessed MSA to file...")
+        submitted_df.to_csv(path, index=True, header=True)
+        importlib.import_module('src.kmodes_alpha_h')
+        importlib.import_module('src.preprocessor')
 
-    if check_yes.get() == 1:
-        trim_msa.df = deweese_schema(trim_msa.df)
-
-    # Remove High Insertion Areas
-    trim_msa.df = trim_msa.df.replace({'-': None})
-    index_len = len(trim_msa.df.index)
-    null_val = float(null_filter.get().split("%")[0]) / 100
-    for label, column in trim_msa.df.items():
-        non_nulls = column.count()
-        info_amount = non_nulls / index_len
-        if info_amount < null_val:
-            trim_msa.df = trim_msa.df.drop(columns=[label])
-    trim_msa.df = trim_msa.df.replace({None: '-'})  # must return 'None' inserts to '-' str in order to run
-
-    if check_yes.get() == 0:
-        trim_msa.df = durston_schema(trim_msa.df)
-
-    t.delete(1.0, END)
-    t.insert(INSERT, trim_msa.df)
-    button3.config(state='normal', bg='green')
-
-
-def submit_and_run():
-    t['font'] = dialog_font
-    submit_and_run.df = trim_msa.df
-    path = 'preprocessed_msa.csv'
-    sys.stdout.write("Writing preprocessed MSA to file...")
-    submit_and_run.df.to_csv(path, index=True, header=True)
-    importlib.import_module('src.kmodes_alpha_h')
-    importlib.import_module('src.preprocessor')
-
-    return window.destroy()
-
-
-button1 = Button(f1, text='Load MSA', fg='white', bg='purple', command=get_file_path)
-button2 = Button(f3, text='Pre-Process MSA', fg='white', bg='purple', command=trim_msa)
-button3 = Button(f3, text='Submit and Run', fg='white', bg='grey', command=submit_and_run)
-button4 = Button(f1, text='Load Tree File', fg='white', bg='green', command=load_tree_data)
-button3.config(state='disabled')
-button1.pack(side="right")
-button2.pack(side="left")
-button3.pack(side="right")
-button4.pack(side="right")
+        return app.destroy()
 
 
-window.mainloop()
+class TextFrame(Frame):
+    def __init__(self, *args, **kwargs):
+        Frame.__init__(self, *args, **kwargs)
+        self.dialog_font = tkfont.Font(size=10)
+        self.text = Text(self, height=18, width=85, bg='white', fg='black', font=self.dialog_font)
+        self.text.pack(side=TOP, fill=BOTH, expand=True, anchor=CENTER, padx=20)
+
+        redirect = RedirectStdIO(self.text)
+        sys.stdout = redirect
+        sys.stderr = redirect
+
+
+        sys.stdout.write("Welcome to K Modes Alpha!\n"
+                         "\n(1) Please choose an MSA to run."
+                         "\n(2) You may choose 'Preprocess-MSA' to filter high insertion sites."
+                         "\n(3) Label your columns according to your preference."
+                         "\n(4) When ready, press 'Submit and Run' to begin."
+                         "\n\n\nPlease send error reports to ttownsley@mail.lipscomb.edu ")
+
+
+app = Window()
+app.geometry('650x650')
+app.protocol("WM_DELETE_WINDOW", exit)
+app.mainloop()
