@@ -40,8 +40,8 @@ t = Text(window, height=18, width=85, bg='white', fg='black')
 t['font'] = dialog_font
 t.grid(column=2, row=7, padx=20)
 redirect = RedirectStdIO(t)
-sys.stdout = redirect
-sys.stderr = redirect
+# sys.stdout = redirect
+# sys.stderr = redirect
 
 sys.stdout.write("Welcome to K Modes Alpha!\n"
                  "\n(1) Please choose an MSA to run."
@@ -84,9 +84,21 @@ entry3.grid(column=2, row=4, pady=6)
 
 
 def get_file_path():
+    global tree_path
     get_file_path.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
     entry1.delete(0, END)
     entry1.insert(0, get_file_path.file_path)
+    tree_path = None
+
+    return tree_path
+
+
+def load_tree_data():
+    global tree_path
+    get_file_path.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
+    tree_path = get_file_path.file_path
+
+    return tree_path, window.destroy()
 
 
 def trim_msa():
@@ -158,16 +170,19 @@ def submit_and_run():
     submit_and_run.df.to_csv(path, index=True, header=True)
     importlib.import_module('src.kmodes_alpha_h')
     importlib.import_module('src.preprocessor')
-    window.destroy()
+
+    return window.destroy()
 
 
-button1 = Button(f1, text='Select File', fg='white', bg='purple', command=get_file_path)
+button1 = Button(f1, text='Load MSA', fg='white', bg='purple', command=get_file_path)
 button2 = Button(f3, text='Pre-Process MSA', fg='white', bg='purple', command=trim_msa)
 button3 = Button(f3, text='Submit and Run', fg='white', bg='grey', command=submit_and_run)
+button4 = Button(f1, text='Load Tree File', fg='white', bg='green', command=load_tree_data)
 button3.config(state='disabled')
 button1.pack(side="right")
 button2.pack(side="left")
 button3.pack(side="right")
+button4.pack(side="right")
 
 
 window.mainloop()

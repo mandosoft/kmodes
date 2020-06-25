@@ -5,7 +5,7 @@ from math import log
 import numpy as np
 import pandas as pd
 from scipy import sparse as sp
-
+from numba import njit
 from sklearn.utils.validation import check_array, check_consistent_length
 from sklearn.utils.validation import _deprecate_positional_args
 from sklearn.utils.fixes import _astype_copy_false
@@ -97,6 +97,7 @@ def mutual_info_score(labels_true, labels_pred, *, contingency=None):
     return np.clip(mi.sum(), 0.0, None)
 
 
+
 def unique_inverse(labels):
     """
     custom function to utilize pandas unique()
@@ -113,6 +114,7 @@ def unique_inverse(labels):
 
 
 def entropy(labels):
+
     """Calculates the entropy for a labeling.
     Parameters
     ----------

@@ -11,11 +11,12 @@ import glob
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import src.preprocessor as preprocessor
+
 matplotlib.use("TkAgg")
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from sys import exit
-
 
 
 class KmodesApp(Tk):
@@ -111,6 +112,9 @@ class TreeTab(Frame):
     def __init__(self, canvas, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
         Frame.config(self, bg="white")
+        from src.gui import tree_path
+
+        self.tree_path = tree_path
         self.canvas = canvas
         self.val = 0
         self.font_size = 5
@@ -132,9 +136,17 @@ class TreeTab(Frame):
         This is the main tree drawing method
         """
         G = nx.Graph()
-        tree_path = 'tree_input.csv'
-        with open(tree_path) as f:
+
+        if self.tree_path is None:
+            self.tree_path = 'tree_input.csv'
+        else:
+            """generate output file for CSV Tab"""
+            preprocessor.process_tree_file(self.tree_path)
+
+        # tree_path = 'tree_input.csv'
+        with open(self.tree_path) as f:
             lines = list(csv.reader(f))
+
         # TODO: Refactor this area
         data = lines[1:]  # ignores header
         #TODO fix this using split or other method
