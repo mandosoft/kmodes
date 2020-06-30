@@ -1,17 +1,18 @@
 from tkinter import *
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox
+from tkinter.filedialog import askopenfilename
 from tkdatacanvas import *
 
 import networkx as nx
-from networkx.drawing.nx_agraph import write_dot
 import numpy as np
 import io
 import csv
-import glob
+import importlib
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import src.preprocessor as preprocessor
+
 
 matplotlib.use("TkAgg")
 
@@ -36,6 +37,12 @@ class KmodesApp(Tk):
         if messagebox.askokcancel("Quit", "Are you sure want to quit?"):
             exit()
 
+    # TODO Fix refresh window
+    def refresh_view(self):
+        global tree_path
+        tree_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
+        importlib.import_module('src.tree_gui')
+
     def add_features(self):
         tab = TreeTab(self.notebook)
         tab2 = CsvTab(self.notebook, tab.prime_cluster)
@@ -58,7 +65,7 @@ class KmodesApp(Tk):
             self.notebook.add(tab_extra, text=str(value))
         """
 
-        # SR Mode zoom
+        """SR Mode zoom"""
         self.control_panel.label = Label(self.control_panel, text="Zoom by Sr Mode Value", anchor=W, justify=LEFT,
                                          font=("Helvetica", 6))
         self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(50, 5))
@@ -66,7 +73,7 @@ class KmodesApp(Tk):
         self.control_panel.spinbox.bind("<Return>", get_val)
         self.control_panel.spinbox.pack(side=TOP, fill=NONE, expand=False)
 
-        # Font selector
+        """Font selector"""
         self.control_panel.label = Label(self.control_panel, text="Select Font Size", anchor=W, justify=LEFT,
                                          font=("Helvetica", 6))
         self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(20, 5))
@@ -74,13 +81,18 @@ class KmodesApp(Tk):
         self.control_panel.font_spinbox.bind("<Return>", get_val)
         self.control_panel.font_spinbox.pack(side=TOP, fill=NONE, expand=False)
 
-        # Prime cluster value selector
+        """Prime cluster value selector"""
         self.control_panel.label = Label(self.control_panel, text="Set Prime Cluster Value", anchor=W, justify=LEFT,
                                          font=("Helvetica", 6))
         self.control_panel.label.pack(side=TOP, fill=NONE, expand=False, pady=(20, 5))
         self.control_panel.pc_entry = Entry(self.control_panel, textvariable=tab.pc_val)
         self.control_panel.pc_entry.bind("<Return>", get_val)
         self.control_panel.pc_entry.pack(side=TOP, fill=NONE, expand=False)
+
+        """Load New Tree File"""
+        self.control_panel.button = Button(self.control_panel, text='Load New Tree', anchor=W, justify=LEFT,
+                                           fg='white', bg='HotPink2', command=self.refresh_view)
+        self.control_panel.button.pack(side=TOP, pady=(20, 10))
 
         """
         # Experimental Feature
@@ -104,6 +116,7 @@ class ControlPanel(Frame):
         self.pc_entry = None
         self.label = None
         self.directory = None
+        self.button = None
 
 
 class TreeTab(Frame):

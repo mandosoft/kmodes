@@ -6,6 +6,7 @@ import pandas as pd
 import importlib
 import re
 
+
 old_stdout = sys.stdout
 
 
@@ -87,7 +88,7 @@ class Window(Tk):
 
     def get_file_path(self):
         global tree_path
-        self.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
+        self.file_path = askopenfilename(filetypes=[("CSV files", "*.csv"), ("Fasta files", "*.txt")])
         self.entry1.delete(0, END)
         self.entry1.insert(0, self.file_path)
         tree_path = None
@@ -96,7 +97,7 @@ class Window(Tk):
 
     def load_tree_data(self):
         global tree_path
-        self.file_path = askopenfilename(filetypes=[("CSV files", "*.csv")])
+        self.file_path = askopenfilename(filetypes=[("CSV files", "*.csv"), ("Fasta files", "*.txt")])
         tree_path = self.file_path
 
         return tree_path, app.destroy()
@@ -107,10 +108,33 @@ class Window(Tk):
             self.dataframe_manager.text['font'] = "TkFixedFont"
 
         file = open(self.file_path)
-        print(file)
-        df = pd.read_csv(file, encoding='utf-8', header=None)
+
+        if str(self.file_path).endswith(".txt"):
+
+            nucs_dict = dict()
+
+            with open(self.file_path, "r") as a_file:
+                string_without_line_breaks = ""
+                for line in a_file:
+                    stripped_line = line.rstrip()
+                    string_without_line_breaks += stripped_line
+                a_file.close()
+
+            vals = string_without_line_breaks.split('>')
+            for line in vals:
+                line = re.split('(\w+/\d*-?\d*)', line)
+                line.remove('')
+                for i in enumerate(line):
+                    g = list(line[1])
+                    nucs_dict.update({line[0]: g})
+
+            df = pd.DataFrame.from_dict(nucs_dict, orient='index')
+
+        else:
+            df = pd.read_csv(file, encoding='utf-8', engine='c', header=None)
 
         def deweese_schema(df: pd.DataFrame) -> pd.DataFrame:
+
             df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
             df = df.set_index('SEQUENCE_ID', drop=True)
             df = df.rename(columns=lambda x: x - 1)
@@ -187,9 +211,8 @@ class TextFrame(Frame):
         self.text.pack(side=TOP, fill=BOTH, expand=True, anchor=CENTER, padx=20)
 
         redirect = RedirectStdIO(self.text)
-        sys.stdout = redirect
-        sys.stderr = redirect
-
+        #sys.stdout = redirect
+        #sys.stderr = redirect
 
         sys.stdout.write("Welcome to K Modes Alpha!\n"
                          "\n(1) Please choose an MSA to run."
