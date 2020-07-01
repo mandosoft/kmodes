@@ -129,14 +129,16 @@ class Window(Tk):
                     nucs_dict.update({line[0]: g})
 
             df = pd.DataFrame.from_dict(nucs_dict, orient='index')
+            df = df.replace({'.': '-'})
+            df.index.name = 'SEQUENCE_ID'
 
         else:
             df = pd.read_csv(file, encoding='utf-8', engine='c', header=None)
+            df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
+            df = df.set_index('SEQUENCE_ID', drop=True)
 
         def deweese_schema(df: pd.DataFrame) -> pd.DataFrame:
 
-            df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
-            df = df.set_index('SEQUENCE_ID', drop=True)
             df = df.rename(columns=lambda x: x - 1)
             first_row_ix = df.index[0]
             ix_label = first_row_ix.rsplit('/', 1)
@@ -146,6 +148,8 @@ class Window(Tk):
             column_lab_dict = dict()
 
             pattern = '^-'
+
+            # TODO Catch weird insertion detection bug
             for i in df:
                 if not re.search(pattern, df[i].iloc[0]):
                     column_lab_dict[df.columns[i]] = df_label
@@ -159,8 +163,6 @@ class Window(Tk):
             return df
 
         def durston_schema(df: pd.DataFrame) -> pd.DataFrame:
-            df = df.rename(columns={df.columns[0]: 'SEQUENCE_ID'})
-            df = df.set_index('SEQUENCE_ID', drop=True)
             df.columns = range(len(df.columns))
             label_val = self.label_number.get()
             df = df.rename(columns=lambda x: int(x) + label_val)
@@ -211,8 +213,8 @@ class TextFrame(Frame):
         self.text.pack(side=TOP, fill=BOTH, expand=True, anchor=CENTER, padx=20)
 
         redirect = RedirectStdIO(self.text)
-        #sys.stdout = redirect
-        #sys.stderr = redirect
+        sys.stdout = redirect
+        sys.stderr = redirect
 
         sys.stdout.write("Welcome to K Modes Alpha!\n"
                          "\n(1) Please choose an MSA to run."

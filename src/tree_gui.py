@@ -360,7 +360,7 @@ class TreeTab(Frame):
         ax.yaxis.set_ticklabels(ytick_labels, visible=True)
         ax.xaxis.set_ticks(xtick_list)
         ax.xaxis.set_ticklabels(xtick_labels, visible=True)
-        split_patch = mpatches.Patch(color='red', label='cluster split')
+        split_patch = mpatches.Patch(color='pink', label='cluster split')
         perfect_patch = mpatches.Patch(color='black', label='perfect superset')
         ax.legend(handles=([perfect_patch, split_patch]), loc='upper center', bbox_to_anchor=(0.5, -0.05),
                   fancybox=True, shadow=True, ncol=2)
