@@ -8,14 +8,16 @@ from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
 # from normalized_mutual_info import normalized_mutual_info_score as nmis
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-sys.stdout.write("\nLooking for strong pairwise associations...")
+# sys.stdout.write("\nLooking for strong pairwise associations...")
 
 df = submitted_df
 cluster_list = [pd.DataFrame(df[i]) for i in df]
+
+"""
 cluster_list_clean = cluster_list.copy()
 each_2nd_col = df[df.columns[::2]]
 
-"""Compare each second column to whole list. This finds pairwise associations quickly."""
+# Compare each second column to whole list. This finds pairwise associations quickly.
 for i in each_2nd_col:
     max_rii = 0
     rii = 0
@@ -29,7 +31,7 @@ for i in each_2nd_col:
     cluster_list[best_cluster] = pd.concat([cluster_list[best_cluster], each_2nd_col[i]], axis=1)
 
 
-"""All list processing below prevents shared attributes between pairwise associations"""
+# All list processing below prevents shared attributes between pairwise associations
 pairwise = 2
 pairwise_list = [cluster for cluster in cluster_list if len(cluster.columns) == pairwise]
 pairwise_cluster_labels = [list(cluster.columns.values) for cluster in pairwise_list]
@@ -48,7 +50,7 @@ for cluster in pairwise_list:
         if (cluster.columns.values == i).all():
             unique_pairwise_clusters.append(cluster)
 
-"""Get remaining data as single attributes"""
+# Get remaining data as single attributes
 series_from_upc = [i for cluster in unique_pairwise_clusters for i in cluster]
 series_clean_list = [j for cluster in cluster_list_clean for j in cluster]
 final_set = [item for item in series_clean_list if item not in series_from_upc]
@@ -61,8 +63,10 @@ for i in cluster_list_clean:
 
 unique_pairwise_clusters.extend(difference_set)
 
-"""Main vars for K Modes Iterations"""
+# Main vars for K Modes Iterations
 cluster_list = unique_pairwise_clusters.copy()
+"""
+
 k = len(cluster_list)
 max_rii = 0
 rii = 0
@@ -112,7 +116,7 @@ def calculate_new_mode(c: pd.DataFrame) -> pd.DataFrame:
     return c
 
 
-"""--------------- K Modes Algorithm --------------------"""
+# --------------- K Modes Algorithm --------------------
 cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
 
 while k != 2:
