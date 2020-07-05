@@ -1,5 +1,7 @@
 import tkinter
+import tkinter.ttk
 from tkinter import *
+from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 import tkinter.font as tkfont
 import pandas as pd
@@ -8,7 +10,6 @@ import re
 
 
 old_stdout = sys.stdout
-
 
 class RedirectStdIO(object):
     def __init__(self, text_ctrl):
@@ -27,6 +28,11 @@ class Window(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "K Modes Alpha")
+
+        self.style = ttk.Style()
+        self.style.configure("TButton", foreground="white", background="MediumPurple3")
+        self.style.configure("TCheckbutton", foreground="purple", background="light gray")
+
         b_color = 'light gray'
         f_color = 'black'
         self.file_path = None
@@ -35,39 +41,40 @@ class Window(Tk):
         self.cut_off.set(.15)
 
         """Entry Area 1"""
-        label1 = Label(self, text='\nSelect a CSV file for upload:' + '\n', anchor=CENTER)
+        label1 = ttk.Label(self, text='\nSelect a CSV file for upload:' + '\n', anchor=CENTER)
         label1.pack(side="top", pady=(20, 5))
-        f1 = Frame(self)
-        self.entry1 = Entry(f1, width=30)
-        button1 = Button(f1, text='Load MSA', fg='white', bg='MediumPurple3', command=self.get_file_path)
-        button4 = Button(f1, text='Load Tree File', fg='white', bg='deep sky blue', command=self.load_tree_data)
+        f1 = ttk.Frame(self)
+        self.entry1 = ttk.Entry(f1, width=30)
+        button1 = ttk.Button(f1, text='Load MSA', style='TButton', command=self.get_file_path)
+        button4 = ttk.Button(f1, text='Load Tree File', style='TButton', command=self.load_tree_data)
         button4.pack(side="right")
         button1.pack(side="right")
         self.entry1.pack(side="top", fill=NONE, expand=True)
         f1.pack(side="top", fill=NONE, expand=False)
 
         """Entry Area 2"""
-        label2 = Label(self, text='\nPercentage of information present in each column:', anchor=CENTER)
+        label2 = ttk.Label(self, text='\nPercentage of information present in each column:', anchor=CENTER)
         label2.pack(side="top", pady=(10, 5))
-        f2 = Frame(self)
+        f2 = ttk.Frame(self)
         self.null_filter = StringVar()
         self.null_filter.set("20%")
-        self.entry3 = Entry(width=5, textvariable=self.null_filter)
+        self.entry3 = ttk.Entry(width=5, textvariable=self.null_filter)
         self.entry3.pack(side="top")
 
         f2.pack(side="top")
 
         """Entry Area 3"""
-        label3 = Label(self, text='\nEnter label number for actual sequence location of first column, '
+        label3 = ttk.Label(self, text='\nEnter label number for actual sequence location of first column, '
                                   'or automatically label based on first row', anchor=CENTER)
         label3.pack(side="top", pady=(10, 5))
-        f3 = Frame(self)
+        f3 = ttk.Frame(self)
         self.check_yes = IntVar()
-        check_box = Checkbutton(f3, variable=self.check_yes, text="Label using 1st row", bg=b_color, fg='purple')
+
+        check_box = ttk.Checkbutton(f3, variable=self.check_yes, text="Label using 1st row", style="TCheckbutton")
         check_box.pack(side="right")
         self.label_number = IntVar()
         self.label_number.set(1)
-        self.entry2 = Entry(f3, width=3, textvariable=self.label_number)
+        self.entry2 = ttk.Entry(f3, width=3, textvariable=self.label_number)
         self.entry2.pack(side="top")
 
         f3.pack(side="top", pady=(10, 5))
@@ -77,9 +84,9 @@ class Window(Tk):
         self.dataframe_manager.pack(side="top", fill=BOTH, expand=True, pady=(10, 5))
 
         """Submit Buttons Area"""
-        f4 = Frame(self)
-        button2 = Button(f4, text='Pre-Process MSA', fg='white', bg='MediumPurple3', command=self.preprocess_msa)
-        self.button3 = Button(f4, text='Submit and Run', fg='white', bg='grey', command=self.submit_and_run)
+        f4 = ttk.Frame(self)
+        button2 = ttk.Button(f4, text='Pre-Process MSA', style='TButton', command=self.preprocess_msa)
+        self.button3 = ttk.Button(f4, text='Submit and Run', style='TButton', command=self.submit_and_run)
         button2.pack(side="left")
         self.button3.pack(side="right")
         self.button3.config(state='disabled')
@@ -190,7 +197,7 @@ class Window(Tk):
         self.dataframe_manager.text.delete(1.0, END)
         self.dataframe_manager.text.insert(INSERT, df)
         self.df = df
-        self.button3.config(state='normal', bg='SeaGreen3')
+        self.button3.config(state='normal', style='TButton')
 
     def submit_and_run(self):
         self.dataframe_manager.text['font'] = tkfont.Font(size=10)
