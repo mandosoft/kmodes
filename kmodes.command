@@ -19,12 +19,6 @@ else
     brew update && brew upgrade python
     brew install graphviz
 
-    echo "Checking git"
-    if [ ! -f $GIT ]; then
-        echo "### Git installation failed"
-        exit 255
-    fi
-
     $GIT clone https://github.com/mandosoft/kmodes.git
     cd kmodes
     pip3 install -r requirements.txt
