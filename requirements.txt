@@ -1,10 +1,8 @@
 tk==0.1.0
-pandas==1.0.3
-halo==0.0.29
-scikit-learn==0.22.2.post1
+pandas==1.0.5
+scikit-learn==0.23.1
 networkx==2.4
-matplotlib==3.2.1
+matplotlib==3.2.2
 pygraphviz==1.5
 tkdatacanvas==0.1.1
-mplcursors==0.3
 
