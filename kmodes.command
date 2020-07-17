@@ -10,16 +10,23 @@ cd ~/Desktop
 if [ -d $DIR ]
 then
     echo "{$DIR} exists."
+    cd kmodes
 else
     xcode-select --install || softwareupdate --install -a && softwareupdate --restart
-    GIT=git
 
+    # Install Homebrew
     yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-    brew install python
-    brew update && brew upgrade python
-    brew install graphviz
 
-    $GIT clone https://github.com/mandosoft/kmodes.git
+    # TODO: Install ActiveTcl version
+
+    # Install Python from source
+    curl -O https://www.python.org/ftp/python/3.8.4/python-3.8.4-macosx10.9.pkg
+    sudo installer -pkg python-3.8.4-macosx10.9.pkg -target /
+
+    brew update && brew install graphviz
+    brew uninstall python3
+
+    git clone https://github.com/mandosoft/kmodes.git
     cd kmodes
     pip3 install -r requirements.txt
 fi
