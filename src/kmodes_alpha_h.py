@@ -1,11 +1,9 @@
 #!/bin/env python3
-
 import warnings
 import random
 from src.gui import *
-from itertools import combinations
+from lib.kmodeslib import calculate_new_mode, calculate_sr_mode
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmis
-# from normalized_mutual_info import normalized_mutual_info_score as nmis
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 # sys.stdout.write("\nLooking for strong pairwise associations...")
@@ -71,53 +69,7 @@ k = len(cluster_list)
 max_rii = 0
 rii = 0
 csv_dict = dict()
-
-
-def calculate_sr_mode(c: pd.DataFrame) -> pd.DataFrame:
-
-    n_mis = nmis
-    cc = len(list(combinations(c.columns, 2)))
-
-    if len(c.columns) < 2:
-        return c
-    elif len(c.columns) == 2:
-        max_sum = n_mis(c[c.columns[0]], c[c.columns[1]], average_method='geometric')
-    else:
-        max_sum = max([sum([n_mis(c[i], c[j], average_method='geometric')
-                            for j in c if c[i].name != c[j].name]) for i in c])
-
-    sr_mode = max_sum / cc
-    csv_dict[tuple([tuple(sorted(c)), 'k = ' + str(k)])] = round(sr_mode, 3)
-
-    return c
-
-
-def calculate_new_mode(c: pd.DataFrame) -> pd.DataFrame:
-    n_mis = nmis
-    max_sum = 0
-    cluster_mode = pd.Series(dtype=object)
-    for location, i in enumerate(c):
-        sum_rii = 0
-        for j in c:
-            if c[i].name != c[j].name:
-                sum_rii += n_mis(c[i], c[j], average_method='geometric')
-        if sum_rii > max_sum:
-            max_sum, cluster_mode, ix = sum_rii, c[i], location
-
-    if cluster_mode.empty:
-        del cluster_mode
-    else:
-        c = c.drop(c.columns[ix], axis=1)
-        c = pd.concat([c, cluster_mode], axis=1)
-        cols = c.columns.tolist()
-        cols = cols[-1:] + cols[:-1]
-        c = c[cols]
-
-    return c
-
-
-# --------------- K Modes Algorithm --------------------
-cluster_list = [calculate_sr_mode(cluster) for cluster in cluster_list]
+cluster_list = [calculate_sr_mode(cluster, csv_dict, k) for cluster in cluster_list]
 
 while k != 2:
 
@@ -143,7 +95,7 @@ while k != 2:
 
     """Calculate the new mode and sr_mode for the best cluster"""
     cluster_list[best_cluster] = calculate_new_mode(cluster_list[best_cluster])
-    cluster_list[best_cluster] = calculate_sr_mode(cluster_list[best_cluster])
+    cluster_list[best_cluster] = calculate_sr_mode(cluster_list[best_cluster], csv_dict, k)
 
     """Go back to the cluster the random mode came from and auction off remaining attributes"""
     if cluster_list[random_df_il].empty:
@@ -163,11 +115,10 @@ while k != 2:
             # noinspection PyUnboundLocalVariable
             cluster_list[attr_winner] = pd.concat([cluster_list[attr_winner], remaining_attr], axis=1)
             cluster_list[attr_winner] = calculate_new_mode(cluster_list[attr_winner])
-            cluster_list[attr_winner] = calculate_sr_mode(cluster_list[attr_winner])
+            cluster_list[attr_winner] = calculate_sr_mode(cluster_list[attr_winner], csv_dict, k)
         del cluster_list[random_df_il]
 
     else:
         sys.stderr.write('\nThere was a problem breaking up a cluster.')
-
 
 sys.stdout.write('\nRun Complete!')

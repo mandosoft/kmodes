@@ -11,6 +11,7 @@ import re
 
 old_stdout = sys.stdout
 
+
 class RedirectStdIO(object):
     def __init__(self, text_ctrl):
         self.output = text_ctrl
@@ -219,9 +220,9 @@ class TextFrame(Frame):
         self.text = Text(self, height=18, width=85, bg='white', fg='black', font=self.dialog_font)
         self.text.pack(side=TOP, fill=BOTH, expand=True, anchor=CENTER, padx=20)
 
-        redirect = RedirectStdIO(self.text)
-        sys.stdout = redirect
-        sys.stderr = redirect
+        #redirect = RedirectStdIO(self.text)
+        #sys.stdout = redirect
+        #sys.stderr = redirect
 
         sys.stdout.write("Welcome to K Modes Alpha!\n"
                          "\n(1) Please choose an MSA to run."

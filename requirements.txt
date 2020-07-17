@@ -2,7 +2,7 @@ tk==0.1.0
 pandas==1.0.5
 scikit-learn==0.23.1
 networkx==2.4
-matplotlib==3.2.2
+matplotlib==3.3.0
 pygraphviz==1.5
 tkdatacanvas==0.1.1
 
