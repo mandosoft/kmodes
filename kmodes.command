@@ -9,31 +9,39 @@ cd ~/Desktop
 
 if [ -d $DIR ]
 then
-    echo "{$DIR} exists."
+    echo "$DIR already installed."
     cd kmodes
+    source kmodes_env/bin/activate
     git clean -fd
     git pull origin master
 else
-    xcode-select --install || softwareupdate --install -a && softwareupdate --restart
-
-    # Install Homebrew
-    yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
-    brew update && brew install graphviz
-    brew uninstall python3
+    xcode-select --install || softwareupdate --install -a
+    softwareupdate --restart
 
     git clone https://github.com/mandosoft/kmodes.git
     cd kmodes
 
-    # TODO: Install ActiveTcl version
-    sudo installer -pkg lib/ActiveTcl-8.6.9.8609.2-macosx10.9-x86_64-93b04018.pkg -target /
+    # Install Homebrew for graphviz
+    yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    brew update && brew install graphviz
 
-    # Install Python from source
+    # Install Python VERSION from source
     curl -O https://www.python.org/ftp/python/3.8.4/python-3.8.4-macosx10.9.pkg
     sudo installer -pkg python-3.8.4-macosx10.9.pkg -target /
+    pip3 install --upgrade virtualenv
+    virtualenv kmodes_env
+    source kmodes_env/bin/activate
 
-    pip3 install -r requirements.txt
+    # Install newer Tcl/Tk VERSION from source
+    curl -O https://prdownloads.sourceforge.net/tcl/tk8.6.10-src.tar.gz
+    curl -O https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
+    gunzip < tk8.6.10-src.tar.gz | tar xvf -
+    gunzip < tcl8.6.10-src.tar.gz | tar xvf -
+
+
+    pip install -r requirements.txt
 fi
 
-python3 main.py
+which python
+python main.py
 
