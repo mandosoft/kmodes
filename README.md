@@ -2,14 +2,11 @@
 Instructions for setup:
 
 Requires python 3.7+
-- git clone ```https://github.com/mandosoft/kmodes.git```  
-- Setup virtual environment
-- Set working directory to ```<user-path>/kmodes```
-- Install libraries:
-```bash
-pip3 install -r requirements.txt
-```
-- Run using python main.py
 
-![MSA Data Cleansing Demo](demo/demo.gif)
+For macOS users: 
+Download and run kmodes.command in bash. This will do a complete installation and run kmodes in a python3.8 virtualenv.
+
+For Linux users:
+Clone the repository, cd the kmodes/src directory 
+
 
