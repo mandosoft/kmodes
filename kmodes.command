@@ -33,15 +33,15 @@ else
     source kmodes_env/bin/activate
 
     # Install newer Tcl/Tk VERSION from source
-    curl -O https://prdownloads.sourceforge.net/tcl/tk8.6.10-src.tar.gz
-    curl -O https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
+    curl -OL https://prdownloads.sourceforge.net/tcl/tk8.6.10-src.tar.gz
+    curl -OL https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
     gunzip < tk8.6.10-src.tar.gz | tar xvf -
     gunzip < tcl8.6.10-src.tar.gz | tar xvf -
-
 
     pip install -r requirements.txt
 fi
 
 which python
-python main.py
+which tcl-tk
+python src/qtgui.py
 

@@ -11,14 +11,12 @@ import importlib
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import src.preprocessor as preprocessor
-
 
 matplotlib.use("TkAgg")
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from sys import exit
-
+from src.kmodes_lib import KmodesAlpha
 
 class KmodesApp(Tk):
     """
@@ -125,9 +123,8 @@ class TreeTab(Frame):
     def __init__(self, canvas, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
         Frame.config(self, bg="white")
-        from src.gui import tree_path
 
-        self.tree_path = tree_path
+        self.tree_path = 'data/tree_input.csv'
         self.canvas = canvas
         self.val = 0
         self.font_size = 5
@@ -151,10 +148,10 @@ class TreeTab(Frame):
         G = nx.Graph()
 
         if self.tree_path is None:
-            self.tree_path = 'tree_input.csv'
+            self.tree_path = 'data/tree_input.csv'
         else:
             """generate output file for CSV Tab"""
-            preprocessor.process_tree_file(self.tree_path)
+            KmodesAlpha.format_table_output(self.tree_path)
 
         # tree_path = 'tree_input.csv'
         with open(self.tree_path) as f:
@@ -388,7 +385,7 @@ class CsvTab(Frame):
         self.canvas.pack(side=TOP, fill=BOTH, expand=True)
 
     def write_data(self):
-        path = 'output.csv'
+        path = 'data/output.csv'
         with io.open(path, "r", newline="") as csv_file:
             reader = csv.reader(csv_file)
             parsed_rows = 0
@@ -424,6 +421,6 @@ class OutfileTab(Frame):
         self.canvas.display()
 
 
-app = KmodesApp()
-app.protocol("WM_DELETE_WINDOW", app.on_closing)
-app.mainloop()
+#app = KmodesApp()
+#app.protocol("WM_DELETE_WINDOW", app.on_closing)
+#app.mainloop()

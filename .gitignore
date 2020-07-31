@@ -1,6 +1,6 @@
 venv
 src/output.csv
-src/preprocessed_msa.csv
+lib/preprocessed_msa.csv
 src/tree_input.csv
 tester.py
 src/testfiles
