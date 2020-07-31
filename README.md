@@ -10,7 +10,9 @@ For Linux users:
 
 ```
 git clone https://github.com/mandosoft/kmodes.git
-
-pip install requirements.txt
+virtualenv kmodes_env
+source kmodes_env/bin/activate
+pip install -r requirements.txt
+python3 qtgui.py
 ```
 
