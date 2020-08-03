@@ -8,8 +8,8 @@ import re
 import gc
 import math
 import pandas as pd
-from src.kmodes_lib import KmodesAlpha
-from src.tree_gui import KmodesApp
+from kmodes_lib import KmodesAlpha
+from tree_gui import KmodesApp
 
 
 class Ui_MainWindow(object):
@@ -318,7 +318,6 @@ class Ui_MainWindow(object):
 
         while k != 2:
             k -= 1
-            print(increment)
             self.progressBar_handler(increment)
             kmodes_alpha.kmodes(cluster_list, k)
 

@@ -1,3 +1,10 @@
+
+import tkinter
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
+from matplotlib import patches as mpatches
+
 from tkinter import *
 from tkinter import ttk, messagebox
 from tkinter.filedialog import askopenfilename
@@ -8,15 +15,10 @@ import numpy as np
 import io
 import csv
 import importlib
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-matplotlib.use("TkAgg")
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from sys import exit
-from src.kmodes_lib import KmodesAlpha
+from kmodes_lib import KmodesAlpha
 
 class KmodesApp(Tk):
     """
